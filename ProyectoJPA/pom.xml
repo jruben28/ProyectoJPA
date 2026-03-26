@@ -5,6 +5,13 @@
     <artifactId>ProyectoJPA</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
+    <modules>
+        <module>dominio</module>
+        <module>dtos</module>
+        <module>negocio</module>
+        <module>persistencia</module>
+        <module>presentacion</module>
+    </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
