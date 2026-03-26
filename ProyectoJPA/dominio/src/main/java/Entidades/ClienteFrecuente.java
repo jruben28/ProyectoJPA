@@ -29,5 +29,39 @@ public class ClienteFrecuente extends Cliente implements Serializable{
     @Temporal(TemporalType.DATE)
     private Date fechaRegistro; 
 
+    public ClienteFrecuente() {
+    super();
+    }
+
+     public ClienteFrecuente(String nombre, String telefono, String correo) {
+        super(nombre);
+        this.telefono = telefono;
+        this.correo = correo;
+        this.fechaRegistro = new Date();
+    }
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
+    public String getCorreo() {
+        return correo;
+    }
+
+    public void setCorreo(String correo) {
+        this.correo = correo;
+    }
+
+    public Date getFechaRegistro() {
+        return fechaRegistro;
+    }
+
+    public void setFechaRegistro(Date fechaRegistro) {
+        this.fechaRegistro = fechaRegistro;
+    }
     
 }
