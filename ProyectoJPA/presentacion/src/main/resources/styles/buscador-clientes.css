@@ -1,0 +1,215 @@
+/* ===== Fondo principal ===== */
+.root-pane {
+    -fx-background-color: #F9FAFB;
+}
+
+/* ===== Titulo ===== */
+.titulo {
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1F2937;
+}
+
+/* ===== Campo de busqueda ===== */
+.search-field {
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 15px;
+    -fx-padding: 10 15;
+    -fx-border-color: #2563EB;
+    -fx-border-width: 2;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-background-color: white;
+    -fx-prompt-text-fill: #9CA3AF;
+}
+
+.search-field:focused {
+    -fx-border-color: #2563EB;
+    -fx-effect: dropshadow(gaussian, rgba(37,99,235,0.15), 6, 0, 0, 0);
+}
+
+/* ===== Boton buscar ===== */
+.btn-buscar {
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-color: #2563EB;
+    -fx-text-fill: white;
+    -fx-padding: 10 24;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+}
+
+.btn-buscar:hover {
+    -fx-background-color: #1D4ED8;
+}
+
+.btn-buscar:pressed {
+    -fx-background-color: #1E40AF;
+}
+
+/* ===== Botones filtro (toggle) ===== */
+.filtro-btn {
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-padding: 6 20;
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
+    -fx-cursor: hand;
+    -fx-background-color: white;
+    -fx-text-fill: #2563EB;
+    -fx-border-color: #2563EB;
+    -fx-border-width: 2;
+}
+
+.filtro-btn:selected {
+    -fx-background-color: #2563EB;
+    -fx-text-fill: white;
+    -fx-border-color: #2563EB;
+}
+
+.filtro-btn:hover {
+    -fx-background-color: #EFF6FF;
+}
+
+.filtro-btn:selected:hover {
+    -fx-background-color: #1D4ED8;
+    -fx-text-fill: white;
+}
+
+/* ===== Label de resultados ===== */
+.resultados-label {
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 13px;
+    -fx-text-fill: #6B7280;
+}
+
+/* ===== Tabla ===== */
+.table-view {
+    -fx-background-color: white;
+    -fx-border-color: #E5E7EB;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 0;
+}
+
+.table-view .filler {
+    -fx-background-color: #EFF6FF;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #EFF6FF;
+}
+
+.table-view .column-header {
+    -fx-background-color: #EFF6FF;
+    -fx-border-color: transparent transparent #2563EB transparent;
+    -fx-border-width: 0 0 2 0;
+    -fx-pref-height: 45;
+}
+
+.table-view .column-header .label {
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2563EB;
+    -fx-padding: 8 10;
+    -fx-alignment: center-left;
+}
+
+.table-view .table-row-cell {
+    -fx-background-color: white;
+    -fx-border-color: transparent;
+    -fx-cell-size: 48;
+}
+
+.table-view .table-row-cell:odd {
+    -fx-background-color: #F9FAFB;
+}
+
+.table-view .table-row-cell:selected {
+    -fx-background-color: #EFF6FF;
+}
+
+.table-view .table-row-cell:selected .table-cell {
+    -fx-text-fill: #1F2937;
+}
+
+.table-view .table-cell {
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 14px;
+    -fx-text-fill: #1F2937;
+    -fx-padding: 0 10;
+    -fx-alignment: center-left;
+}
+
+.table-view .placeholder .label {
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 14px;
+    -fx-text-fill: #9CA3AF;
+}
+
+/* ===== Celda nombre (azul bold) ===== */
+.nombre-cell {
+    -fx-text-fill: #2563EB;
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+/* ===== Botones de acciones en tabla ===== */
+.btn-ver-perfil {
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-background-color: transparent;
+    -fx-text-fill: #2563EB;
+    -fx-cursor: hand;
+    -fx-padding: 4 8;
+}
+
+.btn-ver-perfil:hover {
+    -fx-background-color: #EFF6FF;
+    -fx-background-radius: 6;
+}
+
+.btn-vincular {
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-background-color: white;
+    -fx-text-fill: #22C55E;
+    -fx-border-color: #22C55E;
+    -fx-border-width: 2;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 4 14;
+    -fx-cursor: hand;
+}
+
+.btn-vincular:hover {
+    -fx-background-color: #F0FDF4;
+}
+
+/* ===== Scrollbar ===== */
+.table-view .scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-pref-width: 8;
+}
+
+.table-view .scroll-bar:vertical .thumb {
+    -fx-background-color: #D1D5DB;
+    -fx-background-radius: 4;
+}
+
+.table-view .scroll-bar:vertical .track {
+    -fx-background-color: transparent;
+}
+
+.table-view .scroll-bar:vertical .increment-button,
+.table-view .scroll-bar:vertical .decrement-button {
+    -fx-pref-height: 0;
+    -fx-padding: 0;
+}
