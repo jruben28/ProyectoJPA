@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import utilidades.Encriptador;
 
 /**
  * Business Object de la entidad Cliente.
@@ -61,7 +62,7 @@ public class ClienteBO implements IClienteBO {
         Double total = 0.0;
         for (Comanda c : comandas) {
             total += c.getTotal();
-        }   
+        }
         if (total < 0) {
             total = 0.0;
         }
@@ -72,7 +73,11 @@ public class ClienteBO implements IClienteBO {
     public void agregarClienteFrecuente(ClienteFrecuenteDTO clienteFrecuenteDTO) {
         //No tiene que tener id, no será mapeado
         validarClienteFrecuenteDTO(clienteFrecuenteDTO);
+
         try {
+
+            clienteFrecuenteDTO.setTelefono(Encriptador.encriptar(clienteFrecuenteDTO.getTelefono()));
+
             ClienteFrecuente clienteF = ClienteFrecuenteAdapter.dtoAEntidad(clienteFrecuenteDTO);
 
             clienteDAO.agregarClienteFrecuente(clienteF);
@@ -82,7 +87,7 @@ public class ClienteBO implements IClienteBO {
             throw new NegocioException("Error al agregar un cliente frecuente");
         }
     }
-    
+
     public void validarClienteFrecuenteDTO(ClienteFrecuenteDTO dto) {
         //Agregar validacion de cliente Frecuente DTO
         //Agregar validacion de cliente Frecuente DTO
@@ -93,7 +98,9 @@ public class ClienteBO implements IClienteBO {
             throw new NegocioException("El nombre del cliente no es valido");
         }
 
-        if (dto.getCorreo() == null || !Pattern.matches(REGEX_CORREO, dto.getCorreo())) {
+        //modificado para que sea opcional
+        if (dto.getCorreo() != null && !dto.getCorreo().trim().isEmpty()
+                && !Pattern.matches(REGEX_CORREO, dto.getCorreo())) {
             throw new NegocioException("El correo del cliente no es valido");
         }
 
@@ -101,11 +108,12 @@ public class ClienteBO implements IClienteBO {
             throw new NegocioException("El telefono del cliente no es valido");
         }
 
-        if (dto.getFechaRegistro()== null || dto.getFechaRegistro().after(new Date())) {
+        if (dto.getFechaRegistro() == null || dto.getFechaRegistro().after(new Date())) {
             throw new NegocioException("La fecha de registro no es valida");
         }
     }
-;
+
+    ;
     @Override
     public List<ClienteFrecuenteDTO> buscarFrecuentesPorFiltro(String filtro, String campoBusqueda) throws NegocioException {
         if (filtro == null || filtro.trim().isEmpty()) {
@@ -122,10 +130,14 @@ public class ClienteBO implements IClienteBO {
                 for (Comanda cmd : comandas) {
                     totalGastado += cmd.getTotal();
                 }
-                if (totalGastado < 0) totalGastado = 0.0;
+                if (totalGastado < 0) {
+                    totalGastado = 0.0;
+                }
 
                 Integer puntos = (int) (totalGastado / 20);
-                if (puntos < 0) puntos = 0;
+                if (puntos < 0) {
+                    puntos = 0;
+                }
 
                 Integer numVisitas = comandas.size();
 
@@ -150,6 +162,5 @@ public class ClienteBO implements IClienteBO {
     public void actualizarClienteFrecuente(ClienteFrecuenteDTO clienteFrecuenteDTO) throws NegocioException {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-
 
 }
