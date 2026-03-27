@@ -1,7 +1,5 @@
 package com.presentacion;
 
-import BOs.ClienteBO;
-import BOs.IClienteBO;
 import com.dtos.ClienteFrecuenteDTO;
 import excepciones.NegocioException;
 
@@ -16,16 +14,20 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 
+/**
+ * Pantalla de registro de cliente frecuente.
+ * No conoce otras pantallas ni el BO. Todo pasa por el controlador.
+ */
 public class RegistroClienteFrm extends Stage {
 
+    private final ControllerClienteFrecuente controller;
     private TextField txtNombre;
     private TextField txtTelefono;
     private TextField txtCorreo;
     private DatePicker dpFechaRegistro;
-    private final IClienteBO clienteBO;
 
-    public RegistroClienteFrm() {
-        this.clienteBO = new ClienteBO();
+    public RegistroClienteFrm(ControllerClienteFrecuente controller) {
+        this.controller = controller;
         initComponents();
     }
 
@@ -49,10 +51,6 @@ public class RegistroClienteFrm extends Stage {
         root.getChildren().addAll(titulo, subtitulo, formulario, spacer, botones);
 
         Scene scene = new Scene(root, 620, 580);
-        scene.getStylesheets().add(
-                getClass().getResource("/styles/buscador-clientes.css").toExternalForm()
-        );
-
         setTitle("Registrar Cliente Frecuente");
         setScene(scene);
     }
@@ -60,28 +58,24 @@ public class RegistroClienteFrm extends Stage {
     // ==================== Formulario ====================
 
     private VBox crearFormulario() {
-        // Nombre
         Label lblNombre = new Label("Nombre completo *");
         lblNombre.getStyleClass().add("form-label");
         txtNombre = new TextField();
         txtNombre.setPromptText("Ej: Maria Lopez");
         txtNombre.getStyleClass().add("form-field");
 
-        // Telefono
         Label lblTelefono = new Label("Numero de telefono *");
         lblTelefono.getStyleClass().add("form-label");
         txtTelefono = new TextField();
         txtTelefono.setPromptText("10 digitos, ej: 6441234567");
         txtTelefono.getStyleClass().add("form-field");
 
-        // Correo
         Label lblCorreo = new Label("Correo electronico (opcional)");
         lblCorreo.getStyleClass().add("form-label");
         txtCorreo = new TextField();
         txtCorreo.setPromptText("Ej: maria@correo.com");
         txtCorreo.getStyleClass().add("form-field");
 
-        // Fecha de registro
         Label lblFecha = new Label("Fecha de registro *");
         lblFecha.getStyleClass().add("form-label");
         dpFechaRegistro = new DatePicker(LocalDate.now());
@@ -116,7 +110,7 @@ public class RegistroClienteFrm extends Stage {
         return hbox;
     }
 
-    // ==================== Guardar ====================
+    // ==================== Guardar (delega al controlador) ====================
 
     private void guardarCliente() {
         ClienteFrecuenteDTO dto = new ClienteFrecuenteDTO();
@@ -134,7 +128,7 @@ public class RegistroClienteFrm extends Stage {
         dto.setTipoCliente("FRECUENTE");
 
         try {
-            clienteBO.agregarClienteFrecuente(dto);
+            controller.registrarCliente(dto);
 
             Alert exito = new Alert(Alert.AlertType.INFORMATION,
                     "Cliente '" + dto.getNombre() + "' registrado exitosamente.");
@@ -143,8 +137,7 @@ public class RegistroClienteFrm extends Stage {
             exito.showAndWait();
             limpiarFormulario();
         } catch (NegocioException ex) {
-            Alert error = new Alert(Alert.AlertType.ERROR,
-                    ex.getMessage());
+            Alert error = new Alert(Alert.AlertType.ERROR, ex.getMessage());
             error.setHeaderText("Error al registrar cliente");
             error.setTitle("Error");
             error.showAndWait();

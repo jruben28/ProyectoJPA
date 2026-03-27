@@ -1,16 +1,23 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- */
-
 package com.presentacion;
 
+import javafx.application.Application;
+import javafx.stage.Stage;
+
 /**
+ * Punto de entrada de la aplicacion JavaFX.
+ * Crea el controlador y le delega el flujo.
  *
  * @author joser
  */
-public class Presentacion {
+public class Presentacion extends Application {
+
+    @Override
+    public void start(Stage primaryStage) {
+        ControllerClienteFrecuente controller = new ControllerClienteFrecuente(primaryStage);
+        controller.mostrarBuscador();
+    }
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        launch(args);
     }
 }

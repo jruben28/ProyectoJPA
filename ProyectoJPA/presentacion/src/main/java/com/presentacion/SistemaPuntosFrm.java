@@ -1,13 +1,10 @@
 package com.presentacion;
 
-import BOs.ClienteBO;
-import BOs.IClienteBO;
 import com.dtos.ClienteFrecuenteDTO;
 
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -18,16 +15,19 @@ import javafx.stage.Stage;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
-import Entidades.Comanda;
 
+/**
+ * Pantalla de Sistema de Puntos / Perfil del cliente.
+ * No conoce otras pantallas ni el BO. Recibe datos ya procesados.
+ */
 public class SistemaPuntosFrm extends Stage {
 
     private final ClienteFrecuenteDTO cliente;
-    private final IClienteBO clienteBO;
+    private final List<FilaTransaccion> transacciones;
 
-    public SistemaPuntosFrm(ClienteFrecuenteDTO cliente) {
+    public SistemaPuntosFrm(ClienteFrecuenteDTO cliente, List<FilaTransaccion> transacciones) {
         this.cliente = cliente;
-        this.clienteBO = new ClienteBO();
+        this.transacciones = transacciones;
         initComponents();
     }
 
@@ -51,10 +51,6 @@ public class SistemaPuntosFrm extends Stage {
         root.getChildren().addAll(titulo, perfilCard, reglaCard, lblHistorial, tablaHistorial);
 
         Scene scene = new Scene(root, 1100, 700);
-        scene.getStylesheets().add(
-                getClass().getResource("/styles/buscador-clientes.css").toExternalForm()
-        );
-
         setTitle("Sistema de Puntos - " + cliente.getNombre());
         setScene(scene);
     }
@@ -62,7 +58,6 @@ public class SistemaPuntosFrm extends Stage {
     // ==================== Tarjeta de perfil ====================
 
     private HBox crearTarjetaPerfil() {
-        // Avatar con iniciales
         String iniciales = obtenerIniciales(cliente.getNombre());
         Label lblIniciales = new Label(iniciales);
         lblIniciales.getStyleClass().add("avatar-text");
@@ -71,11 +66,9 @@ public class SistemaPuntosFrm extends Stage {
         avatar.getStyleClass().add("avatar-circle");
         avatar.setMinSize(64, 64);
         avatar.setMaxSize(64, 64);
-        // Clip circular
         Circle clip = new Circle(32, 32, 32);
         avatar.setClip(clip);
 
-        // Info del cliente
         Label lblNombre = new Label(cliente.getNombre());
         lblNombre.getStyleClass().add("perfil-nombre");
 
@@ -98,12 +91,9 @@ public class SistemaPuntosFrm extends Stage {
         VBox infoBox = new VBox(3, lblNombre, lblContacto, lblFecha);
         infoBox.setAlignment(Pos.CENTER_LEFT);
 
-        // Badge de puntos
         int puntos = cliente.getPuntosAcumulados() != null ? cliente.getPuntosAcumulados() : 0;
-
         Label lblPuntosNum = new Label(String.valueOf(puntos));
         lblPuntosNum.getStyleClass().add("puntos-numero");
-
         Label lblPuntosTxt = new Label("puntos");
         lblPuntosTxt.getStyleClass().add("puntos-texto");
 
@@ -153,24 +143,21 @@ public class SistemaPuntosFrm extends Stage {
         TableView<FilaTransaccion> tabla = new TableView<>();
         tabla.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
         tabla.setPlaceholder(new Label("No hay transacciones registradas"));
+        tabla.setItems(FXCollections.observableArrayList(transacciones));
 
-        // Columna: Fecha
         TableColumn<FilaTransaccion, String> colFecha = new TableColumn<>("Fecha");
         colFecha.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getFecha()));
         colFecha.setPrefWidth(150);
 
-        // Columna: Comanda
         TableColumn<FilaTransaccion, String> colComanda = new TableColumn<>("Comanda");
         colComanda.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getComanda()));
         colComanda.setPrefWidth(200);
 
-        // Columna: Total
         TableColumn<FilaTransaccion, String> colTotal = new TableColumn<>("Total");
         colTotal.setCellValueFactory(c ->
                 new SimpleStringProperty(String.format("$%,.2f", c.getValue().getTotal())));
         colTotal.setPrefWidth(130);
 
-        // Columna: Puntos Ganados (verde)
         TableColumn<FilaTransaccion, Number> colPuntosGanados = new TableColumn<>("Puntos Ganados");
         colPuntosGanados.setCellValueFactory(c ->
                 new SimpleIntegerProperty(c.getValue().getPuntosGanados()));
@@ -189,44 +176,13 @@ public class SistemaPuntosFrm extends Stage {
         });
         colPuntosGanados.setPrefWidth(150);
 
-        // Columna: Acumulado
         TableColumn<FilaTransaccion, Number> colAcumulado = new TableColumn<>("Acumulado");
         colAcumulado.setCellValueFactory(c ->
                 new SimpleIntegerProperty(c.getValue().getAcumulado()));
         colAcumulado.setPrefWidth(120);
 
         tabla.getColumns().addAll(colFecha, colComanda, colTotal, colPuntosGanados, colAcumulado);
-
-        cargarHistorial(tabla);
         return tabla;
-    }
-
-    private void cargarHistorial(TableView<FilaTransaccion> tabla) {
-        ObservableList<FilaTransaccion> datos = FXCollections.observableArrayList();
-
-        try {
-            List<Comanda> comandas = clienteBO.buscarComandasPorCliente(cliente.getId());
-
-            int acumulado = cliente.getPuntosAcumulados() != null ? cliente.getPuntosAcumulados() : 0;
-
-            for (Comanda c : comandas) {
-                int puntosGanados = (int) (c.getTotal() / 20);
-                String folio = "OB-" + String.format("%06d", c.getId());
-
-                datos.add(new FilaTransaccion(
-                        "-",
-                        folio,
-                        c.getTotal(),
-                        puntosGanados,
-                        acumulado
-                ));
-                acumulado -= puntosGanados;
-            }
-        } catch (Exception ex) {
-            // Si el metodo del BO aun no esta implementado, la tabla queda vacia
-        }
-
-        tabla.setItems(datos);
     }
 
     // ==================== Utilidades ====================

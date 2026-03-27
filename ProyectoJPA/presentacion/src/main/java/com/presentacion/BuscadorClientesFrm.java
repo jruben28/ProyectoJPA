@@ -1,31 +1,29 @@
 package com.presentacion;
 
-import BOs.ClienteBO;
-import BOs.IClienteBO;
 import com.dtos.ClienteFrecuenteDTO;
 import excepciones.NegocioException;
 
-import javafx.application.Application;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.stage.Stage;
 
 import java.util.List;
 
 /**
+ * Pantalla de busqueda de clientes frecuentes.
+ * No conoce otras pantallas ni el BO. Todo pasa por el controlador.
  *
  * @author Devora
  */
+public class BuscadorClientesFrm {
 
-public class BuscadorClientesFrm extends Application {
-
+    private final ControllerClienteFrecuente controller;
+    private VBox root;
     private TextField txtBuscar;
     private ToggleButton btnNombre;
     private ToggleButton btnTelefono;
@@ -33,30 +31,22 @@ public class BuscadorClientesFrm extends Application {
     private Label lblResultados;
     private TableView<ClienteFrecuenteDTO> tblClientes;
     private ObservableList<ClienteFrecuenteDTO> datosTabla;
-    private IClienteBO clienteBO;
     private String campoBusquedaActual = "nombre";
 
-    @Override
-    public void start(Stage stage) {
-        clienteBO = new ClienteBO();
-        datosTabla = FXCollections.observableArrayList();
-
-        VBox root = crearVistaPrincipal();
-        root.getStyleClass().add("root-pane");
-
-        Scene scene = new Scene(root, 1100, 700);
-        scene.getStylesheets().add(
-                getClass().getResource("/styles/buscador-clientes.css").toExternalForm()
-        );
-
-        stage.setTitle("Buscar Clientes");
-        stage.setScene(scene);
-        stage.show();
+    public BuscadorClientesFrm(ControllerClienteFrecuente controller) {
+        this.controller = controller;
+        this.datosTabla = FXCollections.observableArrayList();
+        initComponents();
     }
 
-    private VBox crearVistaPrincipal() {
-        VBox root = new VBox(12);
+    public VBox getRoot() {
+        return root;
+    }
+
+    private void initComponents() {
+        root = new VBox(12);
         root.setPadding(new Insets(25, 30, 25, 30));
+        root.getStyleClass().add("root-pane");
 
         Label lblTitulo = new Label("Buscar Clientes");
         lblTitulo.getStyleClass().add("titulo");
@@ -71,7 +61,6 @@ public class BuscadorClientesFrm extends Application {
         VBox.setVgrow(tblClientes, Priority.ALWAYS);
 
         root.getChildren().addAll(lblTitulo, searchBar, filtros, lblResultados, tblClientes);
-        return root;
     }
 
     private HBox crearBarraBusqueda() {
@@ -193,12 +182,12 @@ public class BuscadorClientesFrm extends Application {
 
                 btnVerPerfil.setOnAction(e -> {
                     ClienteFrecuenteDTO dto = getTableView().getItems().get(getIndex());
-                    verPerfil(dto);
+                    controller.mostrarSistemaPuntos(dto);
                 });
 
                 btnVincular.setOnAction(e -> {
                     ClienteFrecuenteDTO dto = getTableView().getItems().get(getIndex());
-                    vincularCliente(dto);
+                    controller.vincularCliente(dto);
                 });
             }
 
@@ -215,7 +204,7 @@ public class BuscadorClientesFrm extends Application {
         return tabla;
     }
 
-    // ==================== Logica de busqueda ====================
+    // ==================== Logica (delega al controlador) ====================
 
     private void buscarClientes() {
         String filtro = txtBuscar.getText().trim();
@@ -226,8 +215,7 @@ public class BuscadorClientesFrm extends Application {
         }
 
         try {
-            List<ClienteFrecuenteDTO> clientes =
-                    clienteBO.buscarFrecuentesPorFiltro(filtro, campoBusquedaActual);
+            List<ClienteFrecuenteDTO> clientes = controller.buscarClientes(filtro, campoBusquedaActual);
             datosTabla.setAll(clientes);
 
             int total = clientes.size();
@@ -245,26 +233,5 @@ public class BuscadorClientesFrm extends Application {
     private String enmascararTelefono(String telefono) {
         if (telefono == null || telefono.length() < 4) return "****";
         return "****" + telefono.substring(telefono.length() - 4);
-    }
-
-    // ==================== Acciones placeholder ====================
-
-    private void verPerfil(ClienteFrecuenteDTO cliente) {
-        SistemaPuntosFrm ventanaPuntos = new SistemaPuntosFrm(cliente);
-        ventanaPuntos.show();
-    }
-
-    private void vincularCliente(ClienteFrecuenteDTO cliente) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION,
-                "Vincular cliente: " + cliente.getNombre() + " (ID: " + cliente.getId() + ") a comanda");
-        alert.setTitle("Vincular Cliente");
-        alert.setHeaderText(null);
-        alert.showAndWait();
-    }
-
-    // ==================== Main ====================
-
-    public static void main(String[] args) {
-        launch(args);
     }
 }
