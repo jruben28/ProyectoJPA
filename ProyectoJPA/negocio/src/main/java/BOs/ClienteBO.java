@@ -9,7 +9,6 @@ import DAOs.IClienteDAO;
 import Entidades.ClienteFrecuente;
 import Entidades.Comanda;
 import adaptadores.ClienteFrecuenteAdapter;
-import com.dtos.ClienteDTO;
 import com.dtos.ClienteFrecuenteDTO;
 import excepciones.NegocioException;
 import excepciones.PersistenciaException;
@@ -113,8 +112,14 @@ public class ClienteBO implements IClienteBO {
         }
     }
 
-    ;
-    @Override
+    /**
+     *  Aplica filtros a la busqueda de cllientesFrecuentes,  
+     * @param filtro
+     * @param campoBusqueda
+     * @return
+     * @throws NegocioException 
+     */
+   @Override
     public List<ClienteFrecuenteDTO> buscarFrecuentesPorFiltro(String filtro, String campoBusqueda) throws NegocioException {
         if (filtro == null || filtro.trim().isEmpty()) {
             throw new NegocioException("El filtro de busqueda no puede estar vacio");
@@ -142,6 +147,10 @@ public class ClienteBO implements IClienteBO {
                 Integer numVisitas = comandas.size();
 
                 ClienteFrecuenteDTO dto = ClienteFrecuenteAdapter.entidadADTO(c, puntos, totalGastado, numVisitas);
+                
+                // Desencriptar el telefono
+                dto.setTelefono(Encriptador.desencriptar(c.getTelefono()));
+                
                 resultado.add(dto);
             }
 
@@ -162,5 +171,6 @@ public class ClienteBO implements IClienteBO {
     public void actualizarClienteFrecuente(ClienteFrecuenteDTO clienteFrecuenteDTO) throws NegocioException {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-
+    
+   
 }
