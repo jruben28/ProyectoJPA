@@ -8,12 +8,12 @@ package excepciones;
  *
  * @author keppler
  */
-public class DAOException extends RuntimeException{
+public class PersistenciaException extends RuntimeException{
 
-    public DAOException() {
+    public PersistenciaException() {
     }
 
-    public DAOException(String mensaje) {
+    public PersistenciaException(String mensaje) {
         super(mensaje);
     }
     

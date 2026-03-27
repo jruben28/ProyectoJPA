@@ -5,14 +5,13 @@
 package BOs;
 
 import DAOs.ClienteDAO;
-import Entidades.Cliente;
+import DAOs.IClienteDAO;
 import Entidades.ClienteFrecuente;
-import Entidades.ClienteGeneral;
 import Entidades.Comanda;
 import adaptadores.ClienteFrecuenteAdapter;
 import com.dtos.ClienteFrecuenteDTO;
-import excepciones.BOException;
-import excepciones.DAOException;
+import excepciones.NegocioException;
+import excepciones.PersistenciaException;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -21,11 +20,10 @@ import java.util.logging.Logger;
  *
  * @author keppler
  */
-public class ClienteBO implements IClienteBO{
+public class ClienteBO implements IClienteBO {
 
-    private ClienteDAO clienteDAO;
+    private IClienteDAO clienteDAO;
     private static final Logger LOG = Logger.getLogger(ClienteBO.class.getName());
-    
 
     public ClienteBO() {
         this.clienteDAO = new ClienteDAO();
@@ -59,9 +57,9 @@ public class ClienteBO implements IClienteBO{
         Double total = 0.0;
         for (Comanda c : comandas) {
             total += c.getTotal();
-        }
-        if(total<0){
-            total=0.0;
+        }   
+        if (total < 0) {
+            total = 0.0;
         }
         return total;
     }
@@ -69,20 +67,26 @@ public class ClienteBO implements IClienteBO{
     @Override
     public void agregarClienteFrecuente(ClienteFrecuenteDTO clienteFrecuenteDTO) {
         //validarClienteFrecuenteDTO(clienteFrecuenteDTO);
-        try{
+        try {
             ClienteFrecuente clienteF = ClienteFrecuenteAdapter.dtoAEntidad(clienteFrecuenteDTO);
-            
+
             clienteDAO.agregarClienteFrecuente(clienteF);
-            
-        }
-        catch(DAOException ex){
+
+        } catch (PersistenciaException ex) {
             LOG.warning("Error en negocio al agregar cliente frecuente" + ex.getMessage());
-            throw new BOException("Error al agregar un cliente frecuente");
+            throw new NegocioException("Error al agregar un cliente frecuente");
         }
     }
-
-    public void validarClienteFrecuenteDTO(ClienteFrecuenteDTO clienteFrecuenteDTO){
+    @Override
+    public void validarClienteFrecuenteDTO(ClienteFrecuenteDTO clienteFrecuenteDTO) {
         //Agregar validacion de cliente Frecuente DTO
-    };
-    
+    }
+;
+   // en progreso
+    @Override
+    public List<Comanda> buscarComandasPorCliente(Long idCliente) throws NegocioException {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+
 }

@@ -29,6 +29,7 @@ public class ClienteFrecuenteAdapter {
     
     /**
      * Convierte una entidad a DTO 
+     * puntos  y total gastado en parametros gracias a que estos datos son calculados por el BO
      * @param entidad 
      * @param puntos
      * @param totalGastado
