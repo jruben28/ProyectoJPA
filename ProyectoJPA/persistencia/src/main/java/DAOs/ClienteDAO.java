@@ -20,13 +20,16 @@ import java.util.List;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import java.util.ArrayList;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 public class ClienteDAO implements IClienteDAO {
 
     private static final Logger LOG = Logger.getLogger(ClienteDAO.class.getName());
 
-    
-    
     @Override
     public Cliente agregar(Cliente cliente) {
         // Obtenemos conexion
@@ -37,12 +40,10 @@ public class ClienteDAO implements IClienteDAO {
             em.getTransaction().commit();
             LOG.info("Se agregó un cliente con ID: " + cliente.getId());
             return cliente;
-        } 
-        catch(Exception ex){
+        } catch (Exception ex) {
             LOG.warning("Error al agregar un cliente");
             throw new PersistenciaException("Error al agregar un cliente");
-        }
-        finally {
+        } finally {
             em.close(); // Siempre cerramos la conexión al terminar
         }
     }
@@ -56,8 +57,7 @@ public class ClienteDAO implements IClienteDAO {
             em.getTransaction().commit();
             LOG.info("Se actualizó un cliente con ID: " + cliente.getId());
             return cliente;
-        } 
-        catch(Exception ex){
+        } catch (Exception ex) {
             LOG.warning("Error al actualizar un cliente");
             throw new PersistenciaException("Error al actualizar un cliente");
         } finally {
@@ -70,11 +70,10 @@ public class ClienteDAO implements IClienteDAO {
         EntityManager em = ConexionBD.crearConexion();
         try {
             return em.find(Cliente.class, id);
-        } 
-        catch(Exception ex){
+        } catch (Exception ex) {
             LOG.warning("Error al buscar un cliente");
             throw new PersistenciaException("Error al buscar un cliente");
-        }finally {
+        } finally {
             em.close();
         }
     }
@@ -92,7 +91,7 @@ public class ClienteDAO implements IClienteDAO {
             query.setParameter("filtro", "%" + filtro + "%");
 
             return query.getResultList();
-        } catch(Exception ex){
+        } catch (Exception ex) {
             LOG.warning("Error al buscar clientes frecuentes por id");
             throw new PersistenciaException("Error al buscar clientes frecuentes por id");
         } finally {
@@ -123,14 +122,14 @@ public class ClienteDAO implements IClienteDAO {
      */
     public List<Comanda> buscarComandasPorCliente(Long idCliente) {
         EntityManager em = ConexionBD.crearConexion();
-        
+
         try {
             String jpql = "SELECT c FROM Comanda c "
                     + "WHERE c.cliente.id = :id "
                     + "AND c.estado = :estado";
             return em.createQuery(jpql, Comanda.class).setParameter("id", idCliente)
                     .setParameter("estado", EstadoComanda.ENTREGADA).getResultList();
-           
+
         } catch (Exception e) {
             LOG.warning("Se produjo un error al buscar las comandas del cliente con ID: " + idCliente);
             throw new excepciones.PersistenciaException("Error en buscar la comanda por id de cliente" + e.getMessage());
@@ -140,35 +139,46 @@ public class ClienteDAO implements IClienteDAO {
 
     }
 
+    /**
+     * Metodo que usa criteria api para las busquedas dinamicas
+     *
+     * @param filtro
+     * @param campo
+     * @return
+     * @throws PersistenciaException
+     */
     @Override
-    public List<ClienteFrecuente> buscarFrecuentesPorCampo(String filtro, String campo) throws PersistenciaException {
-        EntityManager em = ConexionBD.crearConexion();
-        try {
-            String jpql;
-            switch (campo) {
-                case "nombre":
-                    jpql = "SELECT c FROM ClienteFrecuente c WHERE c.nombre LIKE :filtro";
-                    break;
-                case "telefono":
-                    jpql = "SELECT c FROM ClienteFrecuente c WHERE c.telefono LIKE :filtro";
-                    break;
-                case "correo":
-                    jpql = "SELECT c FROM ClienteFrecuente c WHERE c.correo LIKE :filtro";
-                    break;
-                default:
-                    jpql = "SELECT c FROM ClienteFrecuente c WHERE c.nombre LIKE :filtro OR c.telefono LIKE :filtro OR c.correo LIKE :filtro";
-                    break;
-            }
-            TypedQuery<ClienteFrecuente> query = em.createQuery(jpql, ClienteFrecuente.class);
-            query.setParameter("filtro", "%" + filtro + "%");
-            return query.getResultList();
-        } catch (Exception ex) {
-            LOG.warning("Error al buscar clientes frecuentes por campo");
-            throw new PersistenciaException("Error al buscar clientes frecuentes por campo");
-        } finally {
-            em.close();
+public List<ClienteFrecuente> buscarFrecuentesPorCampo(String filtro, String campo) throws PersistenciaException {
+    EntityManager em = ConexionBD.crearConexion();
+    try {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<ClienteFrecuente> query = cb.createQuery(ClienteFrecuente.class);
+        Root<ClienteFrecuente> root = query.from(ClienteFrecuente.class);
+
+        String patron = "%" + filtro + "%";
+        List<Predicate> predicados = new ArrayList<>();
+
+        if (campo.contains("nombre")) {
+            predicados.add(cb.like(root.<String>get("nombre"), patron));
         }
+        if (campo.contains("correo")) {
+            predicados.add(cb.like(root.<String>get("correo"), patron));
+        }
+
+        if (predicados.isEmpty()) {
+            predicados.add(cb.like(root.<String>get("nombre"), patron));
+        }
+
+        query.where(cb.or(predicados.toArray(new Predicate[0])));
+        return em.createQuery(query).getResultList();
+
+    } catch (Exception ex) {
+        LOG.warning("Error al buscar clientes frecuentes por campo: " + ex.getMessage());
+        throw new PersistenciaException("Error al buscar clientes frecuentes por campo");
+    } finally {
+        em.close();
     }
+}
 
     @Override
     public ClienteFrecuente agregarClienteFrecuente(ClienteFrecuente clienteFrecuente) {
@@ -186,7 +196,6 @@ public class ClienteDAO implements IClienteDAO {
         } finally {
             em.close();
         }
-
 
     }
 
