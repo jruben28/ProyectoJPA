@@ -8,13 +8,13 @@ package excepciones;
  *
  * @author keppler
  */
-public class BOException extends RuntimeException{
+public class NegocioException extends RuntimeException{
 
-    public BOException() {
+    public NegocioException() {
     super();
     }
     
-    public BOException(String mensaje) {
+    public NegocioException(String mensaje) {
     super(mensaje);
     }
     

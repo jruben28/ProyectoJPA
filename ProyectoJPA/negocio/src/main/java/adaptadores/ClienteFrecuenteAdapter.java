@@ -26,4 +26,29 @@ public class ClienteFrecuenteAdapter {
         
         return clienteF;
     }
+    
+    /**
+     * Convierte una entidad a DTO 
+     * puntos  y total gastado en parametros gracias a que estos datos son calculados por el BO
+     * @param entidad 
+     * @param puntos
+     * @param totalGastado
+     * @return dto
+     */
+    public static ClienteFrecuenteDTO entidadADTO(ClienteFrecuente entidad, Integer puntos, Double totalGastado){
+        if(entidad==null){
+            return null;
+        }
+        ClienteFrecuenteDTO dto=new ClienteFrecuenteDTO();
+        dto.setId(entidad.getId());
+        dto.setNombre(entidad.getNombre());
+        dto.setTipoCliente("FRECUENTE");
+        dto.setCorreo(entidad.getCorreo());
+        dto.setFechaRegistro(entidad.getFechaRegistro());
+        dto.setPuntosAcumulados(puntos);
+        //falta la encriptacion para desencriptar aqui 
+        dto.setTelefono(entidad.getTelefono());
+        
+        return dto;
+    }
 }

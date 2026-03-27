@@ -4,9 +4,10 @@
  */
 package BOs;
 
-import com.dtos.ClienteDTO;
+import Entidades.Comanda;
 import com.dtos.ClienteFrecuenteDTO;
-import excepciones.BOException;
+import excepciones.NegocioException;
+import java.util.List;
 
 /**
  *
@@ -14,14 +15,13 @@ import excepciones.BOException;
  */
 public interface IClienteBO {
     
-    public Integer calcularPuntos(Long idCliente);
+    public Integer calcularPuntos(Long idCliente) throws NegocioException;
     
-    public Double calcularTotalGastado(Long idCliente);
+    public Double calcularTotalGastado(Long idCliente)throws NegocioException;
     
-    public void agregarClienteFrecuente(ClienteFrecuenteDTO clienteFrecuenteDTO) throws BOException;
+    public void agregarClienteFrecuente(ClienteFrecuenteDTO clienteFrecuenteDTO)throws NegocioException;
     
-    public void actualizarClienteFrecuente(ClienteFrecuenteDTO clienteFrecuenteDTO) throws BOException;
+    public void validarClienteFrecuenteDTO(ClienteFrecuenteDTO clienteFrecuenteDTO)throws NegocioException;
     
-    public void agregarCliente(ClienteDTO clienteDTO) throws BOException;
-    
+    List<Comanda> buscarComandasPorCliente(Long idCliente) throws NegocioException;
 }
