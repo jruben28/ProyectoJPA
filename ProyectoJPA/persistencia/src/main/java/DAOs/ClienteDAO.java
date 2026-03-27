@@ -16,11 +16,16 @@ import Entidades.ClienteGeneral;
 import Entidades.Comanda;
 import enums.EstadoComanda;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
 public class ClienteDAO implements IClienteDAO {
 
+    private static final Logger LOG = Logger.getLogger(ClienteDAO.class.getName());
+
+    
+    
     @Override
     public void agregar(Cliente cliente) {
         // Obtenemos conexion
@@ -29,6 +34,7 @@ public class ClienteDAO implements IClienteDAO {
             em.getTransaction().begin();
             em.persist(cliente);
             em.getTransaction().commit();
+            LOG.info("Se agregó un cliente con ID: " + cliente.getId());
         } finally {
             em.close(); // Siempre cerramos la conexión al terminar
         }
@@ -41,6 +47,7 @@ public class ClienteDAO implements IClienteDAO {
             em.getTransaction().begin();
             em.merge(cliente);
             em.getTransaction().commit();
+            LOG.info("Se actualizó un cliente con ID: " + cliente.getId());
         } finally {
             em.close();
         }
@@ -82,6 +89,7 @@ public class ClienteDAO implements IClienteDAO {
             return em.createQuery(jpql, ClienteGeneral.class).getSingleResult();
         } catch (Exception e) {
             // Retornamos null si no existe para manejarlo en la Capa de Negocio
+            LOG.warning("Se produjo un error al consultar los clientes generales.");
             return null;
         } finally {
             em.close();
@@ -105,6 +113,7 @@ public class ClienteDAO implements IClienteDAO {
                     .setParameter("estado", EstadoComanda.ENTREGADA).getResultList();
            
         } catch (Exception e) {
+            LOG.warning("Se produjo un error al buscar las comandas del cliente con ID: " + idCliente);
             throw new excepciones.DAOException("Error en buscar la comanda por id de cliente" + e.getMessage());
         } finally {
             em.close();
