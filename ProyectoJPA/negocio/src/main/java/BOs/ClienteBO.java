@@ -10,6 +10,7 @@ import Entidades.ClienteFrecuente;
 import Entidades.ClienteGeneral;
 import Entidades.Comanda;
 import adaptadores.ClienteFrecuenteAdapter;
+import com.dtos.ClienteDTO;
 import com.dtos.ClienteFrecuenteDTO;
 import excepciones.BOException;
 import excepciones.DAOException;
@@ -131,6 +132,24 @@ public class ClienteBO implements IClienteBO{
             LOG.warning("Error en negocio al agregar cliente frecuente" + ex.getMessage());
             throw new BOException("Error al agregar un cliente frecuente");
         }
+    }
+
+    @Override
+    public void agregarCliente(ClienteDTO clienteDTO) throws BOException {
+        if (clienteDTO == null || clienteDTO.getNombre().isEmpty() || clienteDTO.getNombre().length() > 200) {
+            throw new BOException("Error al agregar cliente general");
+        }
+        
+        try{
+            //
+     
+        } catch (DAOException ex) {
+            LOG.warning("Error en negocio al agregar cliente general" + ex.getMessage());
+            throw new BOException("Error al agregar un cliente general");
+        }
+
+        
+        
     }
     
 }

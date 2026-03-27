@@ -4,6 +4,7 @@
  */
 package BOs;
 
+import com.dtos.ClienteDTO;
 import com.dtos.ClienteFrecuenteDTO;
 import excepciones.BOException;
 
@@ -20,5 +21,7 @@ public interface IClienteBO {
     public void agregarClienteFrecuente(ClienteFrecuenteDTO clienteFrecuenteDTO) throws BOException;
     
     public void actualizarClienteFrecuente(ClienteFrecuenteDTO clienteFrecuenteDTO) throws BOException;
+    
+    public void agregarCliente(ClienteDTO clienteDTO) throws BOException;
     
 }
