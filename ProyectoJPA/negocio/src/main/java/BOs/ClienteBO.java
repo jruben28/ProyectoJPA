@@ -9,11 +9,15 @@ import DAOs.IClienteDAO;
 import Entidades.ClienteFrecuente;
 import Entidades.Comanda;
 import adaptadores.ClienteFrecuenteAdapter;
+import com.dtos.ClienteDTO;
 import com.dtos.ClienteFrecuenteDTO;
 import excepciones.NegocioException;
 import excepciones.PersistenciaException;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 /**
  * Business Object de la entidad Cliente.
@@ -66,7 +70,8 @@ public class ClienteBO implements IClienteBO {
 
     @Override
     public void agregarClienteFrecuente(ClienteFrecuenteDTO clienteFrecuenteDTO) {
-        //validarClienteFrecuenteDTO(clienteFrecuenteDTO);
+        //No tiene que tener id, no será mapeado
+        validarClienteFrecuenteDTO(clienteFrecuenteDTO);
         try {
             ClienteFrecuente clienteF = ClienteFrecuenteAdapter.dtoAEntidad(clienteFrecuenteDTO);
 
@@ -77,14 +82,72 @@ public class ClienteBO implements IClienteBO {
             throw new NegocioException("Error al agregar un cliente frecuente");
         }
     }
-    @Override
-    public void validarClienteFrecuenteDTO(ClienteFrecuenteDTO clienteFrecuenteDTO) {
+    
+    public void validarClienteFrecuenteDTO(ClienteFrecuenteDTO dto) {
         //Agregar validacion de cliente Frecuente DTO
+        //Agregar validacion de cliente Frecuente DTO
+        String REGEX_CORREO = "^[A-Za-z0-9+_.-]+@(.+)$";
+        String REGEX_TELEFONO = "^\\d{10}$";
+
+        if (dto.getNombre() == null || dto.getNombre().trim().isEmpty() || dto.getNombre().length() > 200) {
+            throw new NegocioException("El nombre del cliente no es valido");
+        }
+
+        if (dto.getCorreo() == null || !Pattern.matches(REGEX_CORREO, dto.getCorreo())) {
+            throw new NegocioException("El correo del cliente no es valido");
+        }
+
+        if (dto.getTelefono() == null || !Pattern.matches(REGEX_TELEFONO, dto.getTelefono())) {
+            throw new NegocioException("El telefono del cliente no es valido");
+        }
+
+        if (dto.getFechaRegistro()== null || dto.getFechaRegistro().after(new Date())) {
+            throw new NegocioException("La fecha de registro no es valida");
+        }
     }
 ;
-   // en progreso
+    @Override
+    public List<ClienteFrecuenteDTO> buscarFrecuentesPorFiltro(String filtro, String campoBusqueda) throws NegocioException {
+        if (filtro == null || filtro.trim().isEmpty()) {
+            throw new NegocioException("El filtro de busqueda no puede estar vacio");
+        }
+        try {
+            List<ClienteFrecuente> clientes = clienteDAO.buscarFrecuentesPorCampo(filtro, campoBusqueda);
+            List<ClienteFrecuenteDTO> resultado = new ArrayList<>();
+
+            for (ClienteFrecuente c : clientes) {
+                List<Comanda> comandas = clienteDAO.buscarComandasPorCliente(c.getId());
+
+                Double totalGastado = 0.0;
+                for (Comanda cmd : comandas) {
+                    totalGastado += cmd.getTotal();
+                }
+                if (totalGastado < 0) totalGastado = 0.0;
+
+                Integer puntos = (int) (totalGastado / 20);
+                if (puntos < 0) puntos = 0;
+
+                Integer numVisitas = comandas.size();
+
+                ClienteFrecuenteDTO dto = ClienteFrecuenteAdapter.entidadADTO(c, puntos, totalGastado, numVisitas);
+                resultado.add(dto);
+            }
+
+            return resultado;
+        } catch (PersistenciaException ex) {
+            LOG.warning("Error al buscar clientes frecuentes: " + ex.getMessage());
+            throw new NegocioException("Error al buscar clientes frecuentes");
+        }
+    }
+
+    // en progreso
     @Override
     public List<Comanda> buscarComandasPorCliente(Long idCliente) throws NegocioException {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void actualizarClienteFrecuente(ClienteFrecuenteDTO clienteFrecuenteDTO) throws NegocioException {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

@@ -21,7 +21,9 @@ public interface IClienteBO {
     
     public void agregarClienteFrecuente(ClienteFrecuenteDTO clienteFrecuenteDTO)throws NegocioException;
     
-    public void validarClienteFrecuenteDTO(ClienteFrecuenteDTO clienteFrecuenteDTO)throws NegocioException;
+    public void actualizarClienteFrecuente(ClienteFrecuenteDTO clienteFrecuenteDTO) throws NegocioException;
     
     List<Comanda> buscarComandasPorCliente(Long idCliente) throws NegocioException;
+
+    List<ClienteFrecuenteDTO> buscarFrecuentesPorFiltro(String filtro, String campoBusqueda) throws NegocioException;
 }
