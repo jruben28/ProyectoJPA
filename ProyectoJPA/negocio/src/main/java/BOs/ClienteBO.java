@@ -13,8 +13,10 @@ import adaptadores.ClienteFrecuenteAdapter;
 import com.dtos.ClienteFrecuenteDTO;
 import excepciones.BOException;
 import excepciones.DAOException;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 /**
  * Business Object de la entidad Cliente.
@@ -68,8 +70,10 @@ public class ClienteBO implements IClienteBO{
 
     @Override
     public void agregarClienteFrecuente(ClienteFrecuenteDTO clienteFrecuenteDTO) {
-        //validarClienteFrecuenteDTO(clienteFrecuenteDTO);
-        //no debe tener id
+        //validar datos cliente
+        validarClienteFrecuenteDTO(clienteFrecuenteDTO);
+        
+        //clienteFrecuenteDTO no debe tener id pues no será mapeado a entity
         try{
             ClienteFrecuente clienteF = ClienteFrecuenteAdapter.dtoAEntidad(clienteFrecuenteDTO);
             
@@ -82,14 +86,39 @@ public class ClienteBO implements IClienteBO{
         }
     }
 
-    public void validarClienteFrecuenteDTO(ClienteFrecuenteDTO clienteFrecuenteDTO){
+    public void validarClienteFrecuenteDTO(ClienteFrecuenteDTO dto){
         //Agregar validacion de cliente Frecuente DTO
+        String REGEX_CORREO = "^[A-Za-z0-9+_.-]+@(.+)$";
+        String REGEX_TELEFONO = "^\\d{10}$";
+        
+        if (dto.getNombre() == null || dto.getNombre().trim().isEmpty() || dto.getNombre().length() > 200) {
+            throw new BOException("El nombre del cliente no es valido");
+        }
+
+        if (dto.getCorreo() == null || !Pattern.matches(REGEX_CORREO, dto.getCorreo())) {
+            throw new BOException("El correo del cliente no es valido");
+        }
+
+        if (dto.getTelefono() == null || !Pattern.matches(REGEX_TELEFONO, dto.getTelefono())) {
+            throw new BOException("El telefono del cliente no es valido");
+        }
+
+        if (dto.getFechaRegistro()== null || dto.getFechaRegistro().after(new Date())) {
+            throw new BOException("La fecha de registro no es valida");
+        }
+
     };
 
     @Override
     public void actualizarClienteFrecuente(ClienteFrecuenteDTO clienteFrecuenteDTO) throws BOException {
-        //validarClienteFrecuenteDTO(clienteFrecuenteDTO);
-        //validar id 
+        //validacion datos cliente
+        validarClienteFrecuenteDTO(clienteFrecuenteDTO);
+        
+        //validacion id del cliente
+        if (clienteFrecuenteDTO.getId() == null || clienteFrecuenteDTO.getId() < 0) {
+            throw new BOException("El id del cliente que se quiere actualizar no es valido.");
+        }
+        
         
         try{
             ClienteFrecuente clienteF = ClienteFrecuenteAdapter.dtoAEntidad(clienteFrecuenteDTO);
