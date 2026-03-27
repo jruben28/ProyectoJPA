@@ -15,6 +15,7 @@ import Entidades.ClienteFrecuente;
 import Entidades.ClienteGeneral;
 import Entidades.Comanda;
 import enums.EstadoComanda;
+import excepciones.DAOException;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
@@ -36,7 +37,12 @@ public class ClienteDAO implements IClienteDAO {
             em.getTransaction().commit();
             LOG.info("Se agregó un cliente con ID: " + cliente.getId());
             return cliente;
-        } finally {
+        } 
+        catch(Exception ex){
+            LOG.warning("Error al agregar un cliente");
+            throw new DAOException("Error al agregar un cliente");
+        }
+        finally {
             em.close(); // Siempre cerramos la conexión al terminar
         }
     }
@@ -50,6 +56,10 @@ public class ClienteDAO implements IClienteDAO {
             em.getTransaction().commit();
             LOG.info("Se actualizó un cliente con ID: " + cliente.getId());
             return cliente;
+        } 
+        catch(Exception ex){
+            LOG.warning("Error al actualizar un cliente");
+            throw new DAOException("Error al actualizar un cliente");
         } finally {
             em.close();
         }
@@ -60,7 +70,11 @@ public class ClienteDAO implements IClienteDAO {
         EntityManager em = ConexionBD.crearConexion();
         try {
             return em.find(Cliente.class, id);
-        } finally {
+        } 
+        catch(Exception ex){
+            LOG.warning("Error al buscar un cliente");
+            throw new DAOException("Error al buscar un cliente");
+        }finally {
             em.close();
         }
     }
@@ -78,6 +92,9 @@ public class ClienteDAO implements IClienteDAO {
             query.setParameter("filtro", "%" + filtro + "%");
 
             return query.getResultList();
+        } catch(Exception ex){
+            LOG.warning("Error al buscar clientes frecuentes por id");
+            throw new DAOException("Error al buscar clientes frecuentes por id");
         } finally {
             em.close();
         }
@@ -135,7 +152,7 @@ public class ClienteDAO implements IClienteDAO {
             return clienteFrecuente;
         } catch (Exception ex) {
             LOG.warning("Se ha producido un error al actualizar cliente");
-            throw new excepciones.DAOException("Error al agregar cliente frecuente" + ex.getMessage());
+            throw new DAOException("Error al agregar cliente frecuente" + ex.getMessage());
         } finally {
             em.close();
         }
@@ -155,7 +172,7 @@ public class ClienteDAO implements IClienteDAO {
             return clienteFrecuente;
         } catch (Exception ex) {
             LOG.warning("Se ha producido un error al actualizar cliente");
-            throw new excepciones.DAOException("Error al agregar cliente frecuente" + ex.getMessage());
+            throw new DAOException("Error al agregar cliente frecuente" + ex.getMessage());
         } finally {
             em.close();
         }
