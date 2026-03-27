@@ -9,11 +9,13 @@ import DAOs.IClienteDAO;
 import Entidades.ClienteFrecuente;
 import Entidades.Comanda;
 import adaptadores.ClienteFrecuenteAdapter;
+import com.dtos.ClienteDTO;
 import com.dtos.ClienteFrecuenteDTO;
 import excepciones.NegocioException;
 import excepciones.PersistenciaException;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 /**
  * Business Object de la entidad Cliente.
