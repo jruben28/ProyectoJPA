@@ -69,6 +69,7 @@ public class ClienteBO implements IClienteBO{
     @Override
     public void agregarClienteFrecuente(ClienteFrecuenteDTO clienteFrecuenteDTO) {
         //validarClienteFrecuenteDTO(clienteFrecuenteDTO);
+        //no debe tener id
         try{
             ClienteFrecuente clienteF = ClienteFrecuenteAdapter.dtoAEntidad(clienteFrecuenteDTO);
             
@@ -84,5 +85,23 @@ public class ClienteBO implements IClienteBO{
     public void validarClienteFrecuenteDTO(ClienteFrecuenteDTO clienteFrecuenteDTO){
         //Agregar validacion de cliente Frecuente DTO
     };
+
+    @Override
+    public void actualizarClienteFrecuente(ClienteFrecuenteDTO clienteFrecuenteDTO) throws BOException {
+        //validarClienteFrecuenteDTO(clienteFrecuenteDTO);
+        //validar id 
+        
+        try{
+            ClienteFrecuente clienteF = ClienteFrecuenteAdapter.dtoAEntidad(clienteFrecuenteDTO);
+            clienteF.setId(clienteFrecuenteDTO.getId());
+            
+            clienteDAO.agregarClienteFrecuente(clienteF);
+            
+        }
+        catch(DAOException ex){
+            LOG.warning("Error en negocio al agregar cliente frecuente" + ex.getMessage());
+            throw new BOException("Error al agregar un cliente frecuente");
+        }
+    }
     
 }

@@ -172,7 +172,7 @@ public class ClienteDAO implements IClienteDAO {
             return clienteFrecuente;
         } catch (Exception ex) {
             LOG.warning("Se ha producido un error al actualizar cliente");
-            throw new DAOException("Error al agregar cliente frecuente" + ex.getMessage());
+            throw new DAOException("Error al actualizar cliente frecuente" + ex.getMessage());
         } finally {
             em.close();
         }
