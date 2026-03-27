@@ -15,15 +15,20 @@ import java.util.List;
  * @author icoro
  */
 public interface IClienteDAO {
-   void agregar(Cliente cliente);
+    Cliente agregar(Cliente cliente);
+
+    Cliente actualizar(Cliente cliente);
     
-    void actualizar(Cliente cliente);
+    ClienteFrecuente agregarClienteFrecuente(ClienteFrecuente clienteFrecuente);
     
+    ClienteFrecuente actualizarClienteFrecuente(ClienteFrecuente clienteFrecuente);
+    
+
     Cliente buscarPorId(Long id);
-    
+
     // Este es el buscador solicitado para el módulo y las comandas
     List<ClienteFrecuente> buscarFrecuentesPorFiltro(String filtro);
-    
+
     // Para obtener el registro "Cliente General" cuando no se identifica al comensal
     ClienteGeneral obtenerClienteGeneral();
 }
