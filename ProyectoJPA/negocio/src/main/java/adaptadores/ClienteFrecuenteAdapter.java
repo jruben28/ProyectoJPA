@@ -35,7 +35,7 @@ public class ClienteFrecuenteAdapter {
      * @param totalGastado
      * @return dto
      */
-    public static ClienteFrecuenteDTO entidadADTO(ClienteFrecuente entidad, Integer puntos, Double totalGastado){
+    public static ClienteFrecuenteDTO entidadADTO(ClienteFrecuente entidad, Integer puntos, Double totalGastado, Integer numVisitas){
         if(entidad==null){
             return null;
         }
@@ -46,9 +46,11 @@ public class ClienteFrecuenteAdapter {
         dto.setCorreo(entidad.getCorreo());
         dto.setFechaRegistro(entidad.getFechaRegistro());
         dto.setPuntosAcumulados(puntos);
-        //falta la encriptacion para desencriptar aqui 
+        dto.setTotalGastado(totalGastado);
+        dto.setNumVisitas(numVisitas);
+        //falta la encriptacion para desencriptar aqui
         dto.setTelefono(entidad.getTelefono());
-        
+
         return dto;
     }
 }

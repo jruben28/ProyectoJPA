@@ -13,6 +13,7 @@ import com.dtos.ClienteDTO;
 import com.dtos.ClienteFrecuenteDTO;
 import excepciones.NegocioException;
 import excepciones.PersistenciaException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
@@ -105,7 +106,41 @@ public class ClienteBO implements IClienteBO {
         }
     }
 ;
-   // en progreso
+    @Override
+    public List<ClienteFrecuenteDTO> buscarFrecuentesPorFiltro(String filtro, String campoBusqueda) throws NegocioException {
+        if (filtro == null || filtro.trim().isEmpty()) {
+            throw new NegocioException("El filtro de busqueda no puede estar vacio");
+        }
+        try {
+            List<ClienteFrecuente> clientes = clienteDAO.buscarFrecuentesPorCampo(filtro, campoBusqueda);
+            List<ClienteFrecuenteDTO> resultado = new ArrayList<>();
+
+            for (ClienteFrecuente c : clientes) {
+                List<Comanda> comandas = clienteDAO.buscarComandasPorCliente(c.getId());
+
+                Double totalGastado = 0.0;
+                for (Comanda cmd : comandas) {
+                    totalGastado += cmd.getTotal();
+                }
+                if (totalGastado < 0) totalGastado = 0.0;
+
+                Integer puntos = (int) (totalGastado / 20);
+                if (puntos < 0) puntos = 0;
+
+                Integer numVisitas = comandas.size();
+
+                ClienteFrecuenteDTO dto = ClienteFrecuenteAdapter.entidadADTO(c, puntos, totalGastado, numVisitas);
+                resultado.add(dto);
+            }
+
+            return resultado;
+        } catch (PersistenciaException ex) {
+            LOG.warning("Error al buscar clientes frecuentes: " + ex.getMessage());
+            throw new NegocioException("Error al buscar clientes frecuentes");
+        }
+    }
+
+    // en progreso
     @Override
     public List<Comanda> buscarComandasPorCliente(Long idCliente) throws NegocioException {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
