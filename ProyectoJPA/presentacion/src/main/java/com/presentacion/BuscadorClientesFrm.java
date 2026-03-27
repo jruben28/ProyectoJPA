@@ -19,6 +19,11 @@ import javafx.stage.Stage;
 
 import java.util.List;
 
+/**
+ *
+ * @author Devora
+ */
+
 public class BuscadorClientesFrm extends Application {
 
     private TextField txtBuscar;
@@ -245,15 +250,8 @@ public class BuscadorClientesFrm extends Application {
     // ==================== Acciones placeholder ====================
 
     private void verPerfil(ClienteFrecuenteDTO cliente) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION,
-                "Perfil de: " + cliente.getNombre()
-                        + "\nTelefono: " + cliente.getTelefono()
-                        + "\nCorreo: " + (cliente.getCorreo() != null ? cliente.getCorreo() : "-")
-                        + "\nPuntos: " + cliente.getPuntosAcumulados()
-                        + "\nVisitas: " + cliente.getNumVisitas());
-        alert.setTitle("Perfil de Cliente");
-        alert.setHeaderText(cliente.getNombre());
-        alert.showAndWait();
+        SistemaPuntosFrm ventanaPuntos = new SistemaPuntosFrm(cliente);
+        ventanaPuntos.show();
     }
 
     private void vincularCliente(ClienteFrecuenteDTO cliente) {
