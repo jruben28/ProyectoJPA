@@ -13,6 +13,8 @@ import Conexion.ConexionBD;
 import Entidades.Cliente;
 import Entidades.ClienteFrecuente;
 import Entidades.ClienteGeneral;
+import Entidades.Comanda;
+import enums.EstadoComanda;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -59,13 +61,13 @@ public class ClienteDAO implements IClienteDAO {
         EntityManager em = ConexionBD.crearConexion();
         try {
             // Buscamos por nombre, teléfono o correo
-            String jpql = "SELECT c FROM ClienteFrecuente c " +
-                          "WHERE c.nombre LIKE :filtro OR c.telefono LIKE :filtro OR c.correo LIKE :filtro";
-            
+            String jpql = "SELECT c FROM ClienteFrecuente c "
+                    + "WHERE c.nombre LIKE :filtro OR c.telefono LIKE :filtro OR c.correo LIKE :filtro";
+
             TypedQuery<ClienteFrecuente> query = em.createQuery(jpql, ClienteFrecuente.class);
             // Los % son para que busque coincidencias parciales (como el LIKE de SQL)
             query.setParameter("filtro", "%" + filtro + "%");
-            
+
             return query.getResultList();
         } finally {
             em.close();
@@ -85,4 +87,29 @@ public class ClienteDAO implements IClienteDAO {
             em.close();
         }
     }
+
+    /**
+     * Busca las comandas ya entregadas, por cliente
+     *
+     * @param idCliente
+     * @return Lista de comandas entregadas
+     */
+    public List<Comanda> buscarComandasPorCliente(Long idCliente) {
+        EntityManager em = ConexionBD.crearConexion();
+        
+        try {
+            String jpql = "SELECT c FROM Comanda c "
+                    + "WHERE c.cliente.id = :id "
+                    + "AND c.estado = :estado";
+            return em.createQuery(jpql, Comanda.class).setParameter("id", idCliente)
+                    .setParameter("estado", EstadoComanda.ENTREGADA).getResultList();
+           
+        } catch (Exception e) {
+            throw new excepciones.DAOException("Error en buscar la comanda por id de cliente" + e.getMessage());
+        } finally {
+            em.close();
+        }
+
+    }
+
 }
