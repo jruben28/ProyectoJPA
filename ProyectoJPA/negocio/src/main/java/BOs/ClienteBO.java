@@ -9,16 +9,23 @@ import Entidades.Cliente;
 import Entidades.ClienteFrecuente;
 import Entidades.ClienteGeneral;
 import Entidades.Comanda;
+import adaptadores.ClienteFrecuenteAdapter;
+import com.dtos.ClienteFrecuenteDTO;
+import excepciones.BOException;
+import excepciones.DAOException;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Business Object de la entidad Cliente.
  *
  * @author keppler
  */
-public class ClienteBO {
+public class ClienteBO implements IClienteBO{
 
     private ClienteDAO clienteDAO;
+    private static final Logger LOG = Logger.getLogger(ClienteBO.class.getName());
+    
 
     public ClienteBO() {
         this.clienteDAO = new ClienteDAO();
@@ -59,4 +66,23 @@ public class ClienteBO {
         return total;
     }
 
+    @Override
+    public void agregarClienteFrecuente(ClienteFrecuenteDTO clienteFrecuenteDTO) {
+        //validarClienteFrecuenteDTO(clienteFrecuenteDTO);
+        try{
+            ClienteFrecuente clienteF = ClienteFrecuenteAdapter.dtoAEntidad(clienteFrecuenteDTO);
+            
+            clienteDAO.agregarClienteFrecuente(clienteF);
+            
+        }
+        catch(DAOException ex){
+            LOG.warning("Error en negocio al agregar cliente frecuente" + ex.getMessage());
+            throw new BOException("Error al agregar un cliente frecuente");
+        }
+    }
+
+    public void validarClienteFrecuenteDTO(ClienteFrecuenteDTO clienteFrecuenteDTO){
+        //Agregar validacion de cliente Frecuente DTO
+    };
+    
 }
