@@ -7,6 +7,7 @@ package DAOs;
 import Entidades.Cliente;
 import Entidades.ClienteFrecuente;
 import Entidades.ClienteGeneral;
+import excepciones.DAOException;
 import java.util.List;
 
 
@@ -15,15 +16,20 @@ import java.util.List;
  * @author icoro
  */
 public interface IClienteDAO {
-   void agregar(Cliente cliente);
+    Cliente agregar(Cliente cliente) throws DAOException;
+
+    Cliente actualizar(Cliente cliente)throws DAOException;
     
-    void actualizar(Cliente cliente);
+    ClienteFrecuente agregarClienteFrecuente(ClienteFrecuente clienteFrecuente)throws DAOException;
     
+    ClienteFrecuente actualizarClienteFrecuente(ClienteFrecuente clienteFrecuente)throws DAOException;
+    
+
     Cliente buscarPorId(Long id);
-    
+
     // Este es el buscador solicitado para el módulo y las comandas
-    List<ClienteFrecuente> buscarFrecuentesPorFiltro(String filtro);
-    
+    List<ClienteFrecuente> buscarFrecuentesPorFiltro(String filtro)throws DAOException;
+
     // Para obtener el registro "Cliente General" cuando no se identifica al comensal
-    ClienteGeneral obtenerClienteGeneral();
+    ClienteGeneral obtenerClienteGeneral()throws DAOException;
 }

@@ -15,6 +15,7 @@ import Entidades.ClienteFrecuente;
 import Entidades.ClienteGeneral;
 import Entidades.Comanda;
 import enums.EstadoComanda;
+import excepciones.DAOException;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
@@ -27,7 +28,7 @@ public class ClienteDAO implements IClienteDAO {
     
     
     @Override
-    public void agregar(Cliente cliente) {
+    public Cliente agregar(Cliente cliente) {
         // Obtenemos conexion
         EntityManager em = ConexionBD.crearConexion();
         try {
@@ -35,19 +36,30 @@ public class ClienteDAO implements IClienteDAO {
             em.persist(cliente);
             em.getTransaction().commit();
             LOG.info("Se agregó un cliente con ID: " + cliente.getId());
-        } finally {
+            return cliente;
+        } 
+        catch(Exception ex){
+            LOG.warning("Error al agregar un cliente");
+            throw new DAOException("Error al agregar un cliente");
+        }
+        finally {
             em.close(); // Siempre cerramos la conexión al terminar
         }
     }
 
     @Override
-    public void actualizar(Cliente cliente) {
+    public Cliente actualizar(Cliente cliente) {
         EntityManager em = ConexionBD.crearConexion();
         try {
             em.getTransaction().begin();
             em.merge(cliente);
             em.getTransaction().commit();
             LOG.info("Se actualizó un cliente con ID: " + cliente.getId());
+            return cliente;
+        } 
+        catch(Exception ex){
+            LOG.warning("Error al actualizar un cliente");
+            throw new DAOException("Error al actualizar un cliente");
         } finally {
             em.close();
         }
@@ -58,7 +70,11 @@ public class ClienteDAO implements IClienteDAO {
         EntityManager em = ConexionBD.crearConexion();
         try {
             return em.find(Cliente.class, id);
-        } finally {
+        } 
+        catch(Exception ex){
+            LOG.warning("Error al buscar un cliente");
+            throw new DAOException("Error al buscar un cliente");
+        }finally {
             em.close();
         }
     }
@@ -76,6 +92,9 @@ public class ClienteDAO implements IClienteDAO {
             query.setParameter("filtro", "%" + filtro + "%");
 
             return query.getResultList();
+        } catch(Exception ex){
+            LOG.warning("Error al buscar clientes frecuentes por id");
+            throw new DAOException("Error al buscar clientes frecuentes por id");
         } finally {
             em.close();
         }
@@ -115,6 +134,45 @@ public class ClienteDAO implements IClienteDAO {
         } catch (Exception e) {
             LOG.warning("Se produjo un error al buscar las comandas del cliente con ID: " + idCliente);
             throw new excepciones.DAOException("Error en buscar la comanda por id de cliente" + e.getMessage());
+        } finally {
+            em.close();
+        }
+
+    }
+
+    @Override
+    public ClienteFrecuente agregarClienteFrecuente(ClienteFrecuente clienteFrecuente) {
+        EntityManager em = ConexionBD.crearConexion();
+
+        try {
+            em.getTransaction().begin();
+            em.persist(clienteFrecuente);
+            em.getTransaction().commit();
+            LOG.info("Se agregó un cliente con ID: " + clienteFrecuente.getId());
+            return clienteFrecuente;
+        } catch (Exception ex) {
+            LOG.warning("Se ha producido un error al actualizar cliente");
+            throw new DAOException("Error al agregar cliente frecuente" + ex.getMessage());
+        } finally {
+            em.close();
+        }
+
+
+    }
+
+    @Override
+    public ClienteFrecuente actualizarClienteFrecuente(ClienteFrecuente clienteFrecuente) {
+        EntityManager em = ConexionBD.crearConexion();
+
+        try {
+            em.getTransaction().begin();
+            em.merge(clienteFrecuente);
+            em.getTransaction().commit();
+            LOG.info("Se agregó un cliente con ID: " + clienteFrecuente.getId());
+            return clienteFrecuente;
+        } catch (Exception ex) {
+            LOG.warning("Se ha producido un error al actualizar cliente");
+            throw new DAOException("Error al agregar cliente frecuente" + ex.getMessage());
         } finally {
             em.close();
         }
