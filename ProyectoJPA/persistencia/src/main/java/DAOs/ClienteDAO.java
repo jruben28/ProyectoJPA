@@ -8,7 +8,7 @@ package DAOs;
  *
  * @author icoro
  */
-// Asegúrate de que estos imports coincidan con tus paquetes reales
+import javax.persistence.criteria.Expression;
 import Conexion.ConexionBD;
 import Entidades.Cliente;
 import Entidades.ClienteFrecuente;
@@ -139,8 +139,8 @@ public class ClienteDAO implements IClienteDAO {
 
     }
 
-    /**
-     * Metodo que usa criteria api para las busquedas dinamicas
+   /**
+     * Metodo que usa criteria api para las busquedas dinamicas por campo nombre, correo y telefono
      *
      * @param filtro
      * @param campo
@@ -148,37 +148,45 @@ public class ClienteDAO implements IClienteDAO {
      * @throws PersistenciaException
      */
     @Override
-public List<ClienteFrecuente> buscarFrecuentesPorCampo(String filtro, String campo) throws PersistenciaException {
-    EntityManager em = ConexionBD.crearConexion();
-    try {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<ClienteFrecuente> query = cb.createQuery(ClienteFrecuente.class);
-        Root<ClienteFrecuente> root = query.from(ClienteFrecuente.class);
+    public List<ClienteFrecuente> buscarFrecuentesPorCampo(String filtro, String campo) throws PersistenciaException {
+        EntityManager em = ConexionBD.crearConexion();
+        try {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<ClienteFrecuente> query = cb.createQuery(ClienteFrecuente.class);
+            Root<ClienteFrecuente> root = query.from(ClienteFrecuente.class);
 
-        String patron = "%" + filtro + "%";
-        List<Predicate> predicados = new ArrayList<>();
+            String patron = "%" + filtro + "%";
+            List<Predicate> predicados = new ArrayList<>();
 
-        if (campo.contains("nombre")) {
-            predicados.add(cb.like(root.<String>get("nombre"), patron));
+            if (campo.contains("nombre")) {
+                predicados.add(cb.like(root.<String>get("nombre"), patron));
+            }
+            if (campo.contains("correo")) {
+                predicados.add(cb.like(root.<String>get("correo"), patron));
+            }
+            // usa Expression y cb para decodificar en la bd el telefono de base 64, porque no podemos buscarlos si estan codificados,
+            // y no podemos traerlos al java y procesarlos porque truena el mundo entero si son muchos registros. 
+            // se tiene que decodificar de todas maneras una vez lo regresemos en el BO, solo funciona para poder hacer la busqueda
+            // de manera correcta. 
+            if (campo.contains("telefono")) {
+                Expression<String> telDecodificado = cb.function("FROM_BASE64", String.class, root.<String>get("telefono"));
+                predicados.add(cb.like(telDecodificado, patron));
+            }
+           
+            if (predicados.isEmpty()) {
+                predicados.add(cb.like(root.<String>get("nombre"), patron));
+            }
+
+            query.where(cb.or(predicados.toArray(new Predicate[0])));
+            return em.createQuery(query).getResultList();
+
+        } catch (Exception ex) {
+            LOG.warning("Error al buscar clientes frecuentes por campo: " + ex.getMessage());
+            throw new PersistenciaException("Error al buscar clientes frecuentes por campo");
+        } finally {
+            em.close();
         }
-        if (campo.contains("correo")) {
-            predicados.add(cb.like(root.<String>get("correo"), patron));
-        }
-
-        if (predicados.isEmpty()) {
-            predicados.add(cb.like(root.<String>get("nombre"), patron));
-        }
-
-        query.where(cb.or(predicados.toArray(new Predicate[0])));
-        return em.createQuery(query).getResultList();
-
-    } catch (Exception ex) {
-        LOG.warning("Error al buscar clientes frecuentes por campo: " + ex.getMessage());
-        throw new PersistenciaException("Error al buscar clientes frecuentes por campo");
-    } finally {
-        em.close();
     }
-}
 
     @Override
     public ClienteFrecuente agregarClienteFrecuente(ClienteFrecuente clienteFrecuente) {
