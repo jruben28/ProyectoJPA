@@ -33,6 +33,7 @@ public interface IClienteDAO {
     // Para obtener el registro "Cliente General" cuando no se identifica al comensal
     ClienteGeneral obtenerClienteGeneral()throws PersistenciaException;
     
-    List<Comanda> buscarComandasPorCliente(Long idCliente) throws PersistenciaException; 
-    
+    List<Comanda> buscarComandasPorCliente(Long idCliente) throws PersistenciaException;
+
+    List<ClienteFrecuente> buscarFrecuentesPorCampo(String filtro, String campo) throws PersistenciaException;
 }

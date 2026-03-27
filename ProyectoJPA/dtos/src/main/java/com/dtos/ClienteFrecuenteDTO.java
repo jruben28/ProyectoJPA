@@ -16,6 +16,8 @@ public class ClienteFrecuenteDTO extends ClienteDTO {
     private String correo;
     private Date fechaRegistro;
     private Integer puntosAcumulados;
+    private Double totalGastado;
+    private Integer numVisitas;
 
     public ClienteFrecuenteDTO() {
         super();
@@ -45,4 +47,10 @@ public class ClienteFrecuenteDTO extends ClienteDTO {
 
     public Integer getPuntosAcumulados() { return puntosAcumulados; }
     public void setPuntosAcumulados(Integer puntosAcumulados) { this.puntosAcumulados = puntosAcumulados; }
+
+    public Double getTotalGastado() { return totalGastado; }
+    public void setTotalGastado(Double totalGastado) { this.totalGastado = totalGastado; }
+
+    public Integer getNumVisitas() { return numVisitas; }
+    public void setNumVisitas(Integer numVisitas) { this.numVisitas = numVisitas; }
 }

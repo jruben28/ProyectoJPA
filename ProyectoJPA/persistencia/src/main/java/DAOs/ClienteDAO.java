@@ -141,6 +141,36 @@ public class ClienteDAO implements IClienteDAO {
     }
 
     @Override
+    public List<ClienteFrecuente> buscarFrecuentesPorCampo(String filtro, String campo) throws PersistenciaException {
+        EntityManager em = ConexionBD.crearConexion();
+        try {
+            String jpql;
+            switch (campo) {
+                case "nombre":
+                    jpql = "SELECT c FROM ClienteFrecuente c WHERE c.nombre LIKE :filtro";
+                    break;
+                case "telefono":
+                    jpql = "SELECT c FROM ClienteFrecuente c WHERE c.telefono LIKE :filtro";
+                    break;
+                case "correo":
+                    jpql = "SELECT c FROM ClienteFrecuente c WHERE c.correo LIKE :filtro";
+                    break;
+                default:
+                    jpql = "SELECT c FROM ClienteFrecuente c WHERE c.nombre LIKE :filtro OR c.telefono LIKE :filtro OR c.correo LIKE :filtro";
+                    break;
+            }
+            TypedQuery<ClienteFrecuente> query = em.createQuery(jpql, ClienteFrecuente.class);
+            query.setParameter("filtro", "%" + filtro + "%");
+            return query.getResultList();
+        } catch (Exception ex) {
+            LOG.warning("Error al buscar clientes frecuentes por campo");
+            throw new PersistenciaException("Error al buscar clientes frecuentes por campo");
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
     public ClienteFrecuente agregarClienteFrecuente(ClienteFrecuente clienteFrecuente) {
         EntityManager em = ConexionBD.crearConexion();
 
