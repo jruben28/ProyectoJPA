@@ -1,12 +1,17 @@
 
+import Conexion.ConexionBD;
 import DAOs.ClienteDAO;
 import Entidades.ClienteFrecuente;
 import Entidades.ClienteGeneral;
+import Entidades.Comanda;
+import enums.EstadoComanda;
 import java.util.List;
+import javax.persistence.EntityManager;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -99,4 +104,117 @@ public class ClienteDAOTest {
         assertNotNull(cg, "El cliente general no debe ser nulo");
         assertEquals("Cliente General", cg.getNombre(), "El nombre debe ser 'Cliente General'");
     }
+    @Test
+public void testAgregarClienteFrecuente_FlujoBase() {
+    System.out.println("Prueba: Agregar ClienteFrecuente (Flujo Base)");
+    
+    ClienteFrecuente nuevoCliente = new ClienteFrecuente("Sofia Lopez", "6441231234", "sofia@test.com");
+    
+    ClienteFrecuente clienteAgregado = dao.agregarClienteFrecuente(nuevoCliente);
+    
+    assertNotNull(clienteAgregado.getId(), "El ID no debe ser nulo después de persistir");
+    
+    ClienteFrecuente clienteRecuperado = (ClienteFrecuente) dao.buscarPorId(clienteAgregado.getId());
+    
+    assertNotNull(clienteRecuperado, "El cliente recuperado no debe ser nulo");
+    assertEquals("Sofia Lopez", clienteRecuperado.getNombre(), "El nombre debe coincidir");
+    assertEquals("6441231234", clienteRecuperado.getTelefono(), "El teléfono debe coincidir");
+    
+    System.out.println("✓ Test pasado: Cliente agregado correctamente");
+}
+
+@Test
+public void testActualizarClienteFrecuente_FlujoBase() {
+    System.out.println("Prueba: Actualizar ClienteFrecuente (Flujo Base)");
+    
+    ClienteFrecuente cliente = new ClienteFrecuente("Carlos Mendez", "6449876543", "carlos@test.com");
+    dao.agregarClienteFrecuente(cliente);
+    
+    Long idOriginal = cliente.getId();
+    
+    cliente.setNombre("Carlos Mendez Actualizado");
+    cliente.setTelefono("6440001234");
+    
+    dao.actualizarClienteFrecuente(cliente);
+    
+    ClienteFrecuente actualizado = (ClienteFrecuente) dao.buscarPorId(idOriginal);
+    
+    assertEquals("Carlos Mendez Actualizado", actualizado.getNombre(), "El nombre debe estar actualizado");
+    assertEquals("6440001234", actualizado.getTelefono(), "El teléfono debe estar actualizado");
+    
+    System.out.println("✓ Test pasado: Cliente actualizado correctamente");
+}
+
+@Test
+public void testBuscarFrecuentesPorCampo_FlujoBase() {
+    System.out.println("Prueba: Buscar por Campo (Flujo Base)");
+    
+    // 1. Simulamos el trabajo del BO codificando el teléfono a Base64 antes de guardar
+    String telefonoOriginal = "6449999888";
+    String telefonoBase64 = java.util.Base64.getEncoder().encodeToString(telefonoOriginal.getBytes());
+    
+    // 2. Guardamos el cliente con el teléfono codificado
+    ClienteFrecuente cliente = new ClienteFrecuente("Roberto Silva", telefonoBase64, "roberto@test.com");
+    dao.agregarClienteFrecuente(cliente);
+    
+    // Búsqueda por nombre
+    List<ClienteFrecuente> resultadosNombre = dao.buscarFrecuentesPorCampo("Roberto", "nombre");
+    assertFalse(resultadosNombre.isEmpty(), "Debería encontrar clientes por nombre");
+    
+    // Búsqueda por teléfono (Buscamos un pedazo del número normal, la BD lo decodifica y ¡bum!, lo encuentra)
+    List<ClienteFrecuente> resultadosTel = dao.buscarFrecuentesPorCampo("9999888", "telefono");
+    assertFalse(resultadosTel.isEmpty(), "Debería encontrar clientes por teléfono");
+    
+    // Búsqueda por correo
+    List<ClienteFrecuente> resultadosEmail = dao.buscarFrecuentesPorCampo("roberto", "correo");
+    assertFalse(resultadosEmail.isEmpty(), "Debería encontrar clientes por correo");
+    
+    System.out.println("✓ Test pasado: Búsquedas por campo funcionan correctamente");
+}
+
+@Test
+public void testBuscarFrecuentesPorCampo_SinResultados() {
+    System.out.println("Prueba: Buscar con filtro que NO existe (Flujo Alternativo)");
+    
+    List<ClienteFrecuente> resultados = dao.buscarFrecuentesPorCampo("XXXXXXXX_NO_EXISTE", "nombre");
+    
+    assertTrue(resultados.isEmpty(), "La lista debe estar vacía porque el filtro no existe");
+    
+    System.out.println("✓ Test pasado: Búsqueda sin resultados retorna lista vacía");
+}
+
+@Test
+public void testBuscarComandasPorCliente_FlujoBase() {
+    System.out.println("Prueba: Buscar Comandas por Cliente (Flujo Base)");
+    
+    // Creamos un cliente
+    ClienteFrecuente cliente = new ClienteFrecuente("Diego Perez", "6445556666", "diego@test.com");
+    EntityManager em = ConexionBD.crearConexion();
+    
+    em.getTransaction().begin();
+    em.persist(cliente);
+    
+    // Creamos 2 comandas ENTREGADAS y 1 ABIERTA
+    Comanda c1 = new Comanda(200.0, EstadoComanda.ENTREGADA, cliente);
+    Comanda c2 = new Comanda(350.0, EstadoComanda.ENTREGADA, cliente);
+    Comanda c3 = new Comanda(100.0, EstadoComanda.ABIERTA, cliente);
+    
+    em.persist(c1);
+    em.persist(c2);
+    em.persist(c3);
+    em.getTransaction().commit();
+    em.close();
+    
+    // Buscamos las comandas del cliente
+    List<Comanda> comandasEntregadas = dao.buscarComandasPorCliente(cliente.getId());
+    
+    // Validaciones
+    assertEquals(2, comandasEntregadas.size(), "Debería retornar SOLO 2 comandas entregadas (sin la ABIERTA)");
+    
+    for (Comanda c : comandasEntregadas) {
+        assertEquals(EstadoComanda.ENTREGADA, c.getEstado(), "Todas las comandas deben estar ENTREGADAS");
+    }
+    
+    System.out.println("✓ Test pasado: Busca correcta de comandas por cliente (filtra por estado ENTREGADA)");
+}
 }
