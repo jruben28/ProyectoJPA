@@ -96,4 +96,29 @@ public class ControllerClienteFrecuente {
         return clienteVinculado;
     }
 
+    /**
+     * Actualiza un cliente frecuente existente
+     */
+    public void actualizarCliente(ClienteFrecuenteDTO dto) throws NegocioException {
+        clienteBO.actualizarClienteFrecuente(dto);
+    }
+
+    /**
+     * Crea un nuevo cliente general
+     */
+    public String crearClienteGeneral() throws NegocioException {
+        String nombreCliente = "Cliente General - " + System.currentTimeMillis();
+        return nombreCliente;
+    }
+
+    /**
+     * Abre la ventana de registro en modo edición
+     */
+    public void mostrarRegistroEdicion(ClienteFrecuenteDTO cliente) {
+        RegistroClienteFrm ventana = new RegistroClienteFrm(this, cliente);
+        ventana.getScene().getStylesheets().add(
+                getClass().getResource(CSS_PATH).toExternalForm());
+        ventana.show();
+    }
+
 }
