@@ -19,8 +19,8 @@ public class ComandaAdapter {
         
         Comanda comanda = new Comanda();
         
-        //comanda.setCliente(dto.getIdCliente());
-        //comanda.setEstado(dto.getEstado());
+        comanda.setIdCliente(dto.getIdCliente());
+        comanda.setEstado(dto.getEstado());
         comanda.setTotal(dto.getTotal());
         
         return comanda;
