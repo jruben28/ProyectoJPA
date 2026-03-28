@@ -2,6 +2,7 @@ package com.presentacion;
 
 import BOs.ClienteBO;
 import BOs.IClienteBO;
+import Entidades.ClienteGeneral;
 import Entidades.Comanda;
 import com.dtos.ClienteFrecuenteDTO;
 import excepciones.NegocioException;
@@ -13,13 +14,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Controlador del modulo de Clientes Frecuentes.
- * Las pantallas NO se comunican entre si, todo pasa por aqui.
+ * Controlador del modulo de Clientes Frecuentes. Las pantallas NO se comunican
+ * entre si, todo pasa por aqui.
  */
 public class ControllerClienteFrecuente {
 
     private final IClienteBO clienteBO;
     private final Stage primaryStage;
+    private ClienteFrecuenteDTO clienteVinculado;
     private static final String CSS_PATH = "/styles/buscador-clientes.css";
 
     public ControllerClienteFrecuente(Stage primaryStage) {
@@ -28,7 +30,6 @@ public class ControllerClienteFrecuente {
     }
 
     // ==================== Navegacion ====================
-
     public void mostrarBuscador() {
         BuscadorClientesFrm buscador = new BuscadorClientesFrm(this);
 
@@ -57,7 +58,6 @@ public class ControllerClienteFrecuente {
     }
 
     // ==================== Logica de negocio ====================
-
     public List<ClienteFrecuenteDTO> buscarClientes(String filtro, String campo) throws NegocioException {
         return clienteBO.buscarFrecuentesPorFiltro(filtro, campo);
     }
@@ -67,11 +67,11 @@ public class ControllerClienteFrecuente {
     }
 
     public void vincularCliente(ClienteFrecuenteDTO cliente) {
-        // TODO: implementar cuando el modulo de comandas este listo
+        this.clienteVinculado = cliente;
+        System.out.println("Cliente vinculado: " + cliente.getNombre());
     }
 
     // ==================== Carga de datos ====================
-
     private List<SistemaPuntosFrm.FilaTransaccion> cargarTransacciones(ClienteFrecuenteDTO cliente) {
         List<SistemaPuntosFrm.FilaTransaccion> filas = new ArrayList<>();
         try {
@@ -91,4 +91,9 @@ public class ControllerClienteFrecuente {
         }
         return filas;
     }
+
+    public ClienteFrecuenteDTO obtenerClienteVinculado() {
+        return clienteVinculado;
+    }
+
 }
