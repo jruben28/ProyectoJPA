@@ -14,21 +14,29 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 
-/**
- * Pantalla de registro de cliente frecuente.
- * No conoce otras pantallas ni el BO. Todo pasa por el controlador.
- */
 public class RegistroClienteFrm extends Stage {
 
     private final ControllerClienteFrecuente controller;
+    private ClienteFrecuenteDTO clienteEditando;
     private TextField txtNombre;
     private TextField txtTelefono;
     private TextField txtCorreo;
     private DatePicker dpFechaRegistro;
+    private Label titulo;
+    private Label subtitulo;
+    private Button btnGuardar;
 
     public RegistroClienteFrm(ControllerClienteFrecuente controller) {
         this.controller = controller;
+        this.clienteEditando = null;
         initComponents();
+    }
+
+    public RegistroClienteFrm(ControllerClienteFrecuente controller, ClienteFrecuenteDTO cliente) {
+        this.controller = controller;
+        this.clienteEditando = cliente;
+        initComponents();
+        precargarDatos(cliente);
     }
 
     private void initComponents() {
@@ -36,10 +44,11 @@ public class RegistroClienteFrm extends Stage {
         root.setPadding(new Insets(25, 35, 25, 35));
         root.getStyleClass().add("root-pane");
 
-        Label titulo = new Label("Registrar Cliente Frecuente");
+        boolean esEdicion = clienteEditando != null;
+        titulo = new Label(esEdicion ? "Editar Cliente Frecuente" : "Registrar Cliente Frecuente");
         titulo.getStyleClass().add("titulo");
 
-        Label subtitulo = new Label("Completa los datos del nuevo cliente frecuente");
+        subtitulo = new Label(esEdicion ? "Actualiza los datos del cliente" : "Completa los datos del nuevo cliente frecuente");
         subtitulo.getStyleClass().add("resultados-label");
 
         VBox formulario = crearFormulario();
@@ -51,11 +60,9 @@ public class RegistroClienteFrm extends Stage {
         root.getChildren().addAll(titulo, subtitulo, formulario, spacer, botones);
 
         Scene scene = new Scene(root, 620, 580);
-        setTitle("Registrar Cliente Frecuente");
+        setTitle(esEdicion ? "Editar Cliente Frecuente" : "Registrar Cliente Frecuente");
         setScene(scene);
     }
-
-    // ==================== Formulario ====================
 
     private VBox crearFormulario() {
         Label lblNombre = new Label("Nombre completo *");
@@ -94,12 +101,12 @@ public class RegistroClienteFrm extends Stage {
         return form;
     }
 
-    // ==================== Botones ====================
-
     private HBox crearBotones() {
-        Button btnGuardar = new Button("Guardar Cliente");
+        boolean esEdicion = clienteEditando != null;
+
+        btnGuardar = new Button(esEdicion ? "Actualizar Cliente" : "Guardar Cliente");
         btnGuardar.getStyleClass().add("btn-buscar");
-        btnGuardar.setOnAction(e -> guardarCliente());
+        btnGuardar.setOnAction(e -> guardarOActualizarCliente());
 
         Button btnCancelar = new Button("Cancelar");
         btnCancelar.getStyleClass().add("btn-cancelar");
@@ -110,10 +117,13 @@ public class RegistroClienteFrm extends Stage {
         return hbox;
     }
 
-    // ==================== Guardar (delega al controlador) ====================
-
-    private void guardarCliente() {
+    private void guardarOActualizarCliente() {
         ClienteFrecuenteDTO dto = new ClienteFrecuenteDTO();
+
+        if (clienteEditando != null) {
+            dto.setId(clienteEditando.getId());
+        }
+
         dto.setNombre(txtNombre.getText().trim());
         dto.setTelefono(txtTelefono.getText().trim());
 
@@ -128,19 +138,41 @@ public class RegistroClienteFrm extends Stage {
         dto.setTipoCliente("FRECUENTE");
 
         try {
-            controller.registrarCliente(dto);
+            if (clienteEditando != null) {
+                controller.actualizarCliente(dto);
+                Alert exito = new Alert(Alert.AlertType.INFORMATION,
+                        "Cliente '" + dto.getNombre() + "' actualizado exitosamente.");
+                exito.setHeaderText(null);
+                exito.setTitle("Cliente Actualizado");
+                exito.showAndWait();
+            } else {
+                controller.registrarCliente(dto);
+                Alert exito = new Alert(Alert.AlertType.INFORMATION,
+                        "Cliente '" + dto.getNombre() + "' registrado exitosamente.");
+                exito.setHeaderText(null);
+                exito.setTitle("Cliente Registrado");
+                exito.showAndWait();
+                limpiarFormulario();
+            }
 
-            Alert exito = new Alert(Alert.AlertType.INFORMATION,
-                    "Cliente '" + dto.getNombre() + "' registrado exitosamente.");
-            exito.setHeaderText(null);
-            exito.setTitle("Cliente Registrado");
-            exito.showAndWait();
-            limpiarFormulario();
+            close();
         } catch (NegocioException ex) {
             Alert error = new Alert(Alert.AlertType.ERROR, ex.getMessage());
-            error.setHeaderText("Error al registrar cliente");
+            error.setHeaderText("Error al guardar cliente");
             error.setTitle("Error");
             error.showAndWait();
+        }
+    }
+
+    private void precargarDatos(ClienteFrecuenteDTO cliente) {
+        txtNombre.setText(cliente.getNombre() != null ? cliente.getNombre() : "");
+        txtTelefono.setText(cliente.getTelefono() != null ? cliente.getTelefono() : "");
+        txtCorreo.setText(cliente.getCorreo() != null ? cliente.getCorreo() : "");
+
+        if (cliente.getFechaRegistro() != null) {
+            dpFechaRegistro.setValue(
+                    cliente.getFechaRegistro().toInstant()
+                            .atZone(ZoneId.systemDefault()).toLocalDate());
         }
     }
 

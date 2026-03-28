@@ -60,7 +60,8 @@ public class BuscadorClientesFrm {
         tblClientes = crearTabla();
         VBox.setVgrow(tblClientes, Priority.ALWAYS);
 
-        root.getChildren().addAll(lblTitulo, searchBar, filtros, lblResultados, tblClientes);
+        HBox header = crearHeader();
+        root.getChildren().addAll(lblTitulo, header, searchBar, filtros, lblResultados, tblClientes);
     }
 
     private HBox crearBarraBusqueda() {
@@ -233,5 +234,36 @@ public class BuscadorClientesFrm {
     private String enmascararTelefono(String telefono) {
         if (telefono == null || telefono.length() < 4) return "****";
         return "****" + telefono.substring(telefono.length() - 4);
+    }
+
+    private HBox crearHeader() {
+        Button btnClienteGeneral = new Button("+ Nuevo Cliente General");
+        btnClienteGeneral.getStyleClass().add("btn-buscar");
+        btnClienteGeneral.setStyle("-fx-padding: 8px 15px;");
+        btnClienteGeneral.setOnAction(e -> crearClienteGeneral());
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        HBox hbox = new HBox(10, btnClienteGeneral, spacer);
+        hbox.setAlignment(Pos.CENTER_LEFT);
+        return hbox;
+    }
+
+    private void crearClienteGeneral() {
+        try {
+            String nombreCliente = controller.crearClienteGeneral();
+            Alert exito = new Alert(Alert.AlertType.INFORMATION,
+                    "Cliente General creado exitosamente.\n\nNombre: " + nombreCliente);
+            exito.setHeaderText(null);
+            exito.setTitle("Cliente General Creado");
+            exito.showAndWait();
+        } catch (NegocioException ex) {
+            Alert error = new Alert(Alert.AlertType.ERROR,
+                    "Error al crear cliente general: " + ex.getMessage());
+            error.setHeaderText(null);
+            error.setTitle("Error");
+            error.showAndWait();
+        }
     }
 }
