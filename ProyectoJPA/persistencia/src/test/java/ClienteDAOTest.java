@@ -1,19 +1,22 @@
 
-import Conexion.ConexionBD;
-import DAOs.ClienteDAO;
-import Entidades.ClienteFrecuente;
-import Entidades.ClienteGeneral;
-import Entidades.Comanda;
-import enums.EstadoComanda;
-import java.util.List;
-import javax.persistence.EntityManager;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.List;
+
+import javax.persistence.EntityManager;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import Conexion.ConexionBD;
+import DAOs.ClienteDAO;
+import Entidades.ClienteFrecuente;
+import Entidades.ClienteGeneral;
+import Entidades.Comanda;
 
 public class ClienteDAOTest {
 
@@ -194,10 +197,14 @@ public void testBuscarComandasPorCliente_FlujoBase() {
     em.getTransaction().begin();
     em.persist(cliente);
     
+    em.flush(); 
+   Long idCliente = cliente.getId();
+    assertNotNull(idCliente, "El cliente debe tener ID antes de crear comandas");
+
     // Creamos 2 comandas ENTREGADAS y 1 ABIERTA
-    Comanda c1 = new Comanda(200.0, EstadoComanda.ENTREGADA, cliente);
-    Comanda c2 = new Comanda(350.0, EstadoComanda.ENTREGADA, cliente);
-    Comanda c3 = new Comanda(100.0, EstadoComanda.ABIERTA, cliente);
+    Comanda c1 = new Comanda(200.0, "ENTREGADA", idCliente);
+    Comanda c2 = new Comanda(350.0, "ENTREGADA", idCliente);
+    Comanda c3 = new Comanda(100.0, "ABIERTA", idCliente);
     
     em.persist(c1);
     em.persist(c2);
@@ -206,13 +213,13 @@ public void testBuscarComandasPorCliente_FlujoBase() {
     em.close();
     
     // Buscamos las comandas del cliente
-    List<Comanda> comandasEntregadas = dao.buscarComandasPorCliente(cliente.getId());
+    List<Comanda> comandasEntregadas = dao.buscarComandasPorCliente(idCliente);
     
     // Validaciones
     assertEquals(2, comandasEntregadas.size(), "Debería retornar SOLO 2 comandas entregadas (sin la ABIERTA)");
     
     for (Comanda c : comandasEntregadas) {
-        assertEquals(EstadoComanda.ENTREGADA, c.getEstado(), "Todas las comandas deben estar ENTREGADAS");
+       assertEquals("ENTREGADA", c.getEstado(), "Todas las comandas deben estar ENTREGADAS");
     }
     
     System.out.println(" Test pasado: Busca correcta de comandas por cliente (filtra por estado ENTREGADA)");

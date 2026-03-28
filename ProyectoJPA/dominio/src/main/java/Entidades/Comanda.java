@@ -4,82 +4,74 @@
  */
 package Entidades;
 
-import enums.EstadoComanda;
+
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
- *
+ * cambio de ultima hora para simplificar la bd, quitamos el enum de estadoComanda para manejarlo como String 
  * @author keppler
  */
+@Entity
+@Table(name = "comandas")
+public class Comanda implements Serializable {
 
-    @Entity
-    @Table(name = "comandas")
-    public class Comanda implements Serializable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private Long id;
+    @Column(nullable = false)
+    private Double total;
 
-        @Column(nullable = false)
-        private Double total;
+    @Column(nullable = false)
+    private String estado;
 
-        @Enumerated(EnumType.STRING)
-        @Column(nullable = false)
-        private EstadoComanda estado;
+    @Column(name = "id_cliente", nullable = true)
+    private Long idCliente;
 
-        @ManyToOne
-        @JoinColumn(name = "id_cliente", nullable = true)
-        private Cliente cliente;
-
-        public Comanda() {
-        }
-
-        public Comanda(Double total, EstadoComanda estado, Cliente cliente) {
-            this.total = total;
-            this.estado = estado;
-            this.cliente = cliente;
-        }
-
-        public Long getId() {
-            return id;
-        }
-
-        public void setId(Long id) {
-            this.id = id;
-        }
-
-        public Double getTotal() {
-            return total;
-        }
-
-        public void setTotal(Double total) {
-            this.total = total;
-        }
-
-        public EstadoComanda getEstado() {
-            return estado;
-        }
-
-        public void setEstado(EstadoComanda estado) {
-            this.estado = estado;
-        }
-
-        public Cliente getCliente() {
-            return cliente;
-        }
-
-        public void setCliente(Cliente cliente) {
-            this.cliente = cliente;
-        }
+    public Comanda() {
     }
 
+    public Comanda(Double total, String estado, Long idCliente) {
+        this.total = total;
+        this.estado = estado;
+        this.idCliente = idCliente;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Double getTotal() {
+        return total;
+    }
+
+    public void setTotal(Double total) {
+        this.total = total;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public Long getIdCliente() {
+        return idCliente;
+    }
+
+    public void setIdCliente(Long idCliente) {
+        this.idCliente = idCliente;
+    }
+}

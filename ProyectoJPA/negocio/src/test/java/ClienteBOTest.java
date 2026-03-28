@@ -4,6 +4,9 @@
  */
 
 import BOs.ClienteBO;
+import Conexion.ConexionBD;
+import Entidades.Comanda;
+import javax.persistence.EntityManager;
 import com.dtos.ClienteFrecuenteDTO;
 import excepciones.NegocioException;
 import org.junit.jupiter.api.BeforeAll;
@@ -12,6 +15,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Date;
 import java.util.List;
+
+
 
 /**
  *
@@ -168,21 +173,43 @@ public void testBuscarFrecuentesPorFiltro_FiltroVacio() {
 @Test
 public void testCalcularPuntos_ConComandasEntregadas() {
     System.out.println("Prueba: Calcular puntos con comandas entregadas");
-    
-    // Test 1: Total $100 = 5 puntos (100/20)
-    Integer puntos100 = bo.calcularPuntos(1L);
-    System.out.println("  Verificando que $100 = 5 puntos...");
-    // Nota: Este test depende de que existan cliente+comandas en BD
-    
-    // Test 2: Total $450 = 22 puntos (450/20 = 22.5 → 22)
-    Integer puntos450 = bo.calcularPuntos(2L);
-    System.out.println("  Verificando que $450 = 22 puntos...");
-    
-    // Validar que no sean negativos
-    assertTrue(puntos100 >= 0, "Los puntos no deben ser negativos");
-    assertTrue(puntos450 >= 0, "Los puntos no deben ser negativos");
-    
-    System.out.println(" Test pasado: Cálculo de puntos funciona correctamente");
+
+    try {
+        String sufijo = String.valueOf(System.currentTimeMillis());
+        ClienteFrecuenteDTO clienteNuevo = new ClienteFrecuenteDTO(
+                null,
+                "ClientePuntos_" + sufijo,
+                "FRECUENTE",
+                "6441234567",
+                "puntos_" + sufijo + "@test.com",
+                new Date(),
+                0
+        );
+
+        bo.agregarClienteFrecuente(clienteNuevo);
+
+        List<ClienteFrecuenteDTO> resultados = bo.buscarFrecuentesPorFiltro("ClientePuntos_" + sufijo, "nombre");
+        assertFalse(resultados.isEmpty(), "Debe encontrar el cliente creado");
+
+        Long idCliente = resultados.get(0).getId();
+        assertNotNull(idCliente, "El ID del cliente no debe ser nulo");
+
+        EntityManager em = ConexionBD.crearConexion();
+        em.getTransaction().begin();
+        em.persist(new Comanda(100.0, "ENTREGADA", idCliente));
+        em.persist(new Comanda(450.0, "ENTREGADA", idCliente));
+        em.persist(new Comanda(999.0, "ABIERTA", idCliente)); // No debe contar
+        em.getTransaction().commit();
+        em.close();
+
+        Integer puntos = bo.calcularPuntos(idCliente);
+
+        // 100 + 450 = 550; 550/20 = 27
+        assertEquals(27, puntos, "El cálculo de puntos debe considerar solo ENTREGADAS");
+        System.out.println("Test pasado: puntos calculados correctamente");
+    } catch (Exception e) {
+        fail("No debería lanzar excepción: " + e.getMessage());
+    }
 }
 
 @Test
