@@ -12,18 +12,17 @@ import java.util.Date;
  */
 public class ComandaDTO {
     private Long id;
-    private String folio;
-    private Date fecha;
+    //private String folio;
+    //private Date fecha;
     private String estado;
     private Double total;
     private Long idCliente;
 
-    public ComandaDTO(Long id, String folio, Date fecha, String estado, Double total) {
-        this.id = id;
-        this.folio = folio;
-        this.fecha = fecha;
+    public ComandaDTO(String estado, Double total, Long idCliente) {
+        
         this.estado = estado;
         this.total = total;
+        this.idCliente = idCliente;
     }
 
     public ComandaDTO() {
@@ -37,21 +36,21 @@ public class ComandaDTO {
         this.id = id;
     }
 
-    public String getFolio() {
-        return folio;
-    }
-
-    public void setFolio(String folio) {
-        this.folio = folio;
-    }
-
-    public Date getFecha() {
-        return fecha;
-    }
-
-    public void setFecha(Date fecha) {
-        this.fecha = fecha;
-    }
+//    public String getFolio() {
+//        return folio;
+//    }
+//
+//    public void setFolio(String folio) {
+//        this.folio = folio;
+//    }
+//
+//    public Date getFecha() {
+//        return fecha;
+//    }
+//
+//    public void setFecha(Date fecha) {
+//        this.fecha = fecha;
+//    }
 
     public String getEstado() {
         return estado;
