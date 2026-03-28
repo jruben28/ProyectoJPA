@@ -100,7 +100,7 @@ public void testAgregarClienteFrecuente_FlujoBase() {
         assertFalse(resultados.isEmpty(), "El cliente recién agregado debería encontrarse");
         assertEquals("Marcela Rojas", resultados.get(0).getNombre(), "El nombre debe coincidir");
         
-        System.out.println("✓ Test pasado: ClienteFrecuente agregado correctamente");
+        System.out.println(" Test pasado: ClienteFrecuente agregado correctamente");
     } catch (Exception e) {
         fail("No debería lanzar excepción: " + e.getMessage());
     }
@@ -120,7 +120,7 @@ public void testAgregarClienteFrecuente_TelefonoInvalido() {
     assertTrue(exception.getMessage().toLowerCase().contains("telefono"), 
         "El mensaje debe mencionar que el teléfono es inválido");
     
-    System.out.println("✓ Test pasado: Teléfono inválido rechazado correctamente");
+    System.out.println("Test pasado: Teléfono inválido rechazado correctamente");
 }
 
 @Test
@@ -162,7 +162,7 @@ public void testBuscarFrecuentesPorFiltro_FiltroVacio() {
     assertTrue(exception.getMessage().toLowerCase().contains("filtro"), 
         "El mensaje debe mencionar que el filtro está vacío");
     
-    System.out.println("✓ Test pasado: Filtro vacío rechazado correctamente");
+    System.out.println(" Test pasado: Filtro vacío rechazado correctamente");
 }
 
 @Test
@@ -182,7 +182,7 @@ public void testCalcularPuntos_ConComandasEntregadas() {
     assertTrue(puntos100 >= 0, "Los puntos no deben ser negativos");
     assertTrue(puntos450 >= 0, "Los puntos no deben ser negativos");
     
-    System.out.println("✓ Test pasado: Cálculo de puntos funciona correctamente");
+    System.out.println(" Test pasado: Cálculo de puntos funciona correctamente");
 }
 
 @Test
@@ -205,7 +205,7 @@ public void testCalcularTotalGastado_SinComandasDevuelve0() {
         
         assertEquals(0.0, total, "Un cliente sin comandas debe tener total = 0.0");
         
-        System.out.println("✓ Test pasado: Cliente sin compras retorna 0.0");
+        System.out.println(" Test pasado: Cliente sin compras retorna 0.0");
     } catch (Exception e) {
         fail("No debería lanzar excepción: " + e.getMessage());
     }

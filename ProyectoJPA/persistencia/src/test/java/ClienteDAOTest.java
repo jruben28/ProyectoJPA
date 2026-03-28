@@ -169,7 +169,7 @@ public void testBuscarFrecuentesPorCampo_FlujoBase() {
     List<ClienteFrecuente> resultadosEmail = dao.buscarFrecuentesPorCampo("roberto", "correo");
     assertFalse(resultadosEmail.isEmpty(), "Debería encontrar clientes por correo");
     
-    System.out.println("✓ Test pasado: Búsquedas por campo funcionan correctamente");
+    System.out.println(" Test pasado: Búsquedas por campo funcionan correctamente");
 }
 
 @Test
@@ -180,7 +180,7 @@ public void testBuscarFrecuentesPorCampo_SinResultados() {
     
     assertTrue(resultados.isEmpty(), "La lista debe estar vacía porque el filtro no existe");
     
-    System.out.println("✓ Test pasado: Búsqueda sin resultados retorna lista vacía");
+    System.out.println("Test pasado: Búsqueda sin resultados retorna lista vacía");
 }
 
 @Test
@@ -215,6 +215,6 @@ public void testBuscarComandasPorCliente_FlujoBase() {
         assertEquals(EstadoComanda.ENTREGADA, c.getEstado(), "Todas las comandas deben estar ENTREGADAS");
     }
     
-    System.out.println("✓ Test pasado: Busca correcta de comandas por cliente (filtra por estado ENTREGADA)");
+    System.out.println(" Test pasado: Busca correcta de comandas por cliente (filtra por estado ENTREGADA)");
 }
 }
