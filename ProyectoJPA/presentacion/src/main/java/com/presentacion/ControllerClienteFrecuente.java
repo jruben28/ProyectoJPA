@@ -2,7 +2,6 @@ package com.presentacion;
 
 import BOs.ClienteBO;
 import BOs.IClienteBO;
-import Entidades.ClienteGeneral;
 import Entidades.Comanda;
 import com.dtos.ClienteFrecuenteDTO;
 import excepciones.NegocioException;
@@ -76,15 +75,15 @@ public class ControllerClienteFrecuente {
         List<SistemaPuntosFrm.FilaTransaccion> filas = new ArrayList<>();
         try {
             List<Comanda> comandas = clienteBO.buscarComandasPorCliente(cliente.getId());
-            int acumulado = cliente.getPuntosAcumulados() != null ? cliente.getPuntosAcumulados() : 0;
+            int acumulado = 0;
 
             for (Comanda c : comandas) {
                 int puntosGanados = (int) (c.getTotal() / 20);
                 String folio = "OB-" + String.format("%06d", c.getId());
+                acumulado += puntosGanados;
 
                 filas.add(new SistemaPuntosFrm.FilaTransaccion(
                         "-", folio, c.getTotal(), puntosGanados, acumulado));
-                acumulado -= puntosGanados;
             }
         } catch (Exception ex) {
             // buscarComandasPorCliente aun no implementado en BO, lista vacia
@@ -107,8 +106,7 @@ public class ControllerClienteFrecuente {
      * Crea un nuevo cliente general
      */
     public String crearClienteGeneral() throws NegocioException {
-        String nombreCliente = "Cliente General - " + System.currentTimeMillis();
-        return nombreCliente;
+        return clienteBO.obtenerOCrearClienteGeneral();
     }
 
     /**

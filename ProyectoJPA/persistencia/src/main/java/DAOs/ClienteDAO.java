@@ -124,7 +124,7 @@ public class ClienteDAO implements IClienteDAO {
 
         try {
            String jpql = "SELECT c FROM Comanda c "
-        + "WHERE c.idCliente = :id AND c.estado = :estado";
+        + "WHERE c.idCliente = :id AND UPPER(c.estado) = :estado";
         
             return em.createQuery(jpql, Comanda.class).setParameter("id", idCliente)
                     .setParameter("estado", "ENTREGADA").getResultList();
@@ -154,14 +154,14 @@ public class ClienteDAO implements IClienteDAO {
             CriteriaQuery<ClienteFrecuente> query = cb.createQuery(ClienteFrecuente.class);
             Root<ClienteFrecuente> root = query.from(ClienteFrecuente.class);
 
-            String patron = "%" + filtro + "%";
+            String patron = "%" + filtro.toLowerCase() + "%";
             List<Predicate> predicados = new ArrayList<>();
 
             if (campo.contains("nombre")) {
-                predicados.add(cb.like(root.<String>get("nombre"), patron));
+                predicados.add(cb.like(cb.lower(root.<String>get("nombre")), patron));
             }
             if (campo.contains("correo")) {
-                predicados.add(cb.like(root.<String>get("correo"), patron));
+                predicados.add(cb.like(cb.lower(root.<String>get("correo")), patron));
             }
             // usa Expression y cb para decodificar en la bd el telefono de base 64, porque no podemos buscarlos si estan codificados,
             // y no podemos traerlos al java y procesarlos porque truena el mundo entero si son muchos registros. 
@@ -173,7 +173,7 @@ public class ClienteDAO implements IClienteDAO {
             }
            
             if (predicados.isEmpty()) {
-                predicados.add(cb.like(root.<String>get("nombre"), patron));
+                predicados.add(cb.like(cb.lower(root.<String>get("nombre")), patron));
             }
 
             query.where(cb.or(predicados.toArray(new Predicate[0])));
