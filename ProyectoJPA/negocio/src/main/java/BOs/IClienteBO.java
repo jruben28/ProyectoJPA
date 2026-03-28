@@ -26,4 +26,6 @@ public interface IClienteBO {
     List<Comanda> buscarComandasPorCliente(Long idCliente) throws NegocioException;
 
     List<ClienteFrecuenteDTO> buscarFrecuentesPorFiltro(String filtro, String campoBusqueda) throws NegocioException;
+
+    String obtenerOCrearClienteGeneral() throws NegocioException;
 }

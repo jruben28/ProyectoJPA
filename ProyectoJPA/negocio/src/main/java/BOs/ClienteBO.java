@@ -7,6 +7,7 @@ package BOs;
 import DAOs.ClienteDAO;
 import DAOs.IClienteDAO;
 import Entidades.ClienteFrecuente;
+import Entidades.ClienteGeneral;
 import Entidades.Comanda;
 import adaptadores.ClienteFrecuenteAdapter;
 import com.dtos.ClienteFrecuenteDTO;
@@ -203,6 +204,21 @@ public class ClienteBO implements IClienteBO {
         } catch (PersistenciaException ex) {
             LOG.warning("Error en negocio al actualizar cliente frecuente: " + ex.getMessage());
             throw new NegocioException("Error al intentar actualizar los datos del cliente en la base de datos.");
+        }
+    }
+
+    @Override
+    public String obtenerOCrearClienteGeneral() throws NegocioException {
+        try {
+            ClienteGeneral clienteGeneral = clienteDAO.obtenerClienteGeneral();
+            if (clienteGeneral == null) {
+                clienteGeneral = new ClienteGeneral("Cliente General");
+                clienteDAO.agregar(clienteGeneral);
+            }
+            return clienteGeneral.getNombre();
+        } catch (PersistenciaException ex) {
+            LOG.warning("Error al obtener o crear cliente general: " + ex.getMessage());
+            throw new NegocioException("Error al preparar el cliente general");
         }
     }
 

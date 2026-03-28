@@ -237,6 +237,11 @@ public class BuscadorClientesFrm {
     }
 
     private HBox crearHeader() {
+        Button btnClienteFrecuente = new Button("+ Nuevo Cliente Frecuente");
+        btnClienteFrecuente.getStyleClass().add("btn-buscar");
+        btnClienteFrecuente.setStyle("-fx-padding: 8px 15px;");
+        btnClienteFrecuente.setOnAction(e -> controller.mostrarRegistro());
+
         Button btnClienteGeneral = new Button("+ Nuevo Cliente General");
         btnClienteGeneral.getStyleClass().add("btn-buscar");
         btnClienteGeneral.setStyle("-fx-padding: 8px 15px;");
@@ -245,7 +250,7 @@ public class BuscadorClientesFrm {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        HBox hbox = new HBox(10, btnClienteGeneral, spacer);
+        HBox hbox = new HBox(10, btnClienteFrecuente, btnClienteGeneral, spacer);
         hbox.setAlignment(Pos.CENTER_LEFT);
         return hbox;
     }
@@ -254,7 +259,8 @@ public class BuscadorClientesFrm {
         try {
             String nombreCliente = controller.crearClienteGeneral();
             Alert exito = new Alert(Alert.AlertType.INFORMATION,
-                    "Cliente General creado exitosamente.\n\nNombre: " + nombreCliente);
+                    "Cliente General listo para usar.\n\nNombre: " + nombreCliente
+                            + "\n\nNota: este buscador solo muestra clientes frecuentes.");
             exito.setHeaderText(null);
             exito.setTitle("Cliente General Creado");
             exito.showAndWait();
