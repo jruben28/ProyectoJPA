@@ -20,6 +20,7 @@ public class ClienteFrecuenteAdapter {
         
         ClienteFrecuente clienteF = new ClienteFrecuente();
         
+        clienteF.setId(dto.getId());
         clienteF.setNombre(dto.getNombre());
         clienteF.setCorreo(dto.getCorreo());
         clienteF.setFechaRegistro(dto.getFechaRegistro());

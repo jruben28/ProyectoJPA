@@ -164,13 +164,50 @@ public class ClienteBO implements IClienteBO {
     // en progreso
     @Override
     public List<Comanda> buscarComandasPorCliente(Long idCliente) throws NegocioException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+      // Validar que el ID tenga sentido lógico
+        if (idCliente == null || idCliente <= 0) {
+            throw new NegocioException("El ID del cliente no es válido para realizar la búsqueda de comandas.");
+        }
+
+        try {
+           
+            return clienteDAO.buscarComandasPorCliente(idCliente);
+            
+        } catch (PersistenciaException ex) {
+            LOG.warning("Error al buscar las comandas del cliente con ID " + idCliente + ": " + ex.getMessage());
+            throw new NegocioException("Error al obtener el historial de comandas del cliente.");
+        }
     }
 
     @Override
     public void actualizarClienteFrecuente(ClienteFrecuenteDTO clienteFrecuenteDTO) throws NegocioException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        // 1.  método de validación (Regex, nulos, etc.)
+        validarClienteFrecuenteDTO(clienteFrecuenteDTO);
+
+        // 2. Regla: No podemos actualizar a un fantasma, ocupamos su ID
+        if (clienteFrecuenteDTO.getId() == null) {
+            throw new NegocioException("No se puede actualizar el cliente porque no tiene un ID asignado.");
+        }
+
+        try {
+            // 3. Encriptamos el teléfono antes de mandarlo a la Entidad
+            clienteFrecuenteDTO.setTelefono(Encriptador.encriptar(clienteFrecuenteDTO.getTelefono()));
+
+            // 4. Convertimos a Entidad
+            ClienteFrecuente clienteF = ClienteFrecuenteAdapter.dtoAEntidad(clienteFrecuenteDTO);
+
+            // 5. Mandamos al DAO a actualizar. 
+ 
+            clienteDAO.actualizarClienteFrecuente(clienteF);
+
+        } catch (PersistenciaException ex) {
+            LOG.warning("Error en negocio al actualizar cliente frecuente: " + ex.getMessage());
+            throw new NegocioException("Error al intentar actualizar los datos del cliente en la base de datos.");
+        }
     }
+
+  
+    
     
    
 }
