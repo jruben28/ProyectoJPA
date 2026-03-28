@@ -14,7 +14,6 @@ import Entidades.Cliente;
 import Entidades.ClienteFrecuente;
 import Entidades.ClienteGeneral;
 import Entidades.Comanda;
-import enums.EstadoComanda;
 import excepciones.PersistenciaException;
 import java.util.List;
 import java.util.logging.Logger;
@@ -124,9 +123,9 @@ public class ClienteDAO implements IClienteDAO {
         EntityManager em = ConexionBD.crearConexion();
 
         try {
-            String jpql = "SELECT c FROM Comanda c "
-                    + "WHERE c.idCliente = :id AND c.estado = :estado "
-                    + "AND c.estado = :estado";
+           String jpql = "SELECT c FROM Comanda c "
+        + "WHERE c.idCliente = :id AND c.estado = :estado";
+        
             return em.createQuery(jpql, Comanda.class).setParameter("id", idCliente)
                     .setParameter("estado", "ENTREGADA").getResultList();
 
