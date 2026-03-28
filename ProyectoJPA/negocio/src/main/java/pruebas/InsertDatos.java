@@ -195,11 +195,11 @@ public class InsertDatos {
         }
         
 
-        ComandaDTO comanda1 = new ComandaDTO("ENTREGADA", 450.50, 2L);
-        ComandaDTO comanda2 = new ComandaDTO("PENDIENTE", 120.00, 2L);
-        ComandaDTO comanda3 = new ComandaDTO("ENTREGADA", 890.99, 2L);
-        ComandaDTO comanda4 = new ComandaDTO("PENDIENTE", 55.50, 2L);
-        ComandaDTO comanda5 = new ComandaDTO("ENTREGADA", 320.00, 2L);
+        ComandaDTO comanda1 = new ComandaDTO("ENTREGADA", 450.50, 4L);
+        ComandaDTO comanda2 = new ComandaDTO("PENDIENTE", 120.00, 4L);
+        ComandaDTO comanda3 = new ComandaDTO("ENTREGADA", 890.99, 4L);
+        ComandaDTO comanda4 = new ComandaDTO("PENDIENTE", 55.50, 4L);
+        ComandaDTO comanda5 = new ComandaDTO("ENTREGADA", 320.00, 4L);
 
         ComandaDTO comanda6 = new ComandaDTO("PENDIENTE", 210.75, 6L);
         ComandaDTO comanda7 = new ComandaDTO("ENTREGADA", 1500.00, 7L);
