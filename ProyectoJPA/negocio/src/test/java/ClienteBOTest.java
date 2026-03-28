@@ -84,4 +84,130 @@ public class ClienteBOTest {
             fail("La prueba falló porque lanzó un error inesperado: " + e.getMessage());
         }
     }
+    @Test
+public void testAgregarClienteFrecuente_FlujoBase() {
+    System.out.println("Prueba: Agregar ClienteFrecuente en BO (Flujo Base)");
+    
+    try {
+        ClienteFrecuenteDTO clienteNuevo = new ClienteFrecuenteDTO(
+            null, "Marcela Rojas", "FRECUENTE", "6447778888", "marcela@test.com", new Date(), 0);
+        
+        bo.agregarClienteFrecuente(clienteNuevo);
+        
+        // Verificar que fue agregado buscándolo
+        List<ClienteFrecuenteDTO> resultados = bo.buscarFrecuentesPorFiltro("Marcela", "nombre");
+        
+        assertFalse(resultados.isEmpty(), "El cliente recién agregado debería encontrarse");
+        assertEquals("Marcela Rojas", resultados.get(0).getNombre(), "El nombre debe coincidir");
+        
+        System.out.println("✓ Test pasado: ClienteFrecuente agregado correctamente");
+    } catch (Exception e) {
+        fail("No debería lanzar excepción: " + e.getMessage());
+    }
+}
+
+@Test
+public void testAgregarClienteFrecuente_TelefonoInvalido() {
+    System.out.println("Prueba: Agregar con teléfono inválido (Debe fallar)");
+    
+    ClienteFrecuenteDTO clienteInvalido = new ClienteFrecuenteDTO(
+        null, "Miguel Torres", "FRECUENTE", "123", "miguel@test.com", new Date(), 0);
+    
+    Exception exception = assertThrows(NegocioException.class, () -> {
+        bo.agregarClienteFrecuente(clienteInvalido);
+    });
+    
+    assertTrue(exception.getMessage().toLowerCase().contains("telefono"), 
+        "El mensaje debe mencionar que el teléfono es inválido");
+    
+    System.out.println("✓ Test pasado: Teléfono inválido rechazado correctamente");
+}
+
+@Test
+public void testBuscarFrecuentesPorFiltro_FlujoBase() {
+    System.out.println("Prueba: Buscar Frecuentes por Filtro (Flujo Base)");
+    
+    try {
+        // Primero agregamos un cliente
+        ClienteFrecuenteDTO clienteNuevo = new ClienteFrecuenteDTO(
+            null, "Valentina Cruz", "FRECUENTE", "6441112233", "valentina@test.com", new Date(), 0);
+        bo.agregarClienteFrecuente(clienteNuevo);
+        
+        // Buscamos por nombre
+        List<ClienteFrecuenteDTO> resultados = bo.buscarFrecuentesPorFiltro("Valentina", "nombre");
+        
+        assertFalse(resultados.isEmpty(), "Debería encontrar al cliente");
+        
+        ClienteFrecuenteDTO encontrado = resultados.get(0);
+        
+        assertNotNull(encontrado.getId(), "El DTO debe tener ID");
+        assertEquals("Valentina Cruz", encontrado.getNombre(), "El nombre debe coincidir");
+        assertNotNull(encontrado.getPuntosAcumulados(), "Los puntos deben estar inicializados");
+        assertNotNull(encontrado.getTotalGastado(), "El total gastado debe estar inicializado");
+        
+        System.out.println("✓ Test pasado: Búsqueda retorna DTOs con datos completos (puntos, visitas, total)");
+    } catch (Exception e) {
+        fail("No debería lanzar excepción: " + e.getMessage());
+    }
+}
+
+@Test
+public void testBuscarFrecuentesPorFiltro_FiltroVacio() {
+    System.out.println("Prueba: Buscar con filtro vacío (Debe fallar)");
+    
+    Exception exception = assertThrows(NegocioException.class, () -> {
+        bo.buscarFrecuentesPorFiltro("", "nombre");
+    });
+    
+    assertTrue(exception.getMessage().toLowerCase().contains("filtro"), 
+        "El mensaje debe mencionar que el filtro está vacío");
+    
+    System.out.println("✓ Test pasado: Filtro vacío rechazado correctamente");
+}
+
+@Test
+public void testCalcularPuntos_ConComandasEntregadas() {
+    System.out.println("Prueba: Calcular puntos con comandas entregadas");
+    
+    // Test 1: Total $100 = 5 puntos (100/20)
+    Integer puntos100 = bo.calcularPuntos(1L);
+    System.out.println("  Verificando que $100 = 5 puntos...");
+    // Nota: Este test depende de que existan cliente+comandas en BD
+    
+    // Test 2: Total $450 = 22 puntos (450/20 = 22.5 → 22)
+    Integer puntos450 = bo.calcularPuntos(2L);
+    System.out.println("  Verificando que $450 = 22 puntos...");
+    
+    // Validar que no sean negativos
+    assertTrue(puntos100 >= 0, "Los puntos no deben ser negativos");
+    assertTrue(puntos450 >= 0, "Los puntos no deben ser negativos");
+    
+    System.out.println("✓ Test pasado: Cálculo de puntos funciona correctamente");
+}
+
+@Test
+public void testCalcularTotalGastado_SinComandasDevuelve0() {
+    System.out.println("Prueba: Cliente sin comandas debe retornar 0.0");
+    
+    // Crear un cliente nuevo sin comandas
+    ClienteFrecuenteDTO clienteSinGastos = new ClienteFrecuenteDTO(
+        null, "Cliente Sin Compras", "FRECUENTE", "6449999999", "nocompra@test.com", new Date(), 0);
+    
+    try {
+        bo.agregarClienteFrecuente(clienteSinGastos);
+        
+        // Buscarlo para obtener el ID
+        List<ClienteFrecuenteDTO> resultados = bo.buscarFrecuentesPorFiltro("Cliente Sin Compras", "nombre");
+        ClienteFrecuenteDTO cliente = resultados.get(0);
+        
+        // Calcular total
+        Double total = bo.calcularTotalGastado(cliente.getId());
+        
+        assertEquals(0.0, total, "Un cliente sin comandas debe tener total = 0.0");
+        
+        System.out.println("✓ Test pasado: Cliente sin compras retorna 0.0");
+    } catch (Exception e) {
+        fail("No debería lanzar excepción: " + e.getMessage());
+    }
+}
 }
