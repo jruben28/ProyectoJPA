@@ -12,6 +12,6 @@ import excepciones.NegocioException;
  * @author joser
  */
 public interface IComandaBO {
-    public ComandaDTO agregarComanda() throws NegocioException;
+    public void agregarComanda(ComandaDTO comandaDTO) throws NegocioException;
     
 }
