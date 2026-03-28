@@ -125,10 +125,10 @@ public class ClienteDAO implements IClienteDAO {
 
         try {
             String jpql = "SELECT c FROM Comanda c "
-                    + "WHERE c.cliente.id = :id "
+                    + "WHERE c.idCliente = :id AND c.estado = :estado "
                     + "AND c.estado = :estado";
             return em.createQuery(jpql, Comanda.class).setParameter("id", idCliente)
-                    .setParameter("estado", EstadoComanda.ENTREGADA).getResultList();
+                    .setParameter("estado", "ENTREGADA").getResultList();
 
         } catch (Exception e) {
             LOG.warning("Se produjo un error al buscar las comandas del cliente con ID: " + idCliente);
