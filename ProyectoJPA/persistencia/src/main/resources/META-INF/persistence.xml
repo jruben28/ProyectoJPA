@@ -6,6 +6,7 @@
     <class>Entidades.ClienteFrecuente</class>
     <class>Entidades.ClienteGeneral</class>
     <class>Entidades.Comanda</class>
+    <class>Entidades.Combo</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/comandas?zeroDateTimeBehavior=CONVERT_TO_NULL"/>
       <property name="javax.persistence.jdbc.user" value="root"/>
