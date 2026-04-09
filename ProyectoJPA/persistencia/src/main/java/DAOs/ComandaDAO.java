@@ -4,8 +4,9 @@
  */
 package DAOs;
 
-import Conexion.ConexionBD;
-import Entidades.Comanda;
+import interfaces.IComandaDAO;
+import conexion.ConexionBD;
+import entidades.Comanda;
 import excepciones.PersistenciaException;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;

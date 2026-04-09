@@ -4,7 +4,7 @@
  */
 package adaptadores;
 
-import Entidades.Comanda;
+import entidades.Comanda;
 import com.dtos.ComandaDTO;
 
 /**

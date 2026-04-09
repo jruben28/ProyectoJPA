@@ -4,8 +4,8 @@
  */
 
 import BOs.ClienteBO;
-import Conexion.ConexionBD;
-import Entidades.Comanda;
+import conexion.ConexionBD;
+import entidades.Comanda;
 import javax.persistence.EntityManager;
 import com.dtos.ClienteFrecuenteDTO;
 import excepciones.NegocioException;

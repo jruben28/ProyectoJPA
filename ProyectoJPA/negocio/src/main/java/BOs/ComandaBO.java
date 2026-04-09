@@ -5,8 +5,8 @@
 package BOs;
 
 import DAOs.ComandaDAO;
-import DAOs.IComandaDAO;
-import Entidades.Comanda;
+import interfaces.IComandaDAO;
+import entidades.Comanda;
 import adaptadores.ComandaAdapter;
 import com.dtos.ComandaDTO;
 import excepciones.NegocioException;

@@ -2,7 +2,7 @@ package com.presentacion;
 
 import BOs.ClienteBO;
 import BOs.IClienteBO;
-import Entidades.Comanda;
+import entidades.Comanda;
 import com.dtos.ClienteFrecuenteDTO;
 import excepciones.NegocioException;
 

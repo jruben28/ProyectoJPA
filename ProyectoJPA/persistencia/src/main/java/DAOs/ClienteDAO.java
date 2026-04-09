@@ -8,12 +8,13 @@ package DAOs;
  *
  * @author icoro
  */
+import interfaces.IClienteDAO;
 import javax.persistence.criteria.Expression;
-import Conexion.ConexionBD;
-import Entidades.Cliente;
-import Entidades.ClienteFrecuente;
-import Entidades.ClienteGeneral;
-import Entidades.Comanda;
+import conexion.ConexionBD;
+import entidades.Cliente;
+import entidades.ClienteFrecuente;
+import entidades.ClienteGeneral;
+import entidades.Comanda;
 import excepciones.PersistenciaException;
 import java.util.List;
 import java.util.logging.Logger;

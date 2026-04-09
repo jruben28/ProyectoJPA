@@ -12,11 +12,11 @@ import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import Conexion.ConexionBD;
+import conexion.ConexionBD;
 import DAOs.ClienteDAO;
-import Entidades.ClienteFrecuente;
-import Entidades.ClienteGeneral;
-import Entidades.Comanda;
+import entidades.ClienteFrecuente;
+import entidades.ClienteGeneral;
+import entidades.Comanda;
 
 public class ClienteDAOTest {
 

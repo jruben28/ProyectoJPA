@@ -4,7 +4,7 @@
  */
 package BOs;
 
-import Entidades.Comanda;
+import entidades.Comanda;
 import com.dtos.ClienteFrecuenteDTO;
 import excepciones.NegocioException;
 import java.util.List;

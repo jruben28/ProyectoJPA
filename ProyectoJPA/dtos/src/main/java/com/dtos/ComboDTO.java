@@ -5,8 +5,8 @@
 package com.dtos;
 
 /**
- *
- * @author keppler
+ * Clase de transferencia de datos de la entidad Combo
+ * @author Adrian Mendoza
  */
 public class ComboDTO {
     private String nombre; 
