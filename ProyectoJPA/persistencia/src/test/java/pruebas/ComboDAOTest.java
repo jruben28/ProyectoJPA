@@ -10,6 +10,7 @@ import entidades.Combo;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+
 /**
  * Test de ComboDAO 
  * @author Adrian Mendoza
@@ -32,8 +33,57 @@ public class ComboDAOTest {
         assertEquals(combo.getNombre(),resultado.getNombre());
         assertEquals(combo.getDescripcion(),resultado.getDescripcion());
         assertEquals(combo.getPrecioOriginal(), resultado.getPrecioOriginal());
-        
+        assertEquals(combo.getPorcentajeDescuento(),resultado.getPorcentajeDescuento());
+        assertTrue(resultado.getActivo());
     }
     
-
+   @Test
+   public void testAgregarComboConDescripcionVacia()throws PersistenciaException{
+       ComboDAO dao=new ComboDAO();
+       Combo combo= new Combo("Combo descripcion vacia","",50.0,40.0,20);
+       
+       Combo resultado= dao.agregarCombo(combo);
+       assertNotNull(resultado);
+       assertNotNull(resultado.getId());
+       assertEquals(combo.getNombre(),resultado.getNombre());
+       assertEquals(combo.getDescripcion(),resultado.getDescripcion());
+       assertEquals(combo.getPrecioOriginal(), resultado.getPrecioOriginal());
+       assertEquals(combo.getPorcentajeDescuento(),resultado.getPorcentajeDescuento());
+       assertTrue(resultado.getActivo());
+       
+   }
+   
+   @Test 
+   public void testAgregarComboConDescripcionNula(){
+       ComboDAO dao=new ComboDAO();
+       Combo combo= new Combo("Combo descripcion nula",null,50.0,40.0,20);
+       
+       Combo resultado = dao.agregarCombo(combo);
+       assertNotNull(resultado);
+       assertNotNull(resultado.getId());
+       assertEquals(combo.getNombre(), resultado.getNombre());
+       assertEquals(combo.getDescripcion(), resultado.getDescripcion());
+       assertEquals(combo.getPrecioOriginal(), resultado.getPrecioOriginal());
+       assertEquals(combo.getPorcentajeDescuento(), resultado.getPorcentajeDescuento());
+       assertTrue(resultado.getActivo());
+       
+   }
+  @Test 
+  public void testAgregarComboConNombreNulo(){
+    ComboDAO dao=new ComboDAO();
+    Combo combo= new Combo(null,"Combo con nombre nulo",50.0,40.0,20);
+    
+    assertThrows(PersistenciaException.class,()->dao.agregarCombo(combo));
+}
+  
+ @Test 
+ public void testAgregarComboConPreciosCero(){
+      ComboDAO dao=new ComboDAO();
+      Combo combo= new Combo("Combo con precios 0",null,0.0,0.0,20);
+      
+      Combo resultado = dao.agregarCombo(combo);
+      assertNotNull(resultado);
+      assertEquals(combo.getPrecioOriginal(), resultado.getPrecioOriginal());
+      assertEquals(combo.getPrecioCombo(),resultado.getPrecioCombo());
+ } 
 }

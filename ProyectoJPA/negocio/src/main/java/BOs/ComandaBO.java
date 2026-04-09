@@ -4,6 +4,7 @@
  */
 package BOs;
 
+import interfaces.IComandaBO;
 import DAOs.ComandaDAO;
 import interfaces.IComandaDAO;
 import entidades.Comanda;

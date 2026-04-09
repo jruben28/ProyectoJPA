@@ -4,6 +4,7 @@
  */
 package BOs;
 
+import interfaces.IClienteBO;
 import DAOs.ClienteDAO;
 import interfaces.IClienteDAO;
 import entidades.ClienteFrecuente;

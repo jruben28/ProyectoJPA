@@ -6,8 +6,8 @@ package pruebas;
 
 import BOs.ClienteBO;
 import BOs.ComandaBO;
-import BOs.IClienteBO;
-import BOs.IComandaBO;
+import interfaces.IClienteBO;
+import interfaces.IComandaBO;
 import com.dtos.ClienteFrecuenteDTO;
 import com.dtos.ComandaDTO;
 import java.util.Date;
