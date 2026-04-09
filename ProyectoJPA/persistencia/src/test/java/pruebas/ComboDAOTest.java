@@ -31,7 +31,6 @@ public class ComboDAOTest {
         assertEquals(combo.getId(), resultado.getId());
         assertEquals(combo.getNombre(),resultado.getNombre());
         assertEquals(combo.getDescripcion(),resultado.getDescripcion());
-        assertEquals(combo.getDescripcion(), resultado.getDescripcion());
         assertEquals(combo.getPrecioOriginal(), resultado.getPrecioOriginal());
         
     }
