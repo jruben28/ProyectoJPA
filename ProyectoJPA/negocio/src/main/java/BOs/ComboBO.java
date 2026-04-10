@@ -69,7 +69,6 @@ public class ComboBO implements IComboBO{
     throw new NegocioException("Error al agregar el combo mediante persistencia");
     
     
-}finally{    
 }
 }
 }
