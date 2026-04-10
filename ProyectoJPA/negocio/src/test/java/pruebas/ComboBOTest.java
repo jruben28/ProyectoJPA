@@ -21,7 +21,7 @@ public class ComboBOTest {
  @Test
  public void testAgregarComboExito(){
      ComboBO bo= new ComboBO();
-     ComboDTO dto= new ComboDTO("Combo de prueba","Descripcccion",100.0,80.00,20);
+     ComboDTO dto= new ComboDTO("Combo de prueba","Descripcion",100.0,80.00,20);
      Combo resultado=bo.agregarCombo(dto);
      
      assertNotNull(resultado);

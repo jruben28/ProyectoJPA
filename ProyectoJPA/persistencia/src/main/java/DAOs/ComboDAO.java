@@ -26,6 +26,9 @@ public class ComboDAO implements IComboDAO {
           LOG.info("Se agrego un combo con ID: "+combo.getId());
           return combo;
       }catch(RuntimeException ex){
+          if(em.getTransaction().isActive()){
+              em.getTransaction().rollback();
+          }
           LOG.warning("Error al agregar un combo");
           throw new PersistenciaException("Error al agregar un combo");
       }finally{

@@ -42,6 +42,10 @@ public class ComboBO implements IComboBO{
             LOG.warning("Nombre del combo vacío o nulo");
             throw new NegocioException("El nombre del combo no puede estar vacio o nulo");
         }
+        if(comboDTO.getActivo()==null){
+            LOG.warning("Cambio del atributo activo de null a true");
+            comboDTO.setActivo(true);
+        }
         if(comboDTO.getPrecioOriginal()==null||
            comboDTO.getPrecioOriginal()<0){
             LOG.warning("Precio original negativo o nulo");
