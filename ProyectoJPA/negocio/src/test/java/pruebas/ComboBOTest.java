@@ -109,4 +109,17 @@ public class ComboBOTest {
     assertNotNull(resultado);
     assertNotNull(resultado.getId());
  }
+ 
+  @Test
+  public void testCrearComboConMenosDosProductos()throws NegocioException{
+    ComboBO bo = new ComboBO();
+    ComboDTO dto = new ComboDTO("combo", "descripcion", 100.0, 80.0, 20);
+    List<Long> idProductos = Arrays.asList(1L);  
+    List<Integer> cantidades = Arrays.asList(1);
+    
+    
+      assertThrows(NegocioException.class, 
+       ()->bo.crearComboConProductos(dto, idProductos, cantidades));
+    
+  } 
 }
