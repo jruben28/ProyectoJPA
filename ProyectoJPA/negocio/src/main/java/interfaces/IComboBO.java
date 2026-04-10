@@ -5,6 +5,7 @@
 package interfaces;
 
 import com.dtos.ComboDTO;
+import entidades.Combo;
 import excepciones.NegocioException;
 
 /**
@@ -12,5 +13,5 @@ import excepciones.NegocioException;
  * @author Adrian Mendoza
  */
 public interface IComboBO {
-    public void agregarCombo(ComboDTO comboDTO) throws NegocioException;
+    public Combo agregarCombo(ComboDTO comboDTO) throws NegocioException;
 }

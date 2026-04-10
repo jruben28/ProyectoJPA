@@ -31,7 +31,7 @@ public class ComboBO implements IComboBO{
  * @throws NegocioException 
  */
     @Override
-    public void agregarCombo(ComboDTO comboDTO) throws NegocioException {
+    public Combo agregarCombo(ComboDTO comboDTO) throws NegocioException {
    try{
         if(comboDTO==null){
             LOG.warning("ComboDTO nulo");
@@ -63,6 +63,7 @@ public class ComboBO implements IComboBO{
         Combo combo=ComboAdapter.dtoAEntidad(comboDTO);
         comboDAO.agregarCombo(combo);
         LOG.info("Combo agregado exitosamente, nombre y id: "+combo.getNombre()+","+combo.getId());
+        return combo;
     }catch(PersistenciaException ex){
     LOG.warning("Error de persistencia al agregar el combo "+ex.getMessage());
     throw new NegocioException("Error al agregar el combo mediante persistencia");
