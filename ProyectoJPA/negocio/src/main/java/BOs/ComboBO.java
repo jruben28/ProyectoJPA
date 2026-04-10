@@ -105,6 +105,10 @@ public class ComboBO implements IComboBO{
     @Override
     public Combo actualizarComboPorId(Long id,ComboDTO comboDTO) throws NegocioException {
       try{
+          if(id==null||id<1){
+            LOG.warning("Id invalido");
+            throw new NegocioException("No se puede actualizar con id invalido");
+          }
           if(comboDTO==null){
            LOG.warning("ComboDTO nulo");
            throw new NegocioException("El combo es nulo");

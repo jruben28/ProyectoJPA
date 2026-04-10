@@ -140,4 +140,38 @@ public class ComboBOTest {
    assertEquals(dtoActualizar.getPrecioCombo(), resultado.getPrecioCombo());
    assertEquals(dtoActualizar.getPorcentajeDescuento(), resultado.getPorcentajeDescuento());
  }
+ 
+  @Test
+  public void testActualizarComboIdNulo()throws NegocioException{
+    ComboBO bo = new ComboBO();
+    ComboDTO dto = new ComboDTO("Combo", "Desc", 100.0, 80.0, 20);
+    
+    assertThrows(NegocioException.class, () -> bo.actualizarComboPorId(null, dto));
+  }
+  
+  @Test
+  public void testActualizarComboDtoNulo() throws NegocioException {
+    ComboBO bo = new ComboBO();
+    
+    assertThrows(NegocioException.class, () -> bo.actualizarComboPorId(1L, null));
+    }
+  
+  @Test
+  public void testActualizarComboNombreVacio() throws NegocioException {
+    ComboBO bo = new ComboBO();
+    ComboDTO dtoOriginal = new ComboDTO("combo", "descripcion", 100.0, 80.0, 20);
+    Combo agregado = bo.agregarCombo(dtoOriginal);
+    ComboDTO dtoConNombreVacio = new ComboDTO("", "Nuevo", 100.0, 80.0, 20);
+  
+    assertThrows(NegocioException.class, () -> bo.actualizarComboPorId(agregado.getId(), dtoConNombreVacio));
+}
+  @Test
+  public void testActualizarComboPrecioOriginalNegativo() throws NegocioException {
+   ComboBO bo = new ComboBO();
+   ComboDTO dtoOriginal = new ComboDTO("Original", "Desc", 100.0, 80.0, 20);
+   Combo agregado = bo.agregarCombo(dtoOriginal);
+   ComboDTO dtoConPrecioNegativo = new ComboDTO("Nuevo", "Desc", 100.0, -80.0, 20);
+
+    assertThrows(NegocioException.class, () -> bo.actualizarComboPorId(agregado.getId(), dtoConPrecioNegativo));
+}
 }
