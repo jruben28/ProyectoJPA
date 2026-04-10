@@ -4,9 +4,13 @@
  */
 package DAOs;
 
+import conexion.ConexionBD;
 import entidades.ComboProducto;
 import excepciones.PersistenciaException;
 import interfaces.IComboProductoDAO;
+import java.util.logging.Logger;
+import javax.persistence.EntityManager;
+import conexion.ConexionBD;
 
 /**
  * Implementación de la interfaz de IComboProductoDAO
@@ -14,9 +18,28 @@ import interfaces.IComboProductoDAO;
  */
 public class ComboProductoDAO implements IComboProductoDAO{
 
+    private static final Logger LOG = Logger.getLogger(ComboProductoDAO.class.getName());
+    
     @Override
     public ComboProducto agregar(ComboProducto comboProducto) throws PersistenciaException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    EntityManager em= ConexionBD.crearConexion();
+        try{
+            em.getTransaction().begin();
+            em.persist(comboProducto);
+            em.getTransaction().commit();
+            LOG.info("ComboProducto agregado con el ID:"+comboProducto);
+            return comboProducto;
+        } catch(RuntimeException ex){
+            if(em.getTransaction().isActive()){
+                em.getTransaction().rollback();
+            }
+            LOG.warning("Error al agregar un ComboProducto: "+ex.getMessage());
+            throw new PersistenciaException("Error al agregar un ComboProducto");
+        }finally{
+            em.close();
+        }
+            
+        
     }
     
 }
