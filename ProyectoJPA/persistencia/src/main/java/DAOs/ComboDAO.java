@@ -7,6 +7,7 @@ import conexion.ConexionBD;
 import entidades.Combo;
 import excepciones.PersistenciaException;
 import interfaces.IComboDAO;
+import java.util.List;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 /**
@@ -55,5 +56,11 @@ public class ComboDAO implements IComboDAO {
             em.close();
         }
     }
+
+    @Override
+    public boolean estaRepetido(List<Long> idProductos, List<Integer> cantidades) throws PersistenciaException {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+    
     
 }

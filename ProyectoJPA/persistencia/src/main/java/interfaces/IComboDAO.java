@@ -6,6 +6,7 @@ package interfaces;
 
 import excepciones.PersistenciaException;
 import entidades.Combo;
+import java.util.List;
 /**
  * Interfaz para las operaciones de Combo
  * @author Adrian Mendoza
@@ -15,4 +16,6 @@ public interface IComboDAO {
     public Combo agregarCombo(Combo combo) throws PersistenciaException;
     
     public Combo actualizarCombo(Combo combo) throws PersistenciaException;
+    
+    public boolean estaRepetido(List<Long> idProductos, List<Integer> cantidades)throws PersistenciaException;
 }
