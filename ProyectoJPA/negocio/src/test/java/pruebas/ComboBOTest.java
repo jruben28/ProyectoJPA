@@ -7,6 +7,7 @@ package pruebas;
 import BOs.ComboBO;
 import com.dtos.ComboDTO;
 import entidades.Combo;
+import excepciones.NegocioException;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,7 +20,7 @@ public class ComboBOTest {
     public ComboBOTest() {
     }
  @Test
- public void testAgregarComboExito(){
+ public void testAgregarComboExito()throws NegocioException{
      ComboBO bo= new ComboBO();
      ComboDTO dto= new ComboDTO("Combo de prueba","Descripcion",100.0,80.00,20);
      Combo resultado=bo.agregarCombo(dto);
@@ -33,4 +34,66 @@ public class ComboBOTest {
      assertEquals(dto.getPrecioCombo(),resultado.getPrecioCombo());
      assertTrue(resultado.getActivo());
  }
+ 
+ @Test
+ public void testAgregarComboDtoNulo()throws NegocioException{
+     ComboBO bo=new ComboBO();
+     
+     assertThrows(NegocioException.class,()->bo.agregarCombo(null));
+ }
+ 
+ @Test
+ public void testAgregarComboNombreVacio()throws NegocioException{
+     ComboBO bo=new ComboBO();
+     ComboDTO dto= new ComboDTO("","Descripcion",100.0,80.0,20);
+     
+     assertThrows(NegocioException.class,()->bo.agregarCombo(dto));
+     
+}
+ 
+ @Test
+ public void testAgregarComboNombreNulo()throws NegocioException{
+     ComboBO bo=new ComboBO();
+     ComboDTO dto= new ComboDTO(null,"Descripcion",100.0,80.0,20);
+     
+     assertThrows(NegocioException.class,()->bo.agregarCombo(dto));
+ }
+ 
+ @Test
+ public void testAgregarComboPrecioComboNegativo()throws NegocioException{
+     ComboBO bo=new ComboBO();
+     ComboDTO dto= new ComboDTO("d","Descripcion",100.0,-80.0,20);
+     
+     assertThrows(NegocioException.class,()->bo.agregarCombo(dto));
+ }
+ 
+ @Test
+ public void testAgregarComboPrecioOriginalNegativo()throws NegocioException{
+     ComboBO bo=new ComboBO();
+     ComboDTO dto= new ComboDTO("d","Descripcion",-100.0,80.0,20);
+     
+     assertThrows(NegocioException.class,()->bo.agregarCombo(dto));
+ }
+
+ @Test 
+ public void testAgregarComboDescuentoFueraLimites()throws NegocioException{
+     ComboBO bo=new ComboBO();
+     ComboDTO dto= new ComboDTO("d","Descripcion",100.0,80.0,101);
+     ComboDTO dto2= new ComboDTO("d","Descripcion",100.0,80.0,-1);
+     
+     assertThrows(NegocioException.class,()->bo.agregarCombo(dto));
+     assertThrows(NegocioException.class,()->bo.agregarCombo(dto2));
+ }
+ 
+    @Test
+    public void testAgregarComboConActivoNulo() throws NegocioException {
+        ComboBO bo = new ComboBO();
+        ComboDTO dto = new ComboDTO("d", "Descripcion", 100.0, 80.0, 20);
+        dto.setActivo(null);
+
+        Combo resultado = bo.agregarCombo(dto);
+
+        assertNotNull(resultado);
+        assertTrue(resultado.getActivo());
+    }
 }
