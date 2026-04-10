@@ -17,4 +17,6 @@ public interface IComboBO {
     public Combo agregarCombo(ComboDTO comboDTO) throws NegocioException;
     
     public Combo crearComboConProductos(ComboDTO dto, List<Long>idProductos,List<Integer> cantidades)throws NegocioException;
+    
+    public Combo actualizarCombo(ComboDTO comboDTO) throws NegocioException;
 }

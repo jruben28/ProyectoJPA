@@ -101,4 +101,9 @@ public class ComboBO implements IComboBO{
         throw new NegocioException("Error al crear combo con productos");
     }
     }
+
+    @Override
+    public Combo actualizarCombo(ComboDTO comboDTO) throws NegocioException {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }
