@@ -8,6 +8,8 @@ import BOs.ComboBO;
 import com.dtos.ComboDTO;
 import entidades.Combo;
 import excepciones.NegocioException;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -90,10 +92,21 @@ public class ComboBOTest {
         ComboBO bo = new ComboBO();
         ComboDTO dto = new ComboDTO("d", "Descripcion", 100.0, 80.0, 20);
         dto.setActivo(null);
-
         Combo resultado = bo.agregarCombo(dto);
 
         assertNotNull(resultado);
         assertTrue(resultado.getActivo());
     }
+    
+ @Test
+ public void testCrearComboConProductosExito()throws NegocioException{
+     ComboBO bo=new ComboBO();
+     ComboDTO dto= new ComboDTO("El mejor combo del mundo","Descripcion chila",100.0,80.0,20);
+     List<Long> idProductos = Arrays.asList(1L, 2L);
+     List<Integer> cantidades = Arrays.asList(1, 2);
+     Combo resultado = bo.crearComboConProductos(dto, idProductos, cantidades);
+    
+    assertNotNull(resultado);
+    assertNotNull(resultado.getId());
+ }
 }

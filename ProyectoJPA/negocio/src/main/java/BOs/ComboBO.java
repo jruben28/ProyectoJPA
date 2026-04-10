@@ -5,13 +5,17 @@
 package BOs;
 
 import DAOs.ComboDAO;
+import DAOs.ComboProductoDAO;
 import adaptadores.ComboAdapter;
 import com.dtos.ComboDTO;
 import entidades.Combo;
+import entidades.ComboProducto;
 import excepciones.NegocioException;
 import excepciones.PersistenciaException;
 import interfaces.IComboBO;
 import interfaces.IComboDAO;
+import interfaces.IComboProductoDAO;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -20,10 +24,12 @@ import java.util.logging.Logger;
  */
 public class ComboBO implements IComboBO{
   private IComboDAO comboDAO;
+  private IComboProductoDAO comboProductoDAO;
   private static final Logger LOG= Logger.getLogger(ComboBO.class.getName());
   
   public ComboBO(){
       this.comboDAO=new ComboDAO();
+      this.comboProductoDAO=new ComboProductoDAO();
   }
 /**
  * Validaciones al agregar un comboDTO.  
@@ -75,4 +81,24 @@ public class ComboBO implements IComboBO{
     
 }
 }
+
+    @Override
+    public Combo crearComboConProductos(ComboDTO dto, List<Long> idProductos,List<Integer> cantidades) throws NegocioException {
+      try {
+        if(idProductos == null || idProductos.size() < 2) {
+          LOG.warning("Error al crear el combo, tiene menos de 2 productos");
+          throw new NegocioException("El combo al menos debe tener 2 productos asociados");
+   }    Combo combo = ComboAdapter.dtoAEntidad(dto);
+        Combo agregado = comboDAO.agregarCombo(combo);
+        for(int i = 0; i < idProductos.size(); i++) {
+            ComboProducto comboP = new ComboProducto(agregado.getId(), idProductos.get(i), cantidades.get(i));
+            comboProductoDAO.agregar(comboP);
+        }
+        LOG.info("Combo con productos creado " + agregado.getNombre());
+        return agregado;
+        } catch(PersistenciaException ex) {
+        LOG.warning("Error de persistencia "+ex.getMessage());
+        throw new NegocioException("Error al crear combo con productos");
+    }
+    }
 }

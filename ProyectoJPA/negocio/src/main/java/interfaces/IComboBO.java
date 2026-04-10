@@ -7,6 +7,7 @@ package interfaces;
 import com.dtos.ComboDTO;
 import entidades.Combo;
 import excepciones.NegocioException;
+import java.util.List;
 
 /**
  * Interfaz para las operaciones de negocio de Combo
@@ -14,4 +15,6 @@ import excepciones.NegocioException;
  */
 public interface IComboBO {
     public Combo agregarCombo(ComboDTO comboDTO) throws NegocioException;
+    
+    public Combo crearComboConProductos(ComboDTO dto, List<Long>idProductos,List<Integer> cantidades)throws NegocioException;
 }
