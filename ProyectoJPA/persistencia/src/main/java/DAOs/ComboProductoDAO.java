@@ -4,7 +4,7 @@
  */
 package DAOs;
 
-import conexion.ConexionBD;
+
 import entidades.ComboProducto;
 import excepciones.PersistenciaException;
 import interfaces.IComboProductoDAO;

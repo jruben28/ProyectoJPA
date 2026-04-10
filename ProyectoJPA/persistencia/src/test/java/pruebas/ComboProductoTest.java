@@ -8,7 +8,7 @@ import DAOs.ComboProductoDAO;
 import entidades.ComboProducto;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-
+import excepciones.PersistenciaException;
 /**
  * Clase de prueba para ComboProductoDAO
  * @author keppler
@@ -19,7 +19,7 @@ public class ComboProductoTest {
     }
     
     @Test
-    public void testAgregarComboProductoExito(){
+    public void testAgregarComboProductoExito()throws PersistenciaException{
         ComboProductoDAO dao= new ComboProductoDAO();
         ComboProducto comboP= new ComboProducto(1L,1L,2);
         ComboProducto resultado = dao.agregar(comboP);
