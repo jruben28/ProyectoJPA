@@ -8,7 +8,7 @@ import com.dtos.ComboDTO;
 import entidades.Combo;
 
 /**
- * Adapter de Combo de DTO a entidad.
+ * Adapter de Combo de DTO a entidad, y de entidad a DTO
  * @author Adrian Mendoza 
  */
 public class ComboAdapter {
@@ -25,6 +25,19 @@ public class ComboAdapter {
         combo.setPorcentajeDescuento(dto.getPorcentajeDescuento());
         combo.setActivo(dto.getActivo());
         return combo;
+    }
+    public static ComboDTO entidadADTO(Combo combo){
+        if(combo==null){
+            return null;
+        }
+        ComboDTO dto = new ComboDTO();
+        dto.setNombre(combo.getNombre());
+        dto.setDescripcion(combo.getDescripcion());
+        dto.setPrecioCombo(combo.getPrecioCombo());
+        dto.setPrecioOriginal(combo.getPrecioOriginal());
+        dto.setPorcentajeDescuento(combo.getPorcentajeDescuento());
+        dto.setActivo(combo.getActivo());
+        return dto;
     }
     
 }

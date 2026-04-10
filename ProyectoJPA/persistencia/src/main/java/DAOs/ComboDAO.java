@@ -36,4 +36,24 @@ public class ComboDAO implements IComboDAO {
       }
     }
     
+    @Override
+    public Combo actualizarCombo(Combo combo) throws PersistenciaException {
+        EntityManager em = ConexionBD.crearConexion();
+        try {
+            em.getTransaction().begin();
+            em.merge(combo);
+            em.getTransaction().commit();
+            LOG.info("Combo actualizado con ID " + combo.getId());
+            return combo;
+        } catch (RuntimeException ex) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            LOG.warning("Error al actualizar combo");
+            throw new PersistenciaException("Error al actualizar combo");
+        } finally {
+            em.close();
+        }
+    }
+    
 }

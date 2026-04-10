@@ -13,4 +13,6 @@ import entidades.Combo;
 public interface IComboDAO {
     
     public Combo agregarCombo(Combo combo) throws PersistenciaException;
+    
+    public Combo actualizarCombo(Combo combo) throws PersistenciaException;
 }
