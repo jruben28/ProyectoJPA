@@ -43,7 +43,7 @@ public class ComboDAO implements IComboDAO {
             em.getTransaction().begin();
             em.merge(combo);
             em.getTransaction().commit();
-            LOG.info("Combo actualizado con ID " + combo.getId());
+            LOG.info("Combo actualizado con ID: " + combo.getId());
             return combo;
         } catch (RuntimeException ex) {
             if (em.getTransaction().isActive()) {

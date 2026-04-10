@@ -86,4 +86,28 @@ public class ComboDAOTest {
       assertEquals(combo.getPrecioOriginal(), resultado.getPrecioOriginal());
       assertEquals(combo.getPrecioCombo(),resultado.getPrecioCombo());
  } 
+
+ @Test
+ public void testActualizarComboExito() throws PersistenciaException {
+    ComboDAO dao = new ComboDAO();
+    Combo combo = new Combo("combo", "descripcion ", 100.0, 80.0, 20);
+    Combo agregado = dao.agregarCombo(combo);
+    agregado.setNombre("actualizado");
+    agregado.setDescripcion("actualizada");
+    agregado.setPrecioOriginal(150.0);
+    agregado.setActivo(false);
+    agregado.setPorcentajeDescuento(99);
+    agregado.setPrecioCombo(100.0);
+    Combo resultado=dao.actualizarCombo(agregado);
+    
+    assertNotNull(resultado);
+    assertEquals(agregado.getNombre(), resultado.getNombre());
+    assertEquals(agregado.getDescripcion(), resultado.getDescripcion());
+    assertEquals(agregado.getPrecioOriginal(), resultado.getPrecioOriginal());
+    assertEquals(agregado.getPrecioCombo(),resultado.getPrecioCombo());
+    assertEquals(agregado.getActivo(),resultado.getActivo());
+    assertEquals(agregado.getId(), resultado.getId());
+    
+    }
+ 
 }
