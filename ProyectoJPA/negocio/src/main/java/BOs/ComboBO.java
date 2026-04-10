@@ -103,7 +103,39 @@ public class ComboBO implements IComboBO{
     }
 
     @Override
-    public Combo actualizarCombo(ComboDTO comboDTO) throws NegocioException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public Combo actualizarComboPorId(Long id,ComboDTO comboDTO) throws NegocioException {
+      try{
+          if(comboDTO==null){
+           LOG.warning("ComboDTO nulo");
+           throw new NegocioException("El combo es nulo");
+          }
+          if(comboDTO.getNombre()==null||comboDTO.getNombre().trim().isEmpty()){
+           LOG.warning("Nombre del combo nulo o vacio");
+           throw new NegocioException("Nombre esta vacio o nulo");
+          }
+          if(comboDTO.getPrecioOriginal()==null||comboDTO.getPrecioOriginal()<0){
+           LOG.warning("Precio original vacio o nulo");
+           throw new NegocioException("Precio original vacio o nulo");
+          }
+          if(comboDTO.getPrecioCombo()==null||comboDTO.getPrecioCombo()<0){
+           LOG.warning("Precio de combo vacio o nulo");
+           throw new NegocioException("Precio de combo vacio o nulo");
+          }
+          if(comboDTO.getPorcentajeDescuento()==null||
+           comboDTO.getPorcentajeDescuento()<0||
+           comboDTO.getPorcentajeDescuento()>100){
+            LOG.warning("Porcentaje de descuento del combo fuera de limites o nulo");
+            throw new NegocioException("El porcentaje no es un valor entre 0 y 100");
+        }
+          Combo combo=ComboAdapter.dtoAEntidad(comboDTO);
+          combo.setId(id);
+          Combo actualizado= comboDAO.actualizarCombo(combo);
+          LOG.info("Combo actualizado con exito, nombre y id "+actualizado.getNombre()+" "+actualizado.getId());
+          return actualizado;
+      } catch (PersistenciaException ex) {
+        LOG.warning("Error de persistencia al actualizar combo " + ex.getMessage());
+        throw new NegocioException("Error al actualizar el combo mediante persistencia");
+    }
+       
     }
 }

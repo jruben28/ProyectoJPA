@@ -121,5 +121,23 @@ public class ComboBOTest {
       assertThrows(NegocioException.class, 
        ()->bo.crearComboConProductos(dto, idProductos, cantidades));
     
-  } 
+  }
+  
+ @Test
+ public void testActualizarComboExito() throws NegocioException {
+   ComboBO bo = new ComboBO();
+   ComboDTO dtoOriginal = new ComboDTO("Viejo", "Viejon", 100.0, 80.0, 20);
+   Combo agregado = bo.agregarCombo(dtoOriginal);
+   ComboDTO dtoActualizar = new ComboDTO("Nuevo", "Nuevon", 111.11, 88.88, 21);
+   Combo resultado = bo.actualizarComboPorId(agregado.getId(), dtoActualizar);
+    
+   assertNotNull(resultado);
+   assertNotNull(resultado.getId());
+   assertEquals(agregado.getId(), resultado.getId());
+   assertEquals(dtoActualizar.getNombre(), resultado.getNombre());
+   assertEquals(dtoActualizar.getDescripcion(), resultado.getDescripcion());
+   assertEquals(dtoActualizar.getPrecioOriginal(), resultado.getPrecioOriginal());
+   assertEquals(dtoActualizar.getPrecioCombo(), resultado.getPrecioCombo());
+   assertEquals(dtoActualizar.getPorcentajeDescuento(), resultado.getPorcentajeDescuento());
+ }
 }
