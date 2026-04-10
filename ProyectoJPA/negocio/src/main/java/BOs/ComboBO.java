@@ -89,8 +89,7 @@ public class ComboBO implements IComboBO{
           LOG.warning("Error al crear el combo, tiene menos de 2 productos");
           throw new NegocioException("El combo al menos debe tener 2 productos asociados");
    }    
-        Combo combo = ComboAdapter.dtoAEntidad(dto);
-        Combo agregado = comboDAO.agregarCombo(combo);
+        Combo agregado = this.agregarCombo(dto);
         for(int i = 0; i < idProductos.size(); i++) {
             ComboProducto comboP = new ComboProducto(agregado.getId(), idProductos.get(i), cantidades.get(i));
             comboProductoDAO.agregar(comboP);
