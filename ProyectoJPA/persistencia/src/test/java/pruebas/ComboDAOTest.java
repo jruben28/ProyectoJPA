@@ -54,7 +54,7 @@ public class ComboDAOTest {
    }
    
    @Test 
-   public void testAgregarComboConDescripcionNula(){
+   public void testAgregarComboConDescripcionNula()throws PersistenciaException{
        ComboDAO dao=new ComboDAO();
        Combo combo= new Combo("Combo descripcion nula",null,50.0,40.0,20);
        
@@ -69,7 +69,7 @@ public class ComboDAOTest {
        
    }
   @Test 
-  public void testAgregarComboConNombreNulo(){
+  public void testAgregarComboConNombreNulo()throws PersistenciaException{
     ComboDAO dao=new ComboDAO();
     Combo combo= new Combo(null,"Combo con nombre nulo",50.0,40.0,20);
     
@@ -77,7 +77,7 @@ public class ComboDAOTest {
 }
   
  @Test 
- public void testAgregarComboConPreciosCero(){
+ public void testAgregarComboConPreciosCero()throws PersistenciaException{
       ComboDAO dao=new ComboDAO();
       Combo combo= new Combo("Combo con precios 0",null,0.0,0.0,20);
       

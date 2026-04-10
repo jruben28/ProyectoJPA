@@ -4,10 +4,13 @@
  */
 package interfaces;
 
+import com.dtos.ComboDTO;
+import excepciones.NegocioException;
+
 /**
- *
- * @author keppler
+ * Interfaz para las operaciones de negocio de Combo
+ * @author Adrian Mendoza
  */
 public interface IComboBO {
-    
+    public void agregarCombo(ComboDTO comboDTO) throws NegocioException;
 }
