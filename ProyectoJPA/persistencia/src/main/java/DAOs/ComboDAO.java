@@ -77,57 +77,7 @@ public class ComboDAO implements IComboDAO {
         }
     }
 
-    /**
-     * Comprueba si existe un duplicado de combos.
-     *
-     * @param idProductos
-     * @param cantidades
-     * @return
-     * @throws PersistenciaException
-     */
-    @Override
-    public boolean estaRepetido(List<Long> idProductos, List<Integer> cantidades) throws PersistenciaException {
-        EntityManager em = ConexionBD.crearConexion();
-        try {
-            List<Long> candidatos = em.createQuery(
-                    "SELECT cp.combo.id FROM ComboProducto cp "
-                    + "GROUP BY cp.combo.id HAVING COUNT(cp.id) = :cantidad", Long.class)
-                    .setParameter("cantidad", (long) idProductos.size())
-                    .getResultList();
-
-            if (candidatos.isEmpty()) {
-                return false;
-            }
-
-            for (Long idCombo : candidatos) {
-                List<ComboProducto> productos = em.createQuery(
-                        "SELECT cp FROM ComboProducto cp WHERE cp.combo.id = :id ORDER BY cp.idProducto",
-                        ComboProducto.class)
-                        .setParameter("id", idCombo)
-                        .getResultList();
-
-                boolean igual = true;
-                for (int i = 0; i < idProductos.size(); i++) {
-                    if (!productos.get(i).getIdProducto().equals(idProductos.get(i))
-                            || !productos.get(i).getCantidad().equals(cantidades.get(i))) {
-                        igual = false;
-                        break;
-                    }
-                }
-                if (igual) {
-                    return true;
-                }
-            }
-            return false;
-
-        } catch (RuntimeException ex) {
-            LOG.warning("Error al verificar duplicado: " + ex.getMessage());
-            throw new PersistenciaException("Error al verificar duplicado");
-        } finally {
-            em.close();
-        }
-    }
-
+    
     @Override
     public List<Combo> obtenerTodosCombos() throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();

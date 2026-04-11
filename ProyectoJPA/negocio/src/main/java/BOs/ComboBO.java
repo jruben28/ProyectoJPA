@@ -17,6 +17,7 @@ import interfaces.IComboDAO;
 import interfaces.IComboProductoDAO;
 import java.util.List;
 import java.util.logging.Logger;
+import entidades.Combo;
 
 /**
  * Implementacion de la interfaz IComboBO
@@ -65,7 +66,7 @@ public Combo crearComboConProductos(ComboDTO dto, List<Long> idProductos, List<I
             LOG.warning("Error al crear el combo, tiene menos de 2 productos");
             throw new NegocioException("El combo al menos debe tener 2 productos asociados");
         }    
-        if(comboDAO.estaRepetido(idProductos, cantidades)) {
+        if(this.estaRepetido(idProductos, cantidades)) {
             LOG.warning("Intento de crear combo duplicado");
             throw new NegocioException("Ya existe un combo con esta misma combinación de productos");
         }
@@ -133,6 +134,30 @@ public Combo crearComboConProductos(ComboDTO dto, List<Long> idProductos, List<I
            comboDTO.getPorcentajeDescuento() > 100) {
             LOG.warning("Porcentaje de descuento del combo fuera de límites o nulo");
             throw new NegocioException("El porcentaje no es un valor entre 0 y 100");
+        }
+    }
+       private boolean estaRepetido(List<Long> idProductos, List<Integer> cantidades) throws NegocioException {
+        try {
+          List<Combo> todos = comboDAO.obtenerTodosCombos();
+          for (Combo combo : todos) {
+              List<ComboProducto> productos = combo.getProductos();
+             if (productos.size() != idProductos.size()) {
+               continue;
+                }
+             boolean igual = true;
+             for (int i = 0; i < idProductos.size(); i++) {
+                    if (!productos.get(i).getIdProducto().equals(idProductos.get(i)) ||
+                        !productos.get(i).getCantidad().equals(cantidades.get(i))) {
+                        igual = false;
+                        break;
+                }  }
+                   if (igual) {
+                    return true;
+                }
+            }
+        return false;  } catch (PersistenciaException ex) {
+            LOG.warning("Error al verificar duplicado: " + ex.getMessage());
+            throw new NegocioException("Error al verificar duplicado");
         }
     }
 }
