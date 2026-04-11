@@ -2,11 +2,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
  */
-package DAOs;
-import Entidades.Comanda;
-import Entidades.Cliente;
-import Entidades.ClienteFrecuente;
-import Entidades.ClienteGeneral;
+package interfaces;
+import entidades.Comanda;
+import entidades.Cliente;
+import entidades.ClienteFrecuente;
+import entidades.ClienteGeneral;
 import excepciones.PersistenciaException;
 import java.util.List;
 

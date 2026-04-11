@@ -1,11 +1,13 @@
+package pruebas;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/UnitTests/JUnit5TestClass.java to edit this template
  */
 
 import BOs.ClienteBO;
-import Conexion.ConexionBD;
-import Entidades.Comanda;
+import conexion.ConexionBD;
+import entidades.Comanda;
 import javax.persistence.EntityManager;
 import com.dtos.ClienteFrecuenteDTO;
 import excepciones.NegocioException;

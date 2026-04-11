@@ -2,12 +2,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
  */
-package pruebas;
+package inserts;
 
 import BOs.ClienteBO;
 import BOs.ComandaBO;
-import BOs.IClienteBO;
-import BOs.IComandaBO;
+import interfaces.IClienteBO;
+import interfaces.IComandaBO;
 import com.dtos.ClienteFrecuenteDTO;
 import com.dtos.ComandaDTO;
 import java.util.Date;

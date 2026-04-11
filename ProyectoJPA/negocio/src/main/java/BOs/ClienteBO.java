@@ -4,11 +4,12 @@
  */
 package BOs;
 
+import interfaces.IClienteBO;
 import DAOs.ClienteDAO;
-import DAOs.IClienteDAO;
-import Entidades.ClienteFrecuente;
-import Entidades.ClienteGeneral;
-import Entidades.Comanda;
+import interfaces.IClienteDAO;
+import entidades.ClienteFrecuente;
+import entidades.ClienteGeneral;
+import entidades.Comanda;
 import adaptadores.ClienteFrecuenteAdapter;
 import com.dtos.ClienteFrecuenteDTO;
 import excepciones.NegocioException;

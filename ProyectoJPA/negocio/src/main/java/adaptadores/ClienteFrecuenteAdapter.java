@@ -4,7 +4,7 @@
  */
 package adaptadores;
 
-import Entidades.ClienteFrecuente;
+import entidades.ClienteFrecuente;
 import com.dtos.ClienteFrecuenteDTO;
 import utilidades.Encriptador;
 
