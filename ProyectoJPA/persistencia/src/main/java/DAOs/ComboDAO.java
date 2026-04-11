@@ -10,6 +10,7 @@ import interfaces.IComboDAO;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 /**
  * implementacion de IComboDAO
  * @author Adrian Mendoza
@@ -59,7 +60,10 @@ public class ComboDAO implements IComboDAO {
 
     @Override
     public boolean estaRepetido(List<Long> idProductos, List<Integer> cantidades) throws PersistenciaException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+         EntityManager em = ConexionBD.crearConexion();
+     try{
+         Query sql=em.createQuery("SELECT c FROM Combo c")
+     }
     }
     
     

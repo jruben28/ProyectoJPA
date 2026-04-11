@@ -10,6 +10,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
@@ -23,8 +25,9 @@ public class ComboProducto implements Serializable {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
     
-    @Column(name="id_combo", nullable=false)
-    private Long idCombo;   
+    @ManyToOne
+    @JoinColumn(name = "id_combo", nullable = false)
+    private Combo combo;   
     
     @Column(name="id_producto",nullable=false)
     private Long idProducto;
@@ -36,8 +39,8 @@ public class ComboProducto implements Serializable {
         
     }
 
-    public ComboProducto(Long idCombo, Long idProducto, Integer cantidad) {
-    this.idCombo = idCombo;
+    public ComboProducto(Combo combo, Long idProducto, Integer cantidad) {
+    this.combo = combo;
     this.idProducto = idProducto;
     this.cantidad = cantidad;
 }
@@ -50,10 +53,14 @@ public class ComboProducto implements Serializable {
         this.cantidad = cantidad;
     }
 
-    public Long getIdCombo() {
-        return idCombo;
+    public Combo getCombo() {
+        return combo;
     }
 
+    public void setCombo(Combo combo) {
+        this.combo = combo;
+    }
+    
     public Long getIdProducto() {
         return idProducto;
     }

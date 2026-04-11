@@ -18,4 +18,6 @@ public interface IComboDAO {
     public Combo actualizarCombo(Combo combo) throws PersistenciaException;
     
     public boolean estaRepetido(List<Long> idProductos, List<Integer> cantidades)throws PersistenciaException;
+    
+    
 }
