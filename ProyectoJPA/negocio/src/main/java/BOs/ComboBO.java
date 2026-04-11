@@ -58,12 +58,17 @@ public class ComboBO implements IComboBO{
 }
 
     @Override
-    public Combo crearComboConProductos(ComboDTO dto, List<Long> idProductos,List<Integer> cantidades) throws NegocioException {
-      try {
+public Combo crearComboConProductos(ComboDTO dto, List<Long> idProductos, List<Integer> cantidades)throws NegocioException {
+    try {
+       
         if(idProductos == null || idProductos.size() < 2) {
-          LOG.warning("Error al crear el combo, tiene menos de 2 productos");
-          throw new NegocioException("El combo al menos debe tener 2 productos asociados");
-   }    
+            LOG.warning("Error al crear el combo, tiene menos de 2 productos");
+            throw new NegocioException("El combo al menos debe tener 2 productos asociados");
+        }    
+        if(comboDAO.estaRepetido(idProductos, cantidades)) {
+            LOG.warning("Intento de crear combo duplicado");
+            throw new NegocioException("Ya existe un combo con esta misma combinación de productos");
+        }
         Combo agregado = this.agregarCombo(dto);
         for(int i = 0; i < idProductos.size(); i++) {
             ComboProducto comboP = new ComboProducto(agregado, idProductos.get(i), cantidades.get(i));
@@ -71,12 +76,11 @@ public class ComboBO implements IComboBO{
         }
         LOG.info("Combo con productos creado " + agregado.getNombre());
         return agregado;
-        } catch(PersistenciaException ex) {
-        LOG.warning("Error de persistencia "+ex.getMessage());
+    } catch(PersistenciaException ex) {
+        LOG.warning("Error de persistencia " + ex.getMessage());
         throw new NegocioException("Error al crear combo con productos");
     }
-    }
-
+}
   @Override
   public Combo actualizarComboPorId(Long id, ComboDTO comboDTO) throws NegocioException {
     try {
@@ -98,7 +102,6 @@ public class ComboBO implements IComboBO{
         throw new NegocioException("Error al actualizar el combo mediante persistencia");
     }
 }
-    
      /**
      * Valida que un ComboDTO tenga todos los datos correctos
      * @param comboDTO

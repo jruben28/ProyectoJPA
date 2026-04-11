@@ -100,14 +100,14 @@ public class ComboBOTest {
     
  @Test
  public void testCrearComboConProductosExito()throws NegocioException{
-     ComboBO bo=new ComboBO();
-     ComboDTO dto= new ComboDTO("El mejor combo del mundo","Descripcion chila",100.0,80.0,20);
-     List<Long> idProductos = Arrays.asList(1L, 2L);
-     List<Integer> cantidades = Arrays.asList(1, 2);
-     Combo resultado = bo.crearComboConProductos(dto, idProductos, cantidades);
-    
-    assertNotNull(resultado);
-    assertNotNull(resultado.getId());
+     ComboBO bo = new ComboBO();
+        ComboDTO dto = new ComboDTO("El mejor combo del mundo", "Descripcion chila", 100.0, 80.0, 20);
+        java.util.List<Long> idProductos = java.util.Arrays.asList(99L, 100L);
+        java.util.List<Integer> cantidades = java.util.Arrays.asList(1, 2);
+        Combo resultado = bo.crearComboConProductos(dto, idProductos, cantidades);
+        
+        assertNotNull(resultado);
+        assertNotNull(resultado.getId());
  }
  
   @Test
