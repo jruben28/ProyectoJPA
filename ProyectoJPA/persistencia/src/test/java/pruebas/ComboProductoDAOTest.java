@@ -40,7 +40,7 @@ public class ComboProductoDAOTest {
     }
     
     @Test
-    public void testObtenerPorComboExito(){
+    public void testObtenerPorComboExito()throws PersistenciaException{
          ComboDAO comboDao = new ComboDAO();
         Combo combo = new Combo("Combo prueba ", "c", 100.0, 80.0, 20);
         Combo comboAgregado = comboDao.agregarCombo(combo); 
@@ -57,7 +57,7 @@ public class ComboProductoDAOTest {
     }
     
     @Test
-    public void testObtenerPorComboIdInexistente(){
+    public void testObtenerPorComboIdInexistente()throws PersistenciaException{
       ComboProductoDAO dao= new ComboProductoDAO();
       List<ComboProducto> resultado= dao.obtenerPorCombo(852L);
       
