@@ -11,6 +11,7 @@ import entidades.ComboProducto;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import excepciones.PersistenciaException;
+import java.util.List;
 
 /**
  * Clase de prueba para ComboProductoDAO
@@ -36,5 +37,31 @@ public class ComboProductoDAOTest {
         assertEquals(comboAgregado.getId(), resultado.getCombo().getId());
         assertEquals(1L, resultado.getIdProducto());
         assertEquals(2, resultado.getCantidad());
+    }
+    
+    @Test
+    public void testObtenerPorComboExito(){
+         ComboDAO comboDao = new ComboDAO();
+        Combo combo = new Combo("Combo prueba ", "c", 100.0, 80.0, 20);
+        Combo comboAgregado = comboDao.agregarCombo(combo); 
+        ComboProductoDAO dao = new ComboProductoDAO();
+        ComboProducto cProducto = new ComboProducto(comboAgregado, 1L, 2);
+        ComboProducto cProducto2 = new ComboProducto(comboAgregado, 2L, 1);
+        dao.agregar(cProducto);
+        dao.agregar(cProducto2);
+        List<ComboProducto> resultado = dao.obtenerPorCombo(comboAgregado.getId());
+        
+        assertNotNull(resultado);
+        assertEquals(2,resultado.size());
+       
+    }
+    
+    @Test
+    public void testObtenerPorComboIdInexistente(){
+      ComboProductoDAO dao= new ComboProductoDAO();
+      List<ComboProducto> resultado= dao.obtenerPorCombo(852L);
+      
+        assertNotNull(resultado);
+        assertTrue(resultado.isEmpty());
     }
 }

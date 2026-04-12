@@ -6,13 +6,12 @@ package DAOs;
 
 import conexion.ConexionBD;
 import entidades.Combo;
-import entidades.ComboProducto;
 import excepciones.PersistenciaException;
 import interfaces.IComboDAO;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 /**
  * implementacion de IComboDAO
@@ -82,7 +81,7 @@ public class ComboDAO implements IComboDAO {
     public List<Combo> obtenerTodosCombos() throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
         try {
-            Query q = em.createQuery("SELECT c FROM Combo c");
+            TypedQuery<Combo> q = em.createQuery("SELECT c FROM Combo c", Combo.class);
             List<Combo> combos = q.getResultList();
             LOG.info("Se obtuvieron " + combos.size() + " combos");
             return combos;
