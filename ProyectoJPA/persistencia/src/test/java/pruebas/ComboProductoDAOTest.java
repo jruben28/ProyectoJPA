@@ -64,4 +64,12 @@ public class ComboProductoDAOTest {
         assertNotNull(resultado);
         assertTrue(resultado.isEmpty());
     }
+    
+    @Test
+    public void testAgregarComboProducto_comboNulo_lanzaExcepcion() {
+        ComboProductoDAO dao = new ComboProductoDAO();
+        ComboProducto cp = new ComboProducto(null, 1L, 2);
+
+        assertThrows(PersistenciaException.class, () -> dao.agregar(cp));
+    }
 }
