@@ -7,6 +7,7 @@ package pruebas;
 import DAOs.ComboDAO;
 import excepciones.PersistenciaException;
 import entidades.Combo;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -110,4 +111,42 @@ public class ComboDAOTest {
     
     }
  
+   @Test 
+   public void testObtenerTodosCombosVacio() throws PersistenciaException{
+       ComboDAO dao= new ComboDAO();
+       List<Combo> resultado= dao.obtenerTodosCombos();
+       
+       assertNotNull(resultado);
+   }
+   
+   @Test
+   public void testBuscarComboPorIdExito()throws PersistenciaException{
+       ComboDAO dao= new ComboDAO();
+       Combo combo= new Combo("combo","dd",50.0,40.0,20);
+       Combo agregado=dao.agregarCombo(combo);
+       Combo resultado= dao.buscarComboPorId(agregado.getId());
+       
+       assertNotNull(resultado);
+       assertEquals(agregado.getId(),resultado.getId());
+       
+       
+   }
+ 
+  @Test
+  public void testActualizarComboNombreNull()throws PersistenciaException{
+      ComboDAO dao = new ComboDAO();
+      Combo combo = new Combo("combo", "dd", 50.0, 40.0, 20);
+      Combo agregado = dao.agregarCombo(combo);
+      agregado.setNombre(null);
+      
+    assertThrows(PersistenciaException.class, () -> dao.actualizarCombo(agregado));
+  }
+ 
+  @Test
+  public void testBuscarComboPorIdInexistente(){
+      ComboDAO dao=new ComboDAO();
+      assertThrows(PersistenciaException.class, () -> dao.buscarComboPorId(-1L));
+  }
+  
 }
+
