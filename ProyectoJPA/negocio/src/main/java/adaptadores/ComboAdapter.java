@@ -29,7 +29,11 @@ public class ComboAdapter {
         combo.setPrecioCombo(dto.getPrecioCombo());
         combo.setPrecioOriginal(dto.getPrecioOriginal());
         combo.setPorcentajeDescuento(dto.getPorcentajeDescuento());
-        combo.setActivo(dto.getActivo());
+        if(dto.getActivo()==null){
+        combo.setActivo(true);
+        }else{
+        combo.setActivo(dto.getActivo());    
+        }
         return combo;
     }
     /**

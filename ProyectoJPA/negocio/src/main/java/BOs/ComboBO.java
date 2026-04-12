@@ -8,7 +8,6 @@ import DAOs.ComboDAO;
 import DAOs.ComboProductoDAO;
 import adaptadores.ComboAdapter;
 import com.dtos.ComboDTO;
-import entidades.Combo;
 import entidades.ComboProducto;
 import excepciones.NegocioException;
 import excepciones.PersistenciaException;
@@ -32,31 +31,37 @@ public class ComboBO implements IComboBO{
       this.comboDAO=new ComboDAO();
       this.comboProductoDAO=new ComboProductoDAO();
   }
-/**
- * Validaciones al agregar un comboDTO.  
- * @param comboDTO
- * @throws NegocioException 
- */
-  @Override
-  public Combo agregarCombo(ComboDTO comboDTO) throws NegocioException {
-    try {
-        validarComboDTO(comboDTO); 
-        
-        if(comboDTO.getActivo() == null) {
-            LOG.warning("Cambio del atributo activo de null a true");
-            comboDTO.setActivo(true);
-        }
-        
-        Combo combo = ComboAdapter.dtoAEntidad(comboDTO);
-        comboDAO.agregarCombo(combo);
-        LOG.info("Combo agregado exitosamente, nombre y id: " + combo.getNombre() + "," + combo.getId());
-        return combo;
-        
-    } catch(PersistenciaException ex) {
-        LOG.warning("Error de persistencia al agregar el combo " + ex.getMessage());
-        throw new NegocioException("Error al agregar el combo mediante persistencia");
-    }
+  
+  /**
+   * 
+   * @param comboDAO
+   * @param comboProductoDAO 
+   */
+  public ComboBO(IComboDAO comboDAO, IComboProductoDAO comboProductoDAO) {  
+        this.comboDAO = comboDAO;
+        this.comboProductoDAO = comboProductoDAO;
 }
+
+/**
+     * Validaciones al agregar un comboDTO.
+     * @param comboDTO
+     * @throws NegocioException
+     */
+    @Override
+    public Combo agregarCombo(ComboDTO comboDTO) throws NegocioException {
+        try {
+            validarComboDTO(comboDTO);
+            
+            Combo combo = ComboAdapter.dtoAEntidad(comboDTO);
+            comboDAO.agregarCombo(combo);
+            LOG.info("Combo agregado exitosamente, nombre y id: " + combo.getNombre() + "," + combo.getId());
+            return combo;
+            
+        } catch(PersistenciaException ex) {
+            LOG.warning("Error de persistencia al agregar el combo " + ex.getMessage());
+            throw new NegocioException("Error al agregar el combo mediante persistencia");
+        }
+    }
 
     @Override
 public Combo crearComboConProductos(ComboDTO dto, List<Long> idProductos, List<Integer> cantidades)throws NegocioException {
