@@ -144,4 +144,21 @@ public class ComboDAO implements IComboDAO {
             em.close();
         }
     }
+    
+    @Override
+    public List<Combo> buscarCombosPorProducto(Long idProducto) throws PersistenciaException {
+        try {
+            EntityManager em = ConexionBD.crearConexion();
+            TypedQuery<Combo> query = em.createQuery(
+                    "SELECT DISTINCT cProducto.combo FROM ComboProducto cProducto WHERE cProducto.idProducto = :idProducto",
+                    Combo.class);
+            query.setParameter("idProducto", idProducto);
+            List<Combo> combos = query.getResultList();
+            LOG.info("Se encontraron " + combos.size() + " combos con producto id: " + idProducto);
+            return combos;
+        } catch (Exception ex) {
+            LOG.warning("Error al buscar combos por producto: " + ex.getMessage());
+            throw new PersistenciaException("Error al buscar combos por producto");
+        }
+    }
 }

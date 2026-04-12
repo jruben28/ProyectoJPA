@@ -52,4 +52,12 @@ public interface IComboDAO {
      * @throws PersistenciaException si ocurre error en la base de datos
      */
     public List<Combo> buscarCombosPorNombre(String nombre) throws PersistenciaException;
+    
+    /**
+     * Busca combos que contengan un producto específico
+     * @param idProducto ID del producto a buscar
+     * @return Lista de combos que contienen ese producto
+     * @throws PersistenciaException si ocurre error
+     */
+    public List<Combo> buscarCombosPorProducto(Long idProducto) throws PersistenciaException;
 }

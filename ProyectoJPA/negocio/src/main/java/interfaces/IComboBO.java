@@ -71,6 +71,15 @@ public interface IComboBO {
      */
     public ComboDTO buscarComboPorId(Long id) throws NegocioException;
 
+    
+    /**
+     * Busca combos que contengan un producto específico
+     *
+     * @param idProducto ID del producto
+     * @return Lista de ComboDTO
+     * @throws NegocioException si ocurre error
+     */
+    public List<ComboDTO> buscarCombosPorProducto(Long idProducto) throws NegocioException;
 
 }
 
