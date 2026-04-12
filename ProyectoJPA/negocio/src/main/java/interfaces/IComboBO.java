@@ -61,5 +61,17 @@ public interface IComboBO {
      * @throws NegocioException si ocurre error
      */
     public List<ComboDTO> buscarCombosPorNombre(String nombre) throws NegocioException;
+  
+    /**
+     * Busca un combo por su ID
+     *
+     * @param id ID del combo a buscar
+     * @return ComboDTO encontrado
+     * @throws NegocioException si no se encuentra o hay error
+     */
+    public ComboDTO buscarComboPorId(Long id) throws NegocioException;
+
+
 }
+
 

@@ -203,4 +203,20 @@ public class ComboBO implements IComboBO {
             throw new NegocioException("Error al buscar combos por nombre");
         }
     }
+    
+    @Override
+    public ComboDTO buscarComboPorId(Long id) throws NegocioException {
+        try {
+            if (id == null || id < 1) {
+                LOG.warning("Id inválido para búsqueda");
+                throw new NegocioException("El id no puede ser nulo o menor a 1");
+            }
+            Combo combo = comboDAO.buscarComboPorId(id);
+            LOG.info("Combo encontrado con id: " + id);
+            return ComboAdapter.entidadADTO(combo);
+        } catch (PersistenciaException ex) {
+            LOG.warning("Error al buscar combo: " + ex.getMessage());
+            throw new NegocioException("Error al buscar combo por id");
+        }
+    }
 }
