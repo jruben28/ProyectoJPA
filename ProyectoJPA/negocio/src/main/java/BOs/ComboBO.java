@@ -157,17 +157,16 @@ public class ComboBO implements IComboBO {
                     continue;
                 }
                 int iguales = 0;
-
-           for (int i = 0; i < idProductos.size(); i++) {
-              for (ComboProducto cProducto : productosDelCombo) {
-
-                   if (cProducto.getIdProducto().equals(idProductos.get(i))
-                      && cProducto.getCantidad().equals(cantidades.get(i))) {
-                      iguales++;
-                        break;
-        }
-              }
-           }     if (iguales == idProductos.size()) {
+                for (int i = 0; i < idProductos.size(); i++) {
+                    for (ComboProducto cProducto : productosDelCombo) {
+                        if (cProducto.getIdProducto().equals(idProductos.get(i))
+                                && cProducto.getCantidad().equals(cantidades.get(i))) {
+                            iguales++;
+                            break;
+                        }
+                    }
+                }
+                if (iguales == idProductos.size()) {
                     return true;
                 }
             }
