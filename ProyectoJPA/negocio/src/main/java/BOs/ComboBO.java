@@ -178,4 +178,14 @@ public class ComboBO implements IComboBO {
             throw new NegocioException("Error al verificar duplicado");
         }
     }
+
+    @Override
+    public List<ComboDTO> obtenerTodosCombos() throws NegocioException {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<ComboDTO> buscarCombosPorNombre(String nombre) throws NegocioException {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }
