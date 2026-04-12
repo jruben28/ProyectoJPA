@@ -166,9 +166,8 @@ public class ComboBO implements IComboBO {
                       iguales++;
                         break;
         }
-   } 
-                }
-                if (iguales == idProductos.size()) {
+              }
+           }     if (iguales == idProductos.size()) {
                     return true;
                 }
             }
@@ -181,11 +180,28 @@ public class ComboBO implements IComboBO {
 
     @Override
     public List<ComboDTO> obtenerTodosCombos() throws NegocioException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        try {
+            List<Combo> combos = comboDAO.obtenerTodosCombos();
+            LOG.info("Se obtuvieron " + combos.size() + " combos");
+            return ComboAdapter.listaEntidadADTO(combos);
+        } catch (PersistenciaException ex) {
+            LOG.warning("Error al obtener combos: " + ex.getMessage());
+            throw new NegocioException("Error al obtener todos los combos");
+        }
     }
 
     @Override
     public List<ComboDTO> buscarCombosPorNombre(String nombre) throws NegocioException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        try {
+            if (nombre == null || nombre.trim().isEmpty()) {
+                return this.obtenerTodosCombos();
+            }
+            List<Combo> combos = comboDAO.buscarCombosPorNombre(nombre);
+            LOG.info("Se encontraron " + combos.size() + " combos con nombre: " + nombre);
+            return ComboAdapter.listaEntidadADTO(combos);
+        } catch (PersistenciaException ex) {
+            LOG.warning("Error al buscar combos: " + ex.getMessage());
+            throw new NegocioException("Error al buscar combos por nombre");
+        }
     }
 }
