@@ -76,7 +76,11 @@ public class ComboDAO implements IComboDAO {
         }
     }
 
-    
+    /**
+     * Obtiene todos los combos registrados
+     * @return Lista de todos los combos
+     * @throws PersistenciaException si ocurre error en la base de datos
+     */
     @Override
     public List<Combo> obtenerTodosCombos() throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
@@ -92,7 +96,12 @@ public class ComboDAO implements IComboDAO {
             em.close();
         }
     }
-
+   /**
+     * Busca un combo por su ID
+     * @param id ID del combo a buscar
+     * @return Combo encontrado
+     * @throws PersistenciaException si no se encuentra o hay error
+     */
     @Override
     public Combo buscarComboPorId(Long id) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
@@ -111,5 +120,28 @@ public class ComboDAO implements IComboDAO {
             em.close();
         }
     }
-
+    /**
+     * Busca combos cuyo nombre contenga el texto dado
+     *
+     * @param nombre Texto a buscar en el nombre
+     * @return Lista de combos que coinciden
+     * @throws PersistenciaException si ocurre error en la base de datos
+     */
+    @Override
+    public List<Combo> buscarCombosPorNombre(String nombre) throws PersistenciaException {
+        EntityManager em = ConexionBD.crearConexion();
+        try {
+            String jpql = "SELECT c FROM Combo c WHERE c.nombre LIKE :nombre";
+            TypedQuery<Combo> query = em.createQuery(jpql, Combo.class);
+            query.setParameter("nombre", "%" + nombre + "%");
+            List<Combo> resultado = query.getResultList();
+            LOG.info("Se encontraron " + resultado.size() + " combos con nombre: " + nombre);
+            return resultado;
+        } catch (RuntimeException ex) {
+            LOG.warning("Error al buscar combos por nombre: " + ex.getMessage());
+            throw new PersistenciaException("Error al buscar combos por nombre");
+        } finally {
+            em.close();
+        }
+    }
 }
