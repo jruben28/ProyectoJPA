@@ -78,7 +78,7 @@ public class IngredienteDAOTest {
         PersistenciaException exception = assertThrows(PersistenciaException.class, () -> {
             ingredienteDAO.obtenerIngredientePorId(idAEliminar);
         });
-        assertTrue(exception.getMessage().contains("No existe el ingrediente"));
+        assertTrue(exception.getMessage().contains("Ha habido un error al buscar el ingrediente"));
     }
 
     @Test
