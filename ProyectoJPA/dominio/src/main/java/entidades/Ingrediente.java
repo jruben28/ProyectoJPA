@@ -28,7 +28,8 @@ import javax.persistence.InheritanceType;
 public class Ingrediente implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_ingrediente")
     private Long id;
     
     @Column(name = "nombre", nullable = false)
