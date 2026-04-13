@@ -11,6 +11,8 @@ import interfaces.IComboProductoDAO;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import conexion.ConexionBD;
+import java.util.List;
+import javax.persistence.TypedQuery;
 
 /**
  * Implementación de la interfaz de IComboProductoDAO
@@ -40,6 +42,24 @@ public class ComboProductoDAO implements IComboProductoDAO{
         }
             
         
+    }
+
+    @Override
+    public List<ComboProducto> obtenerPorCombo(Long idCombo) throws PersistenciaException {
+            EntityManager em= ConexionBD.crearConexion();
+        try{
+          TypedQuery<ComboProducto> query = em.createQuery("SELECT cProducto FROM ComboProducto cProducto WHERE cProducto.combo.id = :idCombo",ComboProducto.class);
+          query.setParameter("idCombo", idCombo);
+          
+          LOG.info("Busqueda con exito");
+          return query.getResultList();
+        
+        }catch(RuntimeException ex){
+            LOG.warning("Error al consultar productos del combo");
+          throw new PersistenciaException("Error al consultar productos del combo");
+        }finally{
+            em.close();
+        }
     }
     
 }

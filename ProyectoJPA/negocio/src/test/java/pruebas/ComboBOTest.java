@@ -100,14 +100,14 @@ public class ComboBOTest {
     
  @Test
  public void testCrearComboConProductosExito()throws NegocioException{
-     ComboBO bo=new ComboBO();
-     ComboDTO dto= new ComboDTO("El mejor combo del mundo","Descripcion chila",100.0,80.0,20);
-     List<Long> idProductos = Arrays.asList(1L, 2L);
-     List<Integer> cantidades = Arrays.asList(1, 2);
-     Combo resultado = bo.crearComboConProductos(dto, idProductos, cantidades);
-    
-    assertNotNull(resultado);
-    assertNotNull(resultado.getId());
+     ComboBO bo = new ComboBO();
+        ComboDTO dto = new ComboDTO("El mejor combo del mundo", "Descripcion chila", 100.0, 80.0, 20);
+        java.util.List<Long> idProductos = java.util.Arrays.asList(9999L, 10000L);
+        java.util.List<Integer> cantidades = java.util.Arrays.asList(1, 2);
+        Combo resultado = bo.crearComboConProductos(dto, idProductos, cantidades);
+        
+        assertNotNull(resultado);
+        assertNotNull(resultado.getId());
  }
  
   @Test
@@ -196,4 +196,90 @@ public class ComboBOTest {
     assertThrows(NegocioException.class, () -> bo.actualizarComboPorId(agregado.getId(), dtoConDescuentoNulo));
     assertThrows(NegocioException.class, () -> bo.actualizarComboPorId(agregado.getId(), dtoConDescuentoNegativo));
 }
+  
+    @Test
+    public void testObtenerTodosCombos() throws NegocioException {
+        ComboBO bo = new ComboBO();
+        List<ComboDTO> resultado = bo.obtenerTodosCombos();
+        
+        
+        assertNotNull(resultado);
+    }
+
+    @Test
+    public void testBuscarCombosPorNombreConResultados() throws NegocioException {
+        ComboBO bo = new ComboBO();
+        ComboDTO dto = new ComboDTO("ComboTest123", "Desc", 100.0, 80.0, 20);
+        bo.agregarCombo(dto);
+
+        
+        List<ComboDTO> resultado = bo.buscarCombosPorNombre("Test");
+        assertNotNull(resultado);
+    }
+
+    @Test
+    public void testBuscarCombosPorNombreVacio() throws NegocioException {
+        ComboBO bo = new ComboBO();
+        List<ComboDTO> resultado = bo.buscarCombosPorNombre("");
+        
+        
+        assertNotNull(resultado);
+    }
+
+    @Test
+    public void testBuscarCombosPorNombreNull() throws NegocioException {
+        ComboBO bo = new ComboBO();
+        List<ComboDTO> resultado = bo.buscarCombosPorNombre(null);
+        
+        
+        assertNotNull(resultado);
+    }
+
+    @Test
+    public void testBuscarComboPorIdExito() throws NegocioException {
+        ComboBO bo = new ComboBO();
+        ComboDTO dto = new ComboDTO("ComboParaBuscar", "Desc", 100.0, 80.0, 20);
+        Combo agregado = bo.agregarCombo(dto);
+        ComboDTO resultado = bo.buscarComboPorId(agregado.getId());
+
+        assertNotNull(resultado);
+        assertEquals(agregado.getId(), resultado.getId());
+        assertEquals("ComboParaBuscar", resultado.getNombre());
+    }
+
+    @Test
+    public void testBuscarComboPorIdNulo() {
+        ComboBO bo = new ComboBO();
+
+        assertThrows(NegocioException.class, () -> bo.buscarComboPorId(null));
+    }
+
+    @Test
+    public void testBuscarComboPorIdInvalido() {
+        ComboBO bo = new ComboBO();
+
+        assertThrows(NegocioException.class, () -> bo.buscarComboPorId(-1L));
+    }
+
+    @Test
+    public void testBuscarCombosPorProductoExito() throws NegocioException {
+        ComboBO bo = new ComboBO();
+        List<ComboDTO> resultado = bo.buscarCombosPorProducto(9999L);
+
+        assertNotNull(resultado);
+    }
+
+    @Test
+    public void testBuscarCombosPorProductoIdNulo() {
+        ComboBO bo = new ComboBO();
+
+        assertThrows(NegocioException.class, () -> bo.buscarCombosPorProducto(null));
+    }
+
+    @Test
+    public void testBuscarCombosPorProductoIdInvalido() {
+        ComboBO bo = new ComboBO();
+
+        assertThrows(NegocioException.class, () -> bo.buscarCombosPorProducto(-1L));
+    }
 }
