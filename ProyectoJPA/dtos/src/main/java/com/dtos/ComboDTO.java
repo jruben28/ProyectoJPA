@@ -15,6 +15,7 @@ public class ComboDTO {
     private Double precioOriginal;
     private Integer porcentajeDescuento; 
     private Boolean activo; 
+    private Long id;
 
     public ComboDTO() {
     }
@@ -28,6 +29,13 @@ public class ComboDTO {
         this.activo=true;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
     public String getNombre() {
         return nombre;
     }

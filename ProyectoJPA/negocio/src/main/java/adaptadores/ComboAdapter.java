@@ -46,6 +46,7 @@ public class ComboAdapter {
             return null;
         }
         ComboDTO dto = new ComboDTO();
+        dto.setId(combo.getId());
         dto.setNombre(combo.getNombre());
         dto.setDescripcion(combo.getDescripcion());
         dto.setPrecioCombo(combo.getPrecioCombo());
