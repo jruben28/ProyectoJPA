@@ -24,7 +24,7 @@ public class IngredienteBO implements IIngredienteBO{
     IIngredienteDAO ingredienteDAO;
     private static final Logger LOG = Logger.getLogger(IngredienteBO.class.getName());
 
-    public IngredienteBO(IIngredienteDAO ingredienteDAO) {
+    public IngredienteBO() {
         this.ingredienteDAO = new IngredienteDAO();
     }
 
