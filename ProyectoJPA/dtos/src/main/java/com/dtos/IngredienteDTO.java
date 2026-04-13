@@ -6,6 +6,7 @@ package com.dtos;
 
 import enums.UnidadDeMedida;
 
+
 /**
  *
  * @author joser
@@ -67,6 +68,8 @@ public class IngredienteDTO {
     public void setUrlImagen(String urlImagen) {
         this.urlImagen = urlImagen;
     }
+
+
     
     
     
