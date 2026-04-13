@@ -5,11 +5,11 @@
 package BOs;
 
 import DAOs.ProductoDAO;
-import dominio.Ingrediente;
-import Entidades.Producto;
-import Entidades.ProductoIngrediente;
+import entidades.Producto;
+import entidades.ProductoIngrediente;
 import com.dtos.ProductoDTO;
 import com.dtos.ProductoIngredienteDTO;
+import entidades.Ingrediente;
 import enums.TipoProducto;
 import interfaces.IProductoBO;
 import interfaces.IProductoDAO;
