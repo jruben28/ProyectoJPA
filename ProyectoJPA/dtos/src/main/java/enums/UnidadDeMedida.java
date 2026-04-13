@@ -9,5 +9,5 @@ package enums;
  * @author joser
  */
 public enum UnidadDeMedida {
-    KILOS, LITROS, PIEZA, PAQUETE, GRAMOS, MILILITROS
+    KILOGRAMO, LITRO, PIEZA, PAQUETE, GRAMO, MILILITRO
 }
