@@ -33,7 +33,7 @@ public class IngredienteBOTest {
             IngredienteDTO nuevoIngrediente = new IngredienteDTO();
             nuevoIngrediente.setNombre("Cebolla de Prueba");
             nuevoIngrediente.setStock(15.5);
-            nuevoIngrediente.setUnidadDeMedida(UnidadDeMedida.KILOGRAMO); // Cambia según tu Enum
+            nuevoIngrediente.setUnidadDeMedida(UnidadDeMedida.KILOGRAMO); 
 
             IngredienteDTO resultado = ingredienteBO.agregarIngrediente(nuevoIngrediente);
 
