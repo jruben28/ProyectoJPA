@@ -126,5 +126,15 @@ public class Producto implements Serializable {
         this.ingredientes = ingredientes;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
    
+
+  
 }
