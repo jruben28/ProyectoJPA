@@ -156,7 +156,7 @@ public class IngredienteDAO implements IIngredienteDAO{
         EntityManager em = ConexionBD.crearConexion();
         
         try{
-            String jpql = "SELECT i FROM Ingrediente i WHERE i.nombre LIKE :filtro OR CAST(i.unidadDeMedida AS string) LIKE :filtro OR CAST(i.stock AS string) LIKE :filtro";
+            String jpql = "SELECT i FROM Ingrediente i WHERE i.nombre LIKE :filtro OR CAST(i.unidadDeMedida AS char) LIKE :filtro OR CAST(i.stock AS char) LIKE :filtro";
             TypedQuery<Ingrediente> query = em.createQuery(jpql, Ingrediente.class);
             query.setParameter("filtro", "%" + filtro + "%");
             
