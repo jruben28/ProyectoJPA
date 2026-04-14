@@ -1,8 +1,8 @@
 package com.presentacion;
 
 import BOs.ClienteBO;
-import BOs.IClienteBO;
-import Entidades.Comanda;
+import interfaces.IClienteBO;
+import entidades.Comanda;
 import com.dtos.ClienteFrecuenteDTO;
 import excepciones.NegocioException;
 
@@ -13,13 +13,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Controlador del modulo de Clientes Frecuentes.
- * Las pantallas NO se comunican entre si, todo pasa por aqui.
+ * Controlador del modulo de Clientes Frecuentes. Las pantallas NO se comunican
+ * entre si, todo pasa por aqui.
  */
 public class ControllerClienteFrecuente {
 
     private final IClienteBO clienteBO;
     private final Stage primaryStage;
+    private ClienteFrecuenteDTO clienteVinculado;
     private static final String CSS_PATH = "/styles/buscador-clientes.css";
 
     public ControllerClienteFrecuente(Stage primaryStage) {
@@ -28,7 +29,6 @@ public class ControllerClienteFrecuente {
     }
 
     // ==================== Navegacion ====================
-
     public void mostrarBuscador() {
         BuscadorClientesFrm buscador = new BuscadorClientesFrm(this);
 
@@ -57,7 +57,6 @@ public class ControllerClienteFrecuente {
     }
 
     // ==================== Logica de negocio ====================
-
     public List<ClienteFrecuenteDTO> buscarClientes(String filtro, String campo) throws NegocioException {
         return clienteBO.buscarFrecuentesPorFiltro(filtro, campo);
     }
@@ -67,28 +66,57 @@ public class ControllerClienteFrecuente {
     }
 
     public void vincularCliente(ClienteFrecuenteDTO cliente) {
-        // TODO: implementar cuando el modulo de comandas este listo
+        this.clienteVinculado = cliente;
+        System.out.println("Cliente vinculado: " + cliente.getNombre());
     }
 
     // ==================== Carga de datos ====================
-
     private List<SistemaPuntosFrm.FilaTransaccion> cargarTransacciones(ClienteFrecuenteDTO cliente) {
         List<SistemaPuntosFrm.FilaTransaccion> filas = new ArrayList<>();
         try {
             List<Comanda> comandas = clienteBO.buscarComandasPorCliente(cliente.getId());
-            int acumulado = cliente.getPuntosAcumulados() != null ? cliente.getPuntosAcumulados() : 0;
+            int acumulado = 0;
 
             for (Comanda c : comandas) {
                 int puntosGanados = (int) (c.getTotal() / 20);
                 String folio = "OB-" + String.format("%06d", c.getId());
+                acumulado += puntosGanados;
 
                 filas.add(new SistemaPuntosFrm.FilaTransaccion(
                         "-", folio, c.getTotal(), puntosGanados, acumulado));
-                acumulado -= puntosGanados;
             }
         } catch (Exception ex) {
             // buscarComandasPorCliente aun no implementado en BO, lista vacia
         }
         return filas;
     }
+
+    public ClienteFrecuenteDTO obtenerClienteVinculado() {
+        return clienteVinculado;
+    }
+
+    /**
+     * Actualiza un cliente frecuente existente
+     */
+    public void actualizarCliente(ClienteFrecuenteDTO dto) throws NegocioException {
+        clienteBO.actualizarClienteFrecuente(dto);
+    }
+
+    /**
+     * Crea un nuevo cliente general
+     */
+    public String crearClienteGeneral() throws NegocioException {
+        return clienteBO.obtenerOCrearClienteGeneral();
+    }
+
+    /**
+     * Abre la ventana de registro en modo edición
+     */
+    public void mostrarRegistroEdicion(ClienteFrecuenteDTO cliente) {
+        RegistroClienteFrm ventana = new RegistroClienteFrm(this, cliente);
+        ventana.getScene().getStylesheets().add(
+                getClass().getResource(CSS_PATH).toExternalForm());
+        ventana.show();
+    }
+
 }

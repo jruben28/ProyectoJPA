@@ -92,6 +92,11 @@ public class SistemaPuntosFrm extends Stage {
         infoBox.setAlignment(Pos.CENTER_LEFT);
 
         int puntos = cliente.getPuntosAcumulados() != null ? cliente.getPuntosAcumulados() : 0;
+        if (transacciones != null && !transacciones.isEmpty()) {
+            puntos = transacciones.stream()
+                .mapToInt(FilaTransaccion::getPuntosGanados)
+                .sum();
+        }
         Label lblPuntosNum = new Label(String.valueOf(puntos));
         lblPuntosNum.getStyleClass().add("puntos-numero");
         Label lblPuntosTxt = new Label("puntos");

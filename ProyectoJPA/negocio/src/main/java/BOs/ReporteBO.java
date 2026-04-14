@@ -1,9 +1,10 @@
 package BOs;
 
-import DAOs.IReporteDAO;
 import DAOs.ReporteDAO;
-import Entidades.ClienteFrecuente;
-import Entidades.Comanda;
+import entidades.Cliente;
+import entidades.ClienteFrecuente;
+import entidades.Comanda;
+import interfaces.IReporteDAO;
 import com.dtos.ReporteClienteFrecuenteDTO;
 import com.dtos.ReporteComandaDTO;
 import excepciones.NegocioException;
@@ -43,8 +44,11 @@ public class ReporteBO implements IReporteBO {
 
             for (Comanda c : comandas) {
                 String nombreCliente = "Cliente General";
-                if (c.getCliente() != null && c.getCliente().getNombre() != null) {
-                    nombreCliente = c.getCliente().getNombre();
+                if (c.getIdCliente() != null) {
+                    Cliente cliente = reporteDAO.buscarClientePorId(c.getIdCliente());
+                    if (cliente != null && cliente.getNombre() != null) {
+                        nombreCliente = cliente.getNombre();
+                    }
                 }
 
                 ReporteComandaDTO dto = new ReporteComandaDTO(
@@ -52,7 +56,7 @@ public class ReporteBO implements IReporteBO {
                         c.getFechaHora(),
                         c.getNumMesa(),
                         c.getTotal(),
-                        c.getEstado().name(),
+                        c.getEstado(),
                         nombreCliente
                 );
                 resultado.add(dto);
@@ -82,7 +86,6 @@ public class ReporteBO implements IReporteBO {
             List<ReporteClienteFrecuenteDTO> resultado = new ArrayList<>();
 
             for (ClienteFrecuente cf : clientes) {
-                // Filtrar por nombre si se proporcionó
                 if (filtroNombre != null && !filtroNombre.trim().isEmpty()) {
                     if (!cf.getNombre().toLowerCase().contains(filtroNombre.toLowerCase())) {
                         continue;
@@ -92,7 +95,6 @@ public class ReporteBO implements IReporteBO {
                 List<Comanda> comandasCliente = reporteDAO.buscarComandasEntregadasPorCliente(cf.getId());
                 int numVisitas = comandasCliente.size();
 
-                // Filtrar por minimo de visitas si se proporcionó
                 if (minimoVisitas != null && numVisitas < minimoVisitas) {
                     continue;
                 }

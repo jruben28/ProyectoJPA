@@ -1,15 +1,15 @@
 package DAOs;
 
-import Conexion.ConexionBD;
-import Entidades.ClienteFrecuente;
-import Entidades.Comanda;
-import enums.EstadoComanda;
+import conexion.ConexionBD;
+import entidades.Cliente;
+import entidades.ClienteFrecuente;
+import entidades.Comanda;
 import excepciones.PersistenciaException;
+import interfaces.IReporteDAO;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
 /**
@@ -59,10 +59,10 @@ public class ReporteDAO implements IReporteDAO {
         EntityManager em = ConexionBD.crearConexion();
         try {
             String jpql = "SELECT c FROM Comanda c "
-                    + "WHERE c.cliente.id = :id AND c.estado = :estado";
+                    + "WHERE c.idCliente = :id AND c.estado = :estado";
             return em.createQuery(jpql, Comanda.class)
                     .setParameter("id", idCliente)
-                    .setParameter("estado", EstadoComanda.ENTREGADA)
+                    .setParameter("estado", "ENTREGADA")
                     .getResultList();
         } catch (Exception ex) {
             LOG.warning("Error al buscar comandas entregadas del cliente: " + ex.getMessage());
@@ -77,17 +77,30 @@ public class ReporteDAO implements IReporteDAO {
         EntityManager em = ConexionBD.crearConexion();
         try {
             String jpql = "SELECT c FROM Comanda c "
-                    + "WHERE c.cliente.id = :id AND c.estado = :estado "
+                    + "WHERE c.idCliente = :id AND c.estado = :estado "
                     + "ORDER BY c.fechaHora DESC";
             List<Comanda> resultado = em.createQuery(jpql, Comanda.class)
                     .setParameter("id", idCliente)
-                    .setParameter("estado", EstadoComanda.ENTREGADA)
+                    .setParameter("estado", "ENTREGADA")
                     .setMaxResults(1)
                     .getResultList();
             return resultado.isEmpty() ? null : resultado.get(0);
         } catch (Exception ex) {
             LOG.warning("Error al buscar ultima comanda del cliente: " + ex.getMessage());
             throw new PersistenciaException("Error al buscar ultima comanda del cliente");
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public Cliente buscarClientePorId(Long id) throws PersistenciaException {
+        EntityManager em = ConexionBD.crearConexion();
+        try {
+            return em.find(Cliente.class, id);
+        } catch (Exception ex) {
+            LOG.warning("Error al buscar cliente por id: " + ex.getMessage());
+            throw new PersistenciaException("Error al buscar cliente");
         } finally {
             em.close();
         }

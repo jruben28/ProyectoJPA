@@ -23,6 +23,7 @@ import java.util.List;
 public class BuscadorClientesFrm {
 
     private final ControllerClienteFrecuente controller;
+    private final ControllerReportes controllerReportes;
     private VBox root;
     private TextField txtBuscar;
     private ToggleButton btnNombre;
@@ -32,7 +33,6 @@ public class BuscadorClientesFrm {
     private TableView<ClienteFrecuenteDTO> tblClientes;
     private ObservableList<ClienteFrecuenteDTO> datosTabla;
     private String campoBusquedaActual = "nombre";
-    private final ControllerReportes controllerReportes;
 
     public BuscadorClientesFrm(ControllerClienteFrecuente controller) {
         this.controller = controller;
@@ -53,7 +53,7 @@ public class BuscadorClientesFrm {
         Label lblTitulo = new Label("Buscar Clientes");
         lblTitulo.getStyleClass().add("titulo");
 
-        HBox barraAcciones = crearBarraAcciones();
+        HBox header = crearHeader();
 
         HBox searchBar = crearBarraBusqueda();
         HBox filtros = crearFiltros();
@@ -64,13 +64,19 @@ public class BuscadorClientesFrm {
         tblClientes = crearTabla();
         VBox.setVgrow(tblClientes, Priority.ALWAYS);
 
-        root.getChildren().addAll(lblTitulo, barraAcciones, searchBar, filtros, lblResultados, tblClientes);
+        root.getChildren().addAll(lblTitulo, header, searchBar, filtros, lblResultados, tblClientes);
     }
 
-    private HBox crearBarraAcciones() {
-        Button btnRegistrar = new Button("Registrar Cliente");
-        btnRegistrar.getStyleClass().add("btn-buscar");
-        btnRegistrar.setOnAction(e -> controller.mostrarRegistro());
+    private HBox crearHeader() {
+        Button btnClienteFrecuente = new Button("+ Nuevo Cliente Frecuente");
+        btnClienteFrecuente.getStyleClass().add("btn-buscar");
+        btnClienteFrecuente.setStyle("-fx-padding: 8px 15px;");
+        btnClienteFrecuente.setOnAction(e -> controller.mostrarRegistro());
+
+        Button btnClienteGeneral = new Button("+ Nuevo Cliente General");
+        btnClienteGeneral.getStyleClass().add("btn-buscar");
+        btnClienteGeneral.setStyle("-fx-padding: 8px 15px;");
+        btnClienteGeneral.setOnAction(e -> crearClienteGeneral());
 
         Button btnReporteComanadas = new Button("Reporte Comandas");
         btnReporteComanadas.getStyleClass().add("btn-reporte");
@@ -83,7 +89,7 @@ public class BuscadorClientesFrm {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        HBox hbox = new HBox(10, btnRegistrar, spacer, btnReporteComanadas, btnReporteClientes);
+        HBox hbox = new HBox(10, btnClienteFrecuente, btnClienteGeneral, spacer, btnReporteComanadas, btnReporteClientes);
         hbox.setAlignment(Pos.CENTER_LEFT);
         return hbox;
     }
@@ -258,5 +264,23 @@ public class BuscadorClientesFrm {
     private String enmascararTelefono(String telefono) {
         if (telefono == null || telefono.length() < 4) return "****";
         return "****" + telefono.substring(telefono.length() - 4);
+    }
+
+    private void crearClienteGeneral() {
+        try {
+            String nombreCliente = controller.crearClienteGeneral();
+            Alert exito = new Alert(Alert.AlertType.INFORMATION,
+                    "Cliente General listo para usar.\n\nNombre: " + nombreCliente
+                            + "\n\nNota: este buscador solo muestra clientes frecuentes.");
+            exito.setHeaderText(null);
+            exito.setTitle("Cliente General Creado");
+            exito.showAndWait();
+        } catch (NegocioException ex) {
+            Alert error = new Alert(Alert.AlertType.ERROR,
+                    "Error al crear cliente general: " + ex.getMessage());
+            error.setHeaderText(null);
+            error.setTitle("Error");
+            error.showAndWait();
+        }
     }
 }

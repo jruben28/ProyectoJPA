@@ -4,8 +4,9 @@
  */
 package adaptadores;
 
-import Entidades.ClienteFrecuente;
+import entidades.ClienteFrecuente;
 import com.dtos.ClienteFrecuenteDTO;
+import utilidades.Encriptador;
 
 /**
  *
@@ -19,6 +20,7 @@ public class ClienteFrecuenteAdapter {
         
         ClienteFrecuente clienteF = new ClienteFrecuente();
         
+        clienteF.setId(dto.getId());
         clienteF.setNombre(dto.getNombre());
         clienteF.setCorreo(dto.getCorreo());
         clienteF.setFechaRegistro(dto.getFechaRegistro());
@@ -48,9 +50,7 @@ public class ClienteFrecuenteAdapter {
         dto.setPuntosAcumulados(puntos);
         dto.setTotalGastado(totalGastado);
         dto.setNumVisitas(numVisitas);
-        //falta la encriptacion para desencriptar aqui
-        dto.setTelefono(entidad.getTelefono());
-
+        dto.setTelefono(Encriptador.desencriptar(entidad.getTelefono()));
         return dto;
     }
 }
