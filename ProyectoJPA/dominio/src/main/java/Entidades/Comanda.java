@@ -6,6 +6,7 @@ package Entidades;
 
 import enums.EstadoComanda;
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -16,6 +17,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  *
@@ -29,6 +32,16 @@ import javax.persistence.Table;
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
+
+        @Column(unique = true)
+        private String folio;
+
+        @Temporal(TemporalType.TIMESTAMP)
+        @Column(name = "fecha_hora")
+        private Date fechaHora;
+
+        @Column(name = "num_mesa")
+        private Integer numMesa;
 
         @Column(nullable = false)
         private Double total;
@@ -44,7 +57,10 @@ import javax.persistence.Table;
         public Comanda() {
         }
 
-        public Comanda(Double total, EstadoComanda estado, Cliente cliente) {
+        public Comanda(String folio, Date fechaHora, Integer numMesa, Double total, EstadoComanda estado, Cliente cliente) {
+            this.folio = folio;
+            this.fechaHora = fechaHora;
+            this.numMesa = numMesa;
             this.total = total;
             this.estado = estado;
             this.cliente = cliente;
@@ -56,6 +72,30 @@ import javax.persistence.Table;
 
         public void setId(Long id) {
             this.id = id;
+        }
+
+        public String getFolio() {
+            return folio;
+        }
+
+        public void setFolio(String folio) {
+            this.folio = folio;
+        }
+
+        public Date getFechaHora() {
+            return fechaHora;
+        }
+
+        public void setFechaHora(Date fechaHora) {
+            this.fechaHora = fechaHora;
+        }
+
+        public Integer getNumMesa() {
+            return numMesa;
+        }
+
+        public void setNumMesa(Integer numMesa) {
+            this.numMesa = numMesa;
         }
 
         public Double getTotal() {

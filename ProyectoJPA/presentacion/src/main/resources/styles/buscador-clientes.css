@@ -339,3 +339,85 @@
 .btn-cancelar:hover {
     -fx-background-color: #F3F4F6;
 }
+
+/* ===== Boton de reportes ===== */
+.btn-reporte {
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-color: white;
+    -fx-text-fill: #7C3AED;
+    -fx-border-color: #7C3AED;
+    -fx-border-width: 2;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 8 18;
+    -fx-cursor: hand;
+}
+
+.btn-reporte:hover {
+    -fx-background-color: #F5F3FF;
+}
+
+.btn-reporte:pressed {
+    -fx-background-color: #EDE9FE;
+}
+
+/* ===== Boton exportar PDF ===== */
+.btn-exportar {
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-color: #7C3AED;
+    -fx-text-fill: white;
+    -fx-padding: 10 24;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+}
+
+.btn-exportar:hover {
+    -fx-background-color: #6D28D9;
+}
+
+.btn-exportar:pressed {
+    -fx-background-color: #5B21B6;
+}
+
+/* ===== Total de ventas en reporte ===== */
+.reporte-total {
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #16A34A;
+}
+
+/* ===== Estados de comanda en reporte ===== */
+.estado-abierta {
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2563EB;
+    -fx-background-color: #EFF6FF;
+    -fx-padding: 3 10;
+    -fx-background-radius: 10;
+}
+
+.estado-entregada {
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #16A34A;
+    -fx-background-color: #F0FDF4;
+    -fx-padding: 3 10;
+    -fx-background-radius: 10;
+}
+
+.estado-cancelada {
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #DC2626;
+    -fx-background-color: #FEF2F2;
+    -fx-padding: 3 10;
+    -fx-background-radius: 10;
+}

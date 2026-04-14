@@ -32,9 +32,11 @@ public class BuscadorClientesFrm {
     private TableView<ClienteFrecuenteDTO> tblClientes;
     private ObservableList<ClienteFrecuenteDTO> datosTabla;
     private String campoBusquedaActual = "nombre";
+    private final ControllerReportes controllerReportes;
 
     public BuscadorClientesFrm(ControllerClienteFrecuente controller) {
         this.controller = controller;
+        this.controllerReportes = new ControllerReportes();
         this.datosTabla = FXCollections.observableArrayList();
         initComponents();
     }
@@ -51,6 +53,8 @@ public class BuscadorClientesFrm {
         Label lblTitulo = new Label("Buscar Clientes");
         lblTitulo.getStyleClass().add("titulo");
 
+        HBox barraAcciones = crearBarraAcciones();
+
         HBox searchBar = crearBarraBusqueda();
         HBox filtros = crearFiltros();
 
@@ -60,7 +64,28 @@ public class BuscadorClientesFrm {
         tblClientes = crearTabla();
         VBox.setVgrow(tblClientes, Priority.ALWAYS);
 
-        root.getChildren().addAll(lblTitulo, searchBar, filtros, lblResultados, tblClientes);
+        root.getChildren().addAll(lblTitulo, barraAcciones, searchBar, filtros, lblResultados, tblClientes);
+    }
+
+    private HBox crearBarraAcciones() {
+        Button btnRegistrar = new Button("Registrar Cliente");
+        btnRegistrar.getStyleClass().add("btn-buscar");
+        btnRegistrar.setOnAction(e -> controller.mostrarRegistro());
+
+        Button btnReporteComanadas = new Button("Reporte Comandas");
+        btnReporteComanadas.getStyleClass().add("btn-reporte");
+        btnReporteComanadas.setOnAction(e -> controllerReportes.mostrarReporteComanadas());
+
+        Button btnReporteClientes = new Button("Reporte Clientes");
+        btnReporteClientes.getStyleClass().add("btn-reporte");
+        btnReporteClientes.setOnAction(e -> controllerReportes.mostrarReporteClientes());
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        HBox hbox = new HBox(10, btnRegistrar, spacer, btnReporteComanadas, btnReporteClientes);
+        hbox.setAlignment(Pos.CENTER_LEFT);
+        return hbox;
     }
 
     private HBox crearBarraBusqueda() {
