@@ -5,40 +5,32 @@
 package entidades;
 
 import java.io.Serializable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  *
- * @author joser
+ * @author icoro
  */
 @Entity
-@Table(name = "productos_ingredientes")
+@Table(name = "producto_ingrediente")
 public class ProductoIngrediente implements Serializable {
 
-    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    
-    @Column(name = "cantidad", nullable = false)
-    private Double cantidad;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_producto", nullable = false)
-    private Producto producto;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_ingrediente", nullable = false)
-    private Ingrediente ingrediente;
+    private Long id; 
 
+    @Column(name = "cantidad", nullable = false)
+    private Double cantidad; 
+
+    @ManyToOne
+    @JoinColumn(name = "id_producto", nullable = false)
+    private Producto producto; 
+
+    @ManyToOne
+    @JoinColumn(name = "id_ingrediente", nullable = false)
+    private Ingrediente ingrediente; 
+
+  
     public ProductoIngrediente() {
     }
 
@@ -47,12 +39,13 @@ public class ProductoIngrediente implements Serializable {
         this.producto = producto;
         this.ingrediente = ingrediente;
     }
-    
-    public ProductoIngrediente(Long id, Double cantidad, Producto producto, Ingrediente ingrediente) {
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
         this.id = id;
-        this.cantidad = cantidad;
-        this.producto = producto;
-        this.ingrediente = ingrediente;
     }
 
     public Double getCantidad() {
@@ -77,17 +70,6 @@ public class ProductoIngrediente implements Serializable {
 
     public void setIngrediente(Ingrediente ingrediente) {
         this.ingrediente = ingrediente;
-    }
-
-    
-    
-    
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     @Override
