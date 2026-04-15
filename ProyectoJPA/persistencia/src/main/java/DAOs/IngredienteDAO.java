@@ -199,5 +199,10 @@ public class IngredienteDAO implements IIngredienteDAO{
         }
     }
 
+    @Override
+    public boolean duplicadoIngredienteExiste(Ingrediente Ingrediente) throws PersistenciaException {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
     
 }
