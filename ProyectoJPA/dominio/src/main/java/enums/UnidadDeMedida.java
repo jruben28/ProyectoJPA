@@ -6,7 +6,7 @@ package enums;
 
 /**
  *
- * @author joser
+ * @author keppler
  */
 public enum UnidadDeMedida {
     KILOGRAMO, LITRO, PIEZA, PAQUETE, GRAMO, MILILITRO
