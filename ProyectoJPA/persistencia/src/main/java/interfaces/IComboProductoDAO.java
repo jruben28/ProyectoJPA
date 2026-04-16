@@ -9,11 +9,16 @@ import excepciones.PersistenciaException;
 import java.util.List;
 
 /**
- * Interfaz para la relacion entre combo y producto
+ * Interfaz para la tabla entre combo y producto
  * @author Adrian Mendoza
  */
 public interface IComboProductoDAO {
-    public ComboProducto agregar(ComboProducto comboProducto) throws PersistenciaException;
-    
-    public List<ComboProducto> obtenerPorCombo(Long idCombo) throws PersistenciaException;
+
+    /**
+     * Agrega una línea ComboProducto usando solo IDs.
+     * Internamente obtiene referencias manejadas de Combo y Producto.
+     */
+  ComboProducto agregar(Long idCombo, Long idProducto, Integer cantidad) throws PersistenciaException;
+  
+  List<ComboProducto> obtenerPorCombo(Long idCombo) throws PersistenciaException;
 }

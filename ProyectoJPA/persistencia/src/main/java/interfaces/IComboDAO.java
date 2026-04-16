@@ -60,4 +60,13 @@ public interface IComboDAO {
      * @throws PersistenciaException si ocurre error
      */
     public List<Combo> buscarCombosPorProducto(Long idProducto) throws PersistenciaException;
+    
+   /**
+     * Cambia el estado activo de un combo (baja o alta logica).
+     * @param id id del combo
+     * @param activo nuevo estado
+     * @return combo actualizado
+     * @throws PersistenciaException
+     */
+    public Combo cambiarEstado(Long id, Boolean activo) throws PersistenciaException;
 }

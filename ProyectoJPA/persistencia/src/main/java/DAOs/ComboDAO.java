@@ -78,6 +78,7 @@ public class ComboDAO implements IComboDAO {
 
     /**
      * Obtiene todos los combos registrados
+     *
      * @return Lista de todos los combos
      * @throws PersistenciaException si ocurre error en la base de datos
      */
@@ -96,8 +97,10 @@ public class ComboDAO implements IComboDAO {
             em.close();
         }
     }
-   /**
+
+    /**
      * Busca un combo por su ID
+     *
      * @param id ID del combo a buscar
      * @return Combo encontrado
      * @throws PersistenciaException si no se encuentra o hay error
@@ -120,6 +123,7 @@ public class ComboDAO implements IComboDAO {
             em.close();
         }
     }
+
     /**
      * Busca combos cuyo nombre contenga el texto dado
      *
@@ -144,13 +148,13 @@ public class ComboDAO implements IComboDAO {
             em.close();
         }
     }
-    
+
     @Override
     public List<Combo> buscarCombosPorProducto(Long idProducto) throws PersistenciaException {
-                   EntityManager em = ConexionBD.crearConexion();
+        EntityManager em = ConexionBD.crearConexion();
         try {
             TypedQuery<Combo> query = em.createQuery(
-                    "SELECT DISTINCT cProducto.combo FROM ComboProducto cProducto WHERE cProducto.idProducto = :idProducto",
+                    "SELECT DISTINCT cp.combo FROM ComboProducto cp WHERE cp.producto.id = :idProducto",
                     Combo.class);
             query.setParameter("idProducto", idProducto);
             List<Combo> combos = query.getResultList();
@@ -159,7 +163,31 @@ public class ComboDAO implements IComboDAO {
         } catch (RuntimeException ex) {
             LOG.warning("Error al buscar combos por producto: " + ex.getMessage());
             throw new PersistenciaException("Error al buscar combos por producto");
-        } finally{
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public Combo cambiarEstado(Long id, Boolean activo) throws PersistenciaException {
+        EntityManager em = ConexionBD.crearConexion();
+        try {
+            em.getTransaction().begin();
+            Combo combo = em.find(Combo.class, id);
+            if (combo == null) {
+                throw new PersistenciaException("Combo no encontrado con id: " + id);
+            }
+            combo.setActivo(activo);
+            em.getTransaction().commit();
+            LOG.info("Estado del combo cambiado a " + activo + " para id: " + id);
+            return combo;
+        } catch (RuntimeException ex) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            LOG.warning("Error al cambiar estado del combo: " + ex.getMessage());
+            throw new PersistenciaException("Error al cambiar estado del combo");
+        } finally {
             em.close();
         }
     }
