@@ -34,12 +34,19 @@ public class IngredienteBO implements IIngredienteBO{
     public IngredienteDTO agregarIngrediente(IngredienteDTO ingredienteDTO) throws NegocioException {
         try{
             validarDatosIngrediente(ingredienteDTO);
-            
             Ingrediente entidadIngrediente = IngredienteAdapter.dtoAEntidad(ingredienteDTO);
+            if (ingredienteDAO.duplicadoIngredienteExiste(entidadIngrediente)) {
+                throw new NegocioException("Ya existe un ingrediente: " + ingredienteDTO.getNombre() + " con la unidad de medida: " + ingredienteDTO.getUnidadDeMedida().name());
+            }
+            
+            
             Ingrediente ingredienteRecibido = ingredienteDAO.agregarIngrediente(entidadIngrediente);
             IngredienteDTO ingredienteRecibidoDTO = IngredienteAdapter.entidadADTO(ingredienteRecibido);
             
             return ingredienteRecibidoDTO;
+        }
+        catch(NegocioException ex){
+            throw ex;
         }
         catch(Exception ex){
             throw new NegocioException("Error al gregar ingrediente: " + ex.getMessage());
