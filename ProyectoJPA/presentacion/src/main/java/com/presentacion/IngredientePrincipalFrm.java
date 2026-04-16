@@ -46,10 +46,8 @@ public class IngredientePrincipalFrm extends BorderPane{
         Button btnStock = crearBotonMenu("Control de Stock");
         btnStock.setOnAction(e -> controller.mostrarGestionStockEnPrincipal(this));
 
-        Button btnBuscador = crearBotonMenu("Buscador Ingredientes");
-        btnBuscador.setOnAction(e -> {
-            System.out.println("Buscador próximamente...");
-        });
+        Button btnBuscador = crearBotonMenu("Asignar Ingredientes");
+        btnBuscador.setOnAction(e -> controller.mostrarAsignarIngredientesEnPrincipal(this) );
 
         sidebar.getChildren().addAll(menuTitulo, btnAgregar, btnStock, btnBuscador);
 
