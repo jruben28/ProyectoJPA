@@ -31,7 +31,7 @@ public class IngredienteBOTest {
     void testAgregarIngrediente_DatosValidos_GuardaEnBD() {
         try {
             IngredienteDTO nuevoIngrediente = new IngredienteDTO();
-            nuevoIngrediente.setNombre("Cebolla de Prueba");
+            nuevoIngrediente.setNombre("Cebolla de Prueba Morada");
             nuevoIngrediente.setStock(15.5);
             nuevoIngrediente.setUnidadDeMedida(UnidadDeMedida.KILOGRAMO); 
 
@@ -40,7 +40,7 @@ public class IngredienteBOTest {
             assertNotNull(resultado, "El resultado no debería ser nulo");
 
             assertNotNull(resultado.getIdIngrediente(), "El ingrediente debería tener un ID generado por la BD");
-            assertEquals("Cebolla de Prueba", resultado.getNombre());
+            assertEquals("Cebolla de Prueba Morada", resultado.getNombre());
             
         } catch (NegocioException e) {
             fail("No debió lanzar excepción: " + e.getMessage());
