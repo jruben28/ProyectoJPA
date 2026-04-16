@@ -1,22 +1,16 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.presentacion;
 
+import BOs.IngredienteBO;
 import BOs.ProductoBO;
-
+import com.dtos.IngredienteDTO;
 import com.dtos.ProductoDTO;
-
-
 import javafx.scene.control.Alert;
 import java.util.List;
 
 /**
  * Controlador para la gestión de productos.
  * Actúa como intermediario entre la capa de presentación y la capa de negocio.
- * 
- * @author icoro
+ * * @author icoro
  */
 public class ControllerProducto {
 
@@ -49,21 +43,8 @@ public class ControllerProducto {
      */
     public List<ProductoDTO> buscarProductos(String texto, String categoria) {
         try {
-            if (categoria == null || categoria.equals("TODOS")) {
-                // Si la categoría es "TODOS" o null, buscar sin filtro de categoría
-                if (texto == null || texto.isEmpty()) {
-                    return productoBO.obtenerTodos();
-                } else {
-                    return productoBO.buscarPorNombre(texto);
-                }
-            } else {
-                // Buscar con filtro de categoría
-                if (texto == null || texto.isEmpty()) {
-                    return productoBO.buscarPorCategoria(categoria);
-                } else {
-                    return productoBO.buscarPorNombreYCategoria(texto, categoria);
-                }
-            }
+            // Tu BO ya maneja toda la lógica de los filtros internamente
+            return productoBO.buscarProductos(texto, categoria);
         } catch (Exception e) {
             mostrarAlerta(Alert.AlertType.ERROR, "Error al buscar productos: " + e.getMessage());
             throw new RuntimeException("Error al buscar productos", e);
@@ -77,12 +58,13 @@ public class ControllerProducto {
     public void registrarProducto(ProductoDTO dto) {
         try {
             validarProducto(dto);
-            productoBO.registrar(dto);
+            // Corregido: Llamando al método correcto del BO
+            productoBO.guardarProducto(dto);
             
             // Refrescar la tabla del buscador
             actualizarVistaBuscador();
         } catch (Exception e) {
-            throw new RuntimeException("Error al registrar producto: " + e.getMessage(), e);
+            mostrarAlerta(Alert.AlertType.ERROR, e.getMessage());
         }
     }
 
@@ -93,12 +75,13 @@ public class ControllerProducto {
     public void actualizarProducto(ProductoDTO dto) {
         try {
             validarProducto(dto);
-            productoBO.actualizar(dto);
+            // Corregido: Llamando al método correcto del BO
+            productoBO.actualizarProducto(dto);
             
             // Refrescar la tabla del buscador
             actualizarVistaBuscador();
         } catch (Exception e) {
-            throw new RuntimeException("Error al actualizar producto: " + e.getMessage(), e);
+             mostrarAlerta(Alert.AlertType.ERROR, e.getMessage());
         }
     }
 
@@ -108,14 +91,12 @@ public class ControllerProducto {
      */
     public void cambiarEstado(Long idProducto) {
         try {
-            ProductoDTO producto = productoBO.obtenerPorId(idProducto);
-            if (producto != null) {
-                producto.setActivo(!producto.getActivo());
-                productoBO.actualizar(producto);
-                
-                String mensaje = producto.getActivo() ? "Producto activado" : "Producto desactivado";
-                mostrarAlerta(Alert.AlertType.INFORMATION, mensaje + " exitosamente.");
-            }
+            // Tu BO ya hace todo el proceso internamente (buscar, cambiar y guardar)
+            productoBO.cambiarEstado(idProducto);
+            mostrarAlerta(Alert.AlertType.INFORMATION, "Estado del producto actualizado exitosamente.");
+            
+            // Refrescar la tabla para ver el cambio
+            actualizarVistaBuscador();
         } catch (Exception e) {
             mostrarAlerta(Alert.AlertType.ERROR, "Error al cambiar estado: " + e.getMessage());
         }
@@ -141,9 +122,14 @@ public class ControllerProducto {
      * Obtiene todos los ingredientes disponibles en el sistema
      * @return Lista de ingredientes
      */
+  /**
+     * Obtiene todos los ingredientes disponibles en el sistema
+     * @return Lista de ingredientes
+     */
     public List<IngredienteDTO> obtenerTodosLosIngredientes() {
         try {
-            return ingredienteBO.obtenerTodos();
+            // Corregido al método exacto que hizo tu compañero en IngredienteBO
+            return ingredienteBO.obtenerIngredienteTodos(); 
         } catch (Exception e) {
             mostrarAlerta(Alert.AlertType.ERROR, "Error al cargar ingredientes: " + e.getMessage());
             throw new RuntimeException("Error al obtener ingredientes", e);
@@ -180,11 +166,8 @@ public class ControllerProducto {
      * Actualiza los datos mostrados en la vista del buscador
      */
     private void actualizarVistaBuscador() {
-        // Esta llamada refrescará la tabla con los datos actualizados
-        if (buscadorProductos != null) {
-            // El buscador se actualizará cuando se cierre el formulario
-            // ya que el método buscarProductos() se llama desde el formulario
-        }
+        // Lógica para decirle a tu BuscadorProductosFrm que vuelva a cargar la tabla.
+        // Si tu formulario de buscador tiene un método como 'cargarDatos()', llámalo aquí.
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.presentacion;
 
+import com.dtos.IngredienteDTO;
 import com.dtos.ProductoDTO;
 import com.dtos.ProductoIngredienteDTO;
 import java.util.ArrayList;
@@ -168,7 +169,7 @@ public class RegistroProductoFrm extends Stage {
         }
 
         ProductoIngredienteDTO pi = new ProductoIngredienteDTO();
-        pi.setIdIngrediente(seleccionado.getId());
+        pi.setIdIngrediente(seleccionado.getIdIngrediente());
         pi.setNombreIngrediente(seleccionado.getNombre());
         // CORRECCIÓN: Cambiado a Double.parseDouble asumiendo que ProductoIngredienteDTO.setCantidad recibe un Double
         pi.setCantidad(Double.parseDouble(cantidadStr)); 
