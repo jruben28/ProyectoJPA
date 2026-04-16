@@ -31,16 +31,16 @@ public class IngredienteBOTest {
     void testAgregarIngrediente_DatosValidos_GuardaEnBD() {
         try {
             IngredienteDTO nuevoIngrediente = new IngredienteDTO();
-            nuevoIngrediente.setNombre("Cebolla de Prueba");
+            nuevoIngrediente.setNombre("Cebolla de Prueba Morada");
             nuevoIngrediente.setStock(15.5);
-            nuevoIngrediente.setUnidadDeMedida(UnidadDeMedida.KILOGRAMO); // Cambia según tu Enum
+            nuevoIngrediente.setUnidadDeMedida(UnidadDeMedida.KILOGRAMO); 
 
             IngredienteDTO resultado = ingredienteBO.agregarIngrediente(nuevoIngrediente);
 
             assertNotNull(resultado, "El resultado no debería ser nulo");
 
             assertNotNull(resultado.getIdIngrediente(), "El ingrediente debería tener un ID generado por la BD");
-            assertEquals("Cebolla de Prueba", resultado.getNombre());
+            assertEquals("Cebolla de Prueba Morada", resultado.getNombre());
             
         } catch (NegocioException e) {
             fail("No debió lanzar excepción: " + e.getMessage());
@@ -112,7 +112,7 @@ public class IngredienteBOTest {
     void testObtenerIngredienteTodos_RetornaLista() {
         try {
             List<IngredienteDTO> lista = ingredienteBO.obtenerIngredienteTodos();
-
+            System.out.println(lista);
             assertNotNull(lista, "La lista no debe ser nula");
             assertFalse(lista.isEmpty(), "La lista debería contener al menos un elemento");
         } catch (NegocioException e) {

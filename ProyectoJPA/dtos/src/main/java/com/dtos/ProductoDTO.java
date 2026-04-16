@@ -36,4 +36,11 @@ public class ProductoDTO {
     public void setTipo(String tipo) { this.tipo = tipo; }
     public List<ProductoIngredienteDTO> getIngredientes() { return ingredientes; }
     public void setIngredientes(List<ProductoIngredienteDTO> ingredientes) { this.ingredientes = ingredientes; }
+
+    @Override
+    public String toString() {
+        return nombre;
+    }
+    
+    
 }

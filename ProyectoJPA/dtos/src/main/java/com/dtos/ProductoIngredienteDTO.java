@@ -22,10 +22,27 @@ public class ProductoIngredienteDTO {
     }
 
     // Getters y Setters
-    public Long getIdIngrediente() { return idIngrediente; }
-    public void setIdIngrediente(Long idIngrediente) { this.idIngrediente = idIngrediente; }
-    public String getNombreIngrediente() { return nombreIngrediente; }
-    public void setNombreIngrediente(String nombreIngrediente) { this.nombreIngrediente = nombreIngrediente; }
-    public Double getCantidad() { return cantidad; }
-    public void setCantidad(Double cantidad) { this.cantidad = cantidad; }
+    public Long getIdIngrediente() {
+        return idIngrediente;
+    }
+
+    public void setIdIngrediente(Long idIngrediente) {
+        this.idIngrediente = idIngrediente;
+    }
+
+    public String getNombreIngrediente() {
+        return nombreIngrediente;
+    }
+
+    public void setNombreIngrediente(String nombreIngrediente) {
+        this.nombreIngrediente = nombreIngrediente;
+    }
+
+    public Double getCantidad() {
+        return cantidad;
+    }
+
+    public void setCantidad(Double cantidad) {
+        this.cantidad = cantidad;
+    }
 }

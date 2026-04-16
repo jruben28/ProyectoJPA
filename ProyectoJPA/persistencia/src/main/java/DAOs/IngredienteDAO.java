@@ -200,8 +200,29 @@ public class IngredienteDAO implements IIngredienteDAO{
     }
 
     @Override
-    public boolean duplicadoIngredienteExiste(Ingrediente Ingrediente) throws PersistenciaException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public boolean duplicadoIngredienteExiste(Ingrediente ingrediente) throws PersistenciaException {
+        EntityManager em = ConexionBD.crearConexion();
+        
+        try {
+
+            String jpql = "SELECT COUNT(i) FROM Ingrediente i WHERE LOWER(i.nombre) = LOWER(:nombre) AND i.unidadDeMedida = :unidadMedida";
+            
+            Long coincidencias = em.createQuery(jpql, Long.class)
+                    .setParameter("nombre", ingrediente.getNombre().trim()) 
+                    .setParameter("unidadMedida", ingrediente.getUnidadDeMedida())
+                    .getSingleResult();
+            
+            LOG.info("Se ha validado la existencia del ingrediente con la unidad de mediad: " + (coincidencias > 0));
+            return coincidencias > 0;
+            
+        } catch (Exception ex) {
+            LOG.warning("Ha habido un error al consultar la existencia del ingrediente en la base de datos.");
+            throw new PersistenciaException("Error al validar la existencia del ingrediente en la base de datos." + ex.getMessage());
+        }
+        finally{
+            em.close();
+        }
+        
     }
 
     
