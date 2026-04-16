@@ -14,7 +14,6 @@ import java.util.List;
  */
 public interface IIngredienteDAO {
     
-    
     Ingrediente agregarIngrediente(Ingrediente ingrediente) throws PersistenciaException;
     
     Ingrediente actualizarStock(Long idIngrediente, Double stock) throws PersistenciaException;
@@ -27,4 +26,5 @@ public interface IIngredienteDAO {
     
     List<Ingrediente> obtenerIngredienteTodos() throws PersistenciaException;
     
+    boolean duplicadoIngredienteExiste(Ingrediente Ingrediente) throws PersistenciaException;
 }
