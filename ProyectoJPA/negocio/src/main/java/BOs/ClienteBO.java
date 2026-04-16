@@ -28,134 +28,88 @@ import utilidades.Encriptador;
  */
 public class ClienteBO implements IClienteBO {
 
-    private IClienteDAO clienteDAO;
-    private static final Logger LOG = Logger.getLogger(ClienteBO.class.getName());
+    private static final Logger LOG = Logger.getLogger(ClienteBO.class.getName()); // 👈 ¡AGREGADO!
+
+    private final IClienteDAO clienteDAO;
 
     public ClienteBO() {
         this.clienteDAO = new ClienteDAO();
     }
 
-    /**
-     * Calcula los puntos generados por las compras del cliente 1 punto por cada
-     * 20 pesos
-     *
-     * @param idCliente
-     * @return puntos
-     */
+    public ClienteBO(IClienteDAO clienteDAO) {
+        this.clienteDAO = clienteDAO;
+    }
+
+    @Override
     public Integer calcularPuntos(Long idCliente) {
         Double total = calcularTotalGastado(idCliente);
         Integer puntos = (int) (total / 20);
-
-        if (puntos < 0) {
-            puntos = 0;
-        }
-        return puntos;
+        return puntos < 0 ? 0 : puntos;
     }
 
-    /**
-     * Calcula el dinero total gastado por el cliente
-     *
-     * @param idCliente
-     * @return total
-     */
+    @Override
     public Double calcularTotalGastado(Long idCliente) {
         List<Comanda> comandas = clienteDAO.buscarComandasPorCliente(idCliente);
         Double total = 0.0;
         for (Comanda c : comandas) {
             total += c.getTotal();
         }
-        if (total < 0) {
-            total = 0.0;
-        }
-        return total;
+        return total < 0 ? 0.0 : total;
     }
 
     @Override
-    public void agregarClienteFrecuente(ClienteFrecuenteDTO clienteFrecuenteDTO) {
-        //No tiene que tener id, no será mapeado
-        validarClienteFrecuenteDTO(clienteFrecuenteDTO);
+    public void agregarClienteFrecuente(ClienteFrecuenteDTO dto) {
+        validarClienteFrecuenteDTO(dto); 
 
         try {
-
-            clienteFrecuenteDTO.setTelefono(Encriptador.encriptar(clienteFrecuenteDTO.getTelefono()));
-
-            ClienteFrecuente clienteF = ClienteFrecuenteAdapter.dtoAEntidad(clienteFrecuenteDTO);
-
+            dto.setTelefono(Encriptador.encriptar(dto.getTelefono()));
+            ClienteFrecuente clienteF = ClienteFrecuenteAdapter.dtoAEntidad(dto);
             clienteDAO.agregarClienteFrecuente(clienteF);
-
         } catch (PersistenciaException ex) {
-            LOG.warning("Error en negocio al agregar cliente frecuente" + ex.getMessage());
+            LOG.warning("Error en negocio al agregar cliente frecuente: " + ex.getMessage());
             throw new NegocioException("Error al agregar un cliente frecuente");
         }
     }
 
-    public void validarClienteFrecuenteDTO(ClienteFrecuenteDTO dto) {
-        //Agregar validacion de cliente Frecuente DTO
-        //Agregar validacion de cliente Frecuente DTO
+ 
+    private void validarClienteFrecuenteDTO(ClienteFrecuenteDTO dto) {
         String REGEX_CORREO = "^[A-Za-z0-9+_.-]+@(.+)$";
         String REGEX_TELEFONO = "^\\d{10}$";
 
         if (dto.getNombre() == null || dto.getNombre().trim().isEmpty() || dto.getNombre().length() > 200) {
-            throw new NegocioException("El nombre del cliente no es valido");
+            throw new NegocioException("El nombre del cliente no es válido");
         }
-
-        //modificado para que sea opcional
         if (dto.getCorreo() != null && !dto.getCorreo().trim().isEmpty()
                 && !Pattern.matches(REGEX_CORREO, dto.getCorreo())) {
-            throw new NegocioException("El correo del cliente no es valido");
+            throw new NegocioException("El correo del cliente no es válido");
         }
-
         if (dto.getTelefono() == null || !Pattern.matches(REGEX_TELEFONO, dto.getTelefono())) {
-            throw new NegocioException("El telefono del cliente no es valido");
+            throw new NegocioException("El teléfono del cliente no es válido");
         }
-
         if (dto.getFechaRegistro() == null || dto.getFechaRegistro().after(new Date())) {
-            throw new NegocioException("La fecha de registro no es valida");
+            throw new NegocioException("La fecha de registro no es válida");
         }
     }
 
-    /**
-     *  Aplica filtros a la busqueda de cllientesFrecuentes,  
-     * @param filtro
-     * @param campoBusqueda
-     * @return
-     * @throws NegocioException 
-     */
-   @Override
-    public List<ClienteFrecuenteDTO> buscarFrecuentesPorFiltro(String filtro, String campoBusqueda) throws NegocioException {
+    @Override
+    public List<ClienteFrecuenteDTO> buscarFrecuentesPorFiltro(String filtro, String campoBusqueda) {
         if (filtro == null || filtro.trim().isEmpty()) {
-            throw new NegocioException("El filtro de busqueda no puede estar vacio");
+            throw new NegocioException("El filtro de búsqueda no puede estar vacío");
         }
         try {
             List<ClienteFrecuente> clientes = clienteDAO.buscarFrecuentesPorCampo(filtro, campoBusqueda);
             List<ClienteFrecuenteDTO> resultado = new ArrayList<>();
 
             for (ClienteFrecuente c : clientes) {
-                List<Comanda> comandas = clienteDAO.buscarComandasPorCliente(c.getId());
-
-                Double totalGastado = 0.0;
-                for (Comanda cmd : comandas) {
-                    totalGastado += cmd.getTotal();
-                }
-                if (totalGastado < 0) {
-                    totalGastado = 0.0;
-                }
-
-                Integer puntos = (int) (totalGastado / 20);
-                if (puntos < 0) {
-                    puntos = 0;
-                }
-
-                Integer numVisitas = comandas.size();
+                
+                Double totalGastado = calcularTotalGastado(c.getId());
+                Integer puntos = calcularPuntos(c.getId());
+                Integer numVisitas = clienteDAO.buscarComandasPorCliente(c.getId()).size();
 
                 ClienteFrecuenteDTO dto = ClienteFrecuenteAdapter.entidadADTO(c, puntos, totalGastado, numVisitas);
-                
-                // Desencriptar el telefono
                 dto.setTelefono(Encriptador.desencriptar(c.getTelefono()));
-                
                 resultado.add(dto);
             }
-
             return resultado;
         } catch (PersistenciaException ex) {
             LOG.warning("Error al buscar clientes frecuentes: " + ex.getMessage());
@@ -163,18 +117,13 @@ public class ClienteBO implements IClienteBO {
         }
     }
 
-    // en progreso
     @Override
-    public List<Comanda> buscarComandasPorCliente(Long idCliente) throws NegocioException {
-      // Validar que el ID tenga sentido lógico
+    public List<Comanda> buscarComandasPorCliente(Long idCliente) {
         if (idCliente == null || idCliente <= 0) {
             throw new NegocioException("El ID del cliente no es válido para realizar la búsqueda de comandas.");
         }
-
         try {
-           
             return clienteDAO.buscarComandasPorCliente(idCliente);
-            
         } catch (PersistenciaException ex) {
             LOG.warning("Error al buscar las comandas del cliente con ID " + idCliente + ": " + ex.getMessage());
             throw new NegocioException("Error al obtener el historial de comandas del cliente.");
@@ -182,26 +131,15 @@ public class ClienteBO implements IClienteBO {
     }
 
     @Override
-    public void actualizarClienteFrecuente(ClienteFrecuenteDTO clienteFrecuenteDTO) throws NegocioException {
-        // 1.  método de validación (Regex, nulos, etc.)
-        validarClienteFrecuenteDTO(clienteFrecuenteDTO);
-
-        // 2. Regla: No podemos actualizar a un fantasma, ocupamos su ID
-        if (clienteFrecuenteDTO.getId() == null) {
+    public void actualizarClienteFrecuente(ClienteFrecuenteDTO dto) {
+        validarClienteFrecuenteDTO(dto);
+        if (dto.getId() == null) {
             throw new NegocioException("No se puede actualizar el cliente porque no tiene un ID asignado.");
         }
-
         try {
-            // 3. Encriptamos el teléfono antes de mandarlo a la Entidad
-            clienteFrecuenteDTO.setTelefono(Encriptador.encriptar(clienteFrecuenteDTO.getTelefono()));
-
-            // 4. Convertimos a Entidad
-            ClienteFrecuente clienteF = ClienteFrecuenteAdapter.dtoAEntidad(clienteFrecuenteDTO);
-
-            // 5. Mandamos al DAO a actualizar. 
- 
+            dto.setTelefono(Encriptador.encriptar(dto.getTelefono()));
+            ClienteFrecuente clienteF = ClienteFrecuenteAdapter.dtoAEntidad(dto);
             clienteDAO.actualizarClienteFrecuente(clienteF);
-
         } catch (PersistenciaException ex) {
             LOG.warning("Error en negocio al actualizar cliente frecuente: " + ex.getMessage());
             throw new NegocioException("Error al intentar actualizar los datos del cliente en la base de datos.");
@@ -209,7 +147,7 @@ public class ClienteBO implements IClienteBO {
     }
 
     @Override
-    public String obtenerOCrearClienteGeneral() throws NegocioException {
+    public String obtenerOCrearClienteGeneral() {
         try {
             ClienteGeneral clienteGeneral = clienteDAO.obtenerClienteGeneral();
             if (clienteGeneral == null) {
@@ -222,9 +160,4 @@ public class ClienteBO implements IClienteBO {
             throw new NegocioException("Error al preparar el cliente general");
         }
     }
-
-  
-    
-    
-   
 }
