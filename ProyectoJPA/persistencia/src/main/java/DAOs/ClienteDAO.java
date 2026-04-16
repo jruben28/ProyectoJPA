@@ -32,7 +32,6 @@ public class ClienteDAO implements IClienteDAO {
 
     @Override
     public Cliente agregar(Cliente cliente) {
-        // Obtenemos conexion
         EntityManager em = ConexionBD.crearConexion();
         try {
             em.getTransaction().begin();
@@ -44,7 +43,7 @@ public class ClienteDAO implements IClienteDAO {
             LOG.warning("Error al agregar un cliente");
             throw new PersistenciaException("Error al agregar un cliente");
         } finally {
-            em.close(); // Siempre cerramos la conexión al terminar
+            em.close(); 
         }
     }
 
@@ -87,7 +86,6 @@ public class ClienteDAO implements IClienteDAO {
                     + "WHERE c.nombre LIKE :filtro OR c.telefono LIKE :filtro OR c.correo LIKE :filtro";
 
             TypedQuery<ClienteFrecuente> query = em.createQuery(jpql, ClienteFrecuente.class);
-            // Los % son para que busque coincidencias parciales (como el LIKE de SQL)
             query.setParameter("filtro", "%" + filtro + "%");
 
             return query.getResultList();
@@ -106,7 +104,6 @@ public class ClienteDAO implements IClienteDAO {
             String jpql = "SELECT c FROM ClienteGeneral c WHERE c.nombre = 'Cliente General'";
             return em.createQuery(jpql, ClienteGeneral.class).getSingleResult();
         } catch (Exception e) {
-            // Retornamos null si no existe para manejarlo en la Capa de Negocio
             LOG.warning("Se produjo un error al consultar los clientes generales.");
             return null;
         } finally {
@@ -114,12 +111,6 @@ public class ClienteDAO implements IClienteDAO {
         }
     }
 
-    /**
-     * Busca las comandas ya entregadas, por cliente
-     *
-     * @param idCliente
-     * @return Lista de comandas entregadas
-     */
     /**
      * Busca las comandas ya entregadas de un cliente.
      *
@@ -145,8 +136,9 @@ public class ClienteDAO implements IClienteDAO {
         }
     }
 
-   /**
-     * Metodo que usa criteria api para las busquedas dinamicas por campo nombre, correo y telefono
+    /**
+     * Metodo que usa criteria api para las busquedas dinamicas por campo
+     * nombre, correo y telefono
      *
      * @param filtro
      * @param campo
@@ -178,7 +170,7 @@ public class ClienteDAO implements IClienteDAO {
                 Expression<String> telDecodificado = cb.function("FROM_BASE64", String.class, root.<String>get("telefono"));
                 predicados.add(cb.like(telDecodificado, patron));
             }
-           
+
             if (predicados.isEmpty()) {
                 predicados.add(cb.like(cb.lower(root.<String>get("nombre")), patron));
             }
