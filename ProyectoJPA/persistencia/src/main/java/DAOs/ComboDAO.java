@@ -14,7 +14,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
 /**
- * implementacion de IComboDAO
+ * Implementación de IComboDAO
  *
  * @author Adrian Mendoza
  */
@@ -22,13 +22,6 @@ public class ComboDAO implements IComboDAO {
 
     private static final Logger LOG = Logger.getLogger(ComboDAO.class.getName());
 
-    /**
-     * Agrega un combo a la bd
-     *
-     * @param combo
-     * @return
-     * @throws PersistenciaException
-     */
     @Override
     public Combo agregarCombo(Combo combo) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
@@ -42,46 +35,33 @@ public class ComboDAO implements IComboDAO {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
-            LOG.warning("Error al agregar un combo");
+            LOG.warning("Error al agregar un combo: " + ex.getMessage());
             throw new PersistenciaException("Error al agregar un combo");
         } finally {
             em.close();
         }
     }
 
-    /**
-     * Actualiza un combo en la bd
-     *
-     * @param combo
-     * @return
-     * @throws PersistenciaException
-     */
     @Override
     public Combo actualizarCombo(Combo combo) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
         try {
             em.getTransaction().begin();
-            em.merge(combo);
+            Combo actualizado = em.merge(combo);
             em.getTransaction().commit();
-            LOG.info("Combo actualizado con ID: " + combo.getId());
-            return combo;
+            LOG.info("Combo actualizado con ID: " + actualizado.getId());
+            return actualizado;
         } catch (RuntimeException ex) {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
-            LOG.warning("Error al actualizar combo");
+            LOG.warning("Error al actualizar combo: " + ex.getMessage());
             throw new PersistenciaException("Error al actualizar combo");
         } finally {
             em.close();
         }
     }
 
-    /**
-     * Obtiene todos los combos registrados
-     *
-     * @return Lista de todos los combos
-     * @throws PersistenciaException si ocurre error en la base de datos
-     */
     @Override
     public List<Combo> obtenerTodosCombos() throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
@@ -98,24 +78,18 @@ public class ComboDAO implements IComboDAO {
         }
     }
 
-    /**
-     * Busca un combo por su ID
-     *
-     * @param id ID del combo a buscar
-     * @return Combo encontrado
-     * @throws PersistenciaException si no se encuentra o hay error
-     */
     @Override
     public Combo buscarComboPorId(Long id) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
         try {
             Combo combo = em.find(Combo.class, id);
             if (combo == null) {
-                LOG.warning("Combo no encontrado con id: " + id);
-                throw new PersistenciaException("Combo no encontrado");
+                throw new PersistenciaException("Combo no encontrado con id: " + id);
             }
             LOG.info("Combo encontrado: " + combo.getNombre());
             return combo;
+        } catch (PersistenciaException ex) {
+            throw ex;
         } catch (RuntimeException ex) {
             LOG.warning("Error al buscar combo: " + ex.getMessage());
             throw new PersistenciaException("Error al buscar combo");
@@ -124,13 +98,35 @@ public class ComboDAO implements IComboDAO {
         }
     }
 
-    /**
-     * Busca combos cuyo nombre contenga el texto dado
-     *
-     * @param nombre Texto a buscar en el nombre
-     * @return Lista de combos que coinciden
-     * @throws PersistenciaException si ocurre error en la base de datos
-     */
+    @Override
+    public Combo buscarComboPorIdConDetalles(Long id) throws PersistenciaException {
+        EntityManager em = ConexionBD.crearConexion();
+        try {
+            String jpql = "SELECT DISTINCT c FROM Combo c "
+                    + "LEFT JOIN FETCH c.productos cp "
+                    + "LEFT JOIN FETCH cp.producto p "
+                    + "LEFT JOIN FETCH p.ingredientes pi "
+                    + "LEFT JOIN FETCH pi.ingrediente "
+                    + "WHERE c.id = :id";
+
+            List<Combo> result = em.createQuery(jpql, Combo.class)
+                    .setParameter("id", id)
+                    .getResultList();
+
+            if (result.isEmpty()) {
+                throw new PersistenciaException("Combo no encontrado con id: " + id);
+            }
+            return result.get(0);
+        } catch (PersistenciaException ex) {
+            throw ex;
+        } catch (RuntimeException ex) {
+            LOG.warning("Error al buscar combo con detalles: " + ex.getMessage());
+            throw new PersistenciaException("Error al buscar combo con detalles");
+        } finally {
+            em.close();
+        }
+    }
+
     @Override
     public List<Combo> buscarCombosPorNombre(String nombre) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
@@ -181,6 +177,11 @@ public class ComboDAO implements IComboDAO {
             em.getTransaction().commit();
             LOG.info("Estado del combo cambiado a " + activo + " para id: " + id);
             return combo;
+        } catch (PersistenciaException ex) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw ex;
         } catch (RuntimeException ex) {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
