@@ -112,7 +112,7 @@ public class IngredienteBOTest {
     void testObtenerIngredienteTodos_RetornaLista() {
         try {
             List<IngredienteDTO> lista = ingredienteBO.obtenerIngredienteTodos();
-
+            System.out.println(lista);
             assertNotNull(lista, "La lista no debe ser nula");
             assertFalse(lista.isEmpty(), "La lista debería contener al menos un elemento");
         } catch (NegocioException e) {
