@@ -5,11 +5,15 @@
 package entidades;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
@@ -40,17 +44,22 @@ public class Combo implements Serializable {
     
     @Column(nullable = false)
     private Boolean activo;
+    
+    @OneToMany(mappedBy = "combo", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ComboProducto> productos;
 
     public Combo() {
+        this.productos = new ArrayList<>();
     }
     
-    public Combo(String nombre, String descripcion, Double precioOriginal, Double precioCombo, Integer porcentajeDescuento){
-        this.nombre=nombre;
-        this.descripcion=descripcion;
-        this.precioCombo=precioCombo;
-        this.precioOriginal=precioOriginal;
-        this.porcentajeDescuento=porcentajeDescuento;
-        this.activo=true;
+    public Combo(String nombre, String descripcion, Double precioOriginal, Double precioCombo, Integer porcentajeDescuento) {
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.precioCombo = precioCombo;
+        this.precioOriginal = precioOriginal;
+        this.porcentajeDescuento = porcentajeDescuento;
+        this.activo = true;
+        this.productos = new ArrayList<>();
     }
     
     public Long getId() {
@@ -111,7 +120,13 @@ public class Combo implements Serializable {
     }
     
     
-    
+    public List<ComboProducto> getProductos() {
+        return productos;
+    }
+
+    public void setProductos(List<ComboProducto> productos) {
+        this.productos = productos;
+    }
     
     
 }

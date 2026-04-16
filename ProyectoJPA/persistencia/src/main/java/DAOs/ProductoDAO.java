@@ -4,8 +4,8 @@
  */
 package DAOs;
 
-import Entidades.Producto;
 import conexion.ConexionBD;
+import entidades.Producto;
 import enums.TipoProducto;
 import interfaces.IProductoDAO;
 import java.util.List;
@@ -99,4 +99,5 @@ public class ProductoDAO implements IProductoDAO {
         } finally {
             em.close();
         }    }
+
 }

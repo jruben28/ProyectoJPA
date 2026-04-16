@@ -6,22 +6,10 @@
         <artifactId>ProyectoJPA</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-    <artifactId>dominio</artifactId>
+    <artifactId>enums</artifactId>
     <packaging>jar</packaging>
     <properties>
         <maven.compiler.release>22</maven.compiler.release>
-        <exec.mainClass>com.dominio.Dominio</exec.mainClass>
+        <exec.mainClass>enums.Enums</exec.mainClass>
     </properties>
-    <dependencies>
-    <dependency>
-        <groupId>javax.persistence</groupId>
-        <artifactId>javax.persistence-api</artifactId>
-        <version>2.2</version>
-    </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>enums</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-    </dependencies>
 </project>

@@ -5,7 +5,7 @@
 package interfaces;
 
 
-import Entidades.Producto;
+import entidades.Producto;
 import enums.TipoProducto;
 import java.util.List;
 

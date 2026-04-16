@@ -5,9 +5,9 @@
 package enums;
 
 /**
- * ENUM para los estados de una Comanda
- * @author keppler
+ *
+ * @author joser
  */
-public enum EstadoComanda {
-    ABIERTA, ENTREGADA, CANCELADA
+public enum UnidadDeMedida {
+    KILOGRAMO, LITRO, PIEZA, PAQUETE, GRAMO, MILILITRO
 }

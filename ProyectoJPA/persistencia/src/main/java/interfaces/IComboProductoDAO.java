@@ -6,6 +6,7 @@ package interfaces;
 
 import entidades.ComboProducto;
 import excepciones.PersistenciaException;
+import java.util.List;
 
 /**
  * Interfaz para la relacion entre combo y producto
@@ -13,4 +14,6 @@ import excepciones.PersistenciaException;
  */
 public interface IComboProductoDAO {
     public ComboProducto agregar(ComboProducto comboProducto) throws PersistenciaException;
+    
+    public List<ComboProducto> obtenerPorCombo(Long idCombo) throws PersistenciaException;
 }
