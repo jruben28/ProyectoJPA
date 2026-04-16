@@ -120,23 +120,29 @@ public class ClienteDAO implements IClienteDAO {
      * @param idCliente
      * @return Lista de comandas entregadas
      */
+    /**
+     * Busca las comandas ya entregadas de un cliente.
+     *
+     * @param idCliente id del cliente
+     * @return lista de comandas entregadas
+     */
+    @Override
     public List<Comanda> buscarComandasPorCliente(Long idCliente) {
         EntityManager em = ConexionBD.crearConexion();
-
         try {
-           String jpql = "SELECT c FROM Comanda c "
-        + "WHERE c.idCliente = :id AND UPPER(c.estado) = :estado";
-        
-            return em.createQuery(jpql, Comanda.class).setParameter("id", idCliente)
-                    .setParameter("estado", "ENTREGADA").getResultList();
-
+            String jpql = "SELECT c FROM Comanda c "
+                    + "WHERE c.cliente.id = :id AND c.estado = :estado";
+            return em.createQuery(jpql, Comanda.class)
+                    .setParameter("id", idCliente)
+                    .setParameter("estado", enums.EstadoComanda.ENTREGADA)
+                    .getResultList();
         } catch (Exception e) {
-            LOG.warning("Se produjo un error al buscar las comandas del cliente con ID: " + idCliente);
-            throw new excepciones.PersistenciaException("Error en buscar la comanda por id de cliente" + e.getMessage());
+            LOG.warning("Error al buscar comandas del cliente con ID: " + idCliente);
+            throw new PersistenciaException(
+                    "Error al buscar la comanda por id de cliente: " + e.getMessage());
         } finally {
             em.close();
         }
-
     }
 
    /**

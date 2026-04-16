@@ -6,6 +6,8 @@ package interfaces;
 
 import entidades.Comanda;
 import excepciones.PersistenciaException;
+import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  *
@@ -14,4 +16,8 @@ import excepciones.PersistenciaException;
 public interface IComandaDAO {
     
     public Comanda agregarComanda(Comanda comanda) throws PersistenciaException;
+   
+    Integer contarComandasDelDia(LocalDateTime dia) throws PersistenciaException;
+
+    List<Comanda> buscarPorRangoFechas(LocalDateTime desde, LocalDateTime hasta) throws PersistenciaException;
 }
