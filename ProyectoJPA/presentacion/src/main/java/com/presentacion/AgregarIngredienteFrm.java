@@ -153,7 +153,7 @@ public class AgregarIngredienteFrm extends Stage{
             controller.registrarIngrediente(dto);
             mostrarAlertaExito("Ingrediente Registrado", "Ingrediente '" + dto.getNombre() + "' registrado exitosamente.");
             limpiarFormulario();
-            //close(); //documentado de momento en lo que agregamos el menú que invoca esto.
+            close(); 
             
         } catch (NegocioException ex) {
             mostrarAlertaError("Error al guardar ingrediente", ex.getMessage());
@@ -186,17 +186,13 @@ public class AgregarIngredienteFrm extends Stage{
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Seleccionar Imagen del Ingrediente");
         
-        // Filtramos para que el usuario solo pueda elegir imágenes
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Archivos de Imagen", "*.png", "*.jpg", "*.jpeg")
         );
 
-        // 'this' funciona porque tu clase hereda de Stage
         File archivoSeleccionado = fileChooser.showOpenDialog(this); 
 
-        // Si el usuario seleccionó un archivo (y no cerró la ventana)
         if (archivoSeleccionado != null) {
-            // Obtenemos la ruta absoluta en la computadora y la ponemos en el campo de texto
             txtRutaImagen.setText(archivoSeleccionado.getAbsolutePath());
         }
     }
