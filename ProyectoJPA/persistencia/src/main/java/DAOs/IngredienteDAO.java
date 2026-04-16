@@ -205,7 +205,7 @@ public class IngredienteDAO implements IIngredienteDAO{
         
         try {
 
-            String jpql = "SELECT COUNT(i) FROM Ingrediente i WHERE LOWER(i.nombre) = LOWER(:nombre) AND i.unidadMedida = :unidadMedida";
+            String jpql = "SELECT COUNT(i) FROM Ingrediente i WHERE LOWER(i.nombre) = LOWER(:nombre) AND i.unidadDeMedida = :unidadMedida";
             
             Long coincidencias = em.createQuery(jpql, Long.class)
                     .setParameter("nombre", ingrediente.getNombre().trim()) 
