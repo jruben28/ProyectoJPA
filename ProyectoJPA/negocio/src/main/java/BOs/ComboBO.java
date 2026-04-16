@@ -10,6 +10,7 @@ import adaptadores.ComboAdapter;
 import com.dtos.ComboDTO;
 import entidades.Combo;
 import entidades.ComboProducto;
+import entidades.ProductoIngrediente;
 import excepciones.NegocioException;
 import excepciones.PersistenciaException;
 import interfaces.IComboBO;
@@ -19,193 +20,205 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * Implementacion de la interfaz IComboBO
+ * Capa de negocio para el módulo de Combos.
+ * Valida reglas de negocio antes de comunicar a la capa de persistencia.
+ *
  * @author Adrian Mendoza
  */
 public class ComboBO implements IComboBO {
 
-    private IComboDAO comboDAO;
-    private IComboProductoDAO comboProductoDAO;
     private static final Logger LOG = Logger.getLogger(ComboBO.class.getName());
+
+    private final IComboDAO comboDAO;
+    private final IComboProductoDAO comboProductoDAO;
 
     public ComboBO() {
         this.comboDAO = new ComboDAO();
         this.comboProductoDAO = new ComboProductoDAO();
     }
 
-    public ComboBO(IComboDAO comboDAO, IComboProductoDAO comboProductoDAO) {
-        this.comboDAO = comboDAO;
-        this.comboProductoDAO = comboProductoDAO;
+
+    private void validarDTO(ComboDTO dto) throws NegocioException {
+        if (dto == null) {
+            throw new NegocioException("El DTO de Combo no puede ser nulo");
+        }
+        if (dto.getNombre() == null || dto.getNombre().isBlank()) {
+            throw new NegocioException("El nombre del combo es obligatorio");
+        }
+        if (dto.getPrecioOriginal() == null || dto.getPrecioOriginal() < 0) {
+            throw new NegocioException("El precio original no puede ser negativo ni nulo");
+        }
+        if (dto.getPrecioCombo() == null || dto.getPrecioCombo() < 0) {
+            throw new NegocioException("El precio del combo no puede ser negativo ni nulo");
+        }
+        if (dto.getPorcentajeDescuento() == null
+                || dto.getPorcentajeDescuento() < 0
+                || dto.getPorcentajeDescuento() > 100) {
+            throw new NegocioException("El porcentaje de descuento debe estar entre 0 y 100");
+        }
     }
 
-    @Override
-    public Combo agregarCombo(ComboDTO comboDTO) throws NegocioException {
-        try {
-            validarComboDTO(comboDTO);
-            Combo combo = ComboAdapter.dtoAEntidad(comboDTO);
-            comboDAO.agregarCombo(combo);
-            LOG.info("Combo agregado exitosamente, nombre y id: " + combo.getNombre() + "," + combo.getId());
-            return combo;
-        } catch (PersistenciaException ex) {
-            LOG.warning("Error de persistencia al agregar el combo " + ex.getMessage());
-            throw new NegocioException("Error al agregar el combo mediante persistencia");
+    /**
+     * Valida que un ID sea no nulo y positivo.
+     *
+     * @param id    valor a verificar
+     * @param campo nombre del campo para el mensaje de error
+     * @throws NegocioException si el ID es inválido
+     */
+    private void validarId(Long id, String campo) throws NegocioException {
+        if (id == null || id <= 0) {
+            throw new NegocioException("El " + campo + " debe ser un valor positivo");
         }
     }
 
     @Override
-    public Combo crearComboConProductos(ComboDTO dto, List<Long> idProductos, List<Integer> cantidades) throws NegocioException {
+    public Combo agregarCombo(ComboDTO dto) throws NegocioException {
+        validarDTO(dto);
         try {
-            if (idProductos == null || idProductos.size() < 2) {
-                LOG.warning("Error al crear el combo, tiene menos de 2 productos");
-                throw new NegocioException("El combo al menos debe tener 2 productos asociados");
-            }
-            if (this.estaRepetido(idProductos, cantidades)) {
-                LOG.warning("Intento de crear combo duplicado");
-                throw new NegocioException("Ya existe un combo con esta misma combinación de productos");
-            }
-            Combo agregado = this.agregarCombo(dto);
+            Combo combo = ComboAdapter.dtoAEntidad(dto);
+            return comboDAO.agregarCombo(combo);
+        } catch (PersistenciaException ex) {
+            throw new NegocioException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public Combo crearComboConProductos(ComboDTO dto, List<Long> idProductos, List<Integer> cantidades)
+            throws NegocioException {
+
+        validarDTO(dto);
+
+        if (idProductos == null || cantidades == null) {
+            throw new NegocioException("Las listas de productos y cantidades no pueden ser nulas");
+        }
+        if (idProductos.size() != cantidades.size()) {
+            throw new NegocioException("Las listas de productos y cantidades deben tener el mismo tamaño");
+        }
+
+        int totalUnidades = cantidades.stream().mapToInt(Integer::intValue).sum();
+        if (totalUnidades < 2) {
+            throw new NegocioException(
+                    "Un combo debe tener al menos 2 unidades de producto en total");
+        }
+
+        try {
+            Combo combo = ComboAdapter.dtoAEntidad(dto);
+            Combo guardado = comboDAO.agregarCombo(combo);
+
             for (int i = 0; i < idProductos.size(); i++) {
-                // CAMBIO AQUÍ: usar el nuevo método agregar(Long, Long, Integer)
-                comboProductoDAO.agregar(agregado.getId(), idProductos.get(i), cantidades.get(i));
+                comboProductoDAO.agregar(guardado.getId(), idProductos.get(i), cantidades.get(i));
             }
-            LOG.info("Combo con productos creado " + agregado.getNombre());
-            return agregado;
+
+            LOG.info("Combo con productos creado. ID: " + guardado.getId());
+            return guardado;
+
         } catch (PersistenciaException ex) {
-            LOG.warning("Error de persistencia " + ex.getMessage());
-            throw new NegocioException("Error al crear combo con productos");
+            throw new NegocioException(ex.getMessage());
         }
     }
 
     @Override
-    public Combo actualizarComboPorId(Long id, ComboDTO comboDTO) throws NegocioException {
+    public Combo actualizarComboPorId(Long id, ComboDTO dto) throws NegocioException {
+        if (id == null) {
+            throw new NegocioException("El ID del combo no puede ser nulo");
+        }
+        validarDTO(dto);
         try {
-            if (id == null || id < 1) {
-                LOG.warning("Id inválido");
-                throw new NegocioException("No se puede actualizar con id inválido");
+            Combo existente = comboDAO.buscarComboPorId(id);
+            existente.setNombre(dto.getNombre());
+            existente.setDescripcion(dto.getDescripcion());
+            existente.setPrecioOriginal(dto.getPrecioOriginal());
+            existente.setPrecioCombo(dto.getPrecioCombo());
+            existente.setPorcentajeDescuento(dto.getPorcentajeDescuento());
+            if (dto.getActivo() != null) {
+                existente.setActivo(dto.getActivo());
             }
-            validarComboDTO(comboDTO);
-            Combo combo = ComboAdapter.dtoAEntidad(comboDTO);
-            combo.setId(id);
-            Combo actualizado = comboDAO.actualizarCombo(combo);
-            LOG.info("Combo actualizado con éxito, nombre y id " + actualizado.getNombre() + " " + actualizado.getId());
-            return actualizado;
+            return comboDAO.actualizarCombo(existente);
         } catch (PersistenciaException ex) {
-            LOG.warning("Error de persistencia al actualizar combo " + ex.getMessage());
-            throw new NegocioException("Error al actualizar el combo mediante persistencia");
+            throw new NegocioException(ex.getMessage());
         }
     }
 
-    private void validarComboDTO(ComboDTO comboDTO) throws NegocioException {
-        if (comboDTO == null) {
-            LOG.warning("ComboDTO nulo");
-            throw new NegocioException("El combo no puede ser nulo");
+    @Override
+    public ComboDTO cambiarEstado(Long id, Boolean activo) throws NegocioException {
+        validarId(id, "ID del combo");
+        if (activo == null) {
+            throw new NegocioException("El estado no puede ser nulo");
         }
-        if (comboDTO.getNombre() == null || comboDTO.getNombre().trim().isEmpty()) {
-            LOG.warning("Nombre del combo vacío o nulo");
-            throw new NegocioException("El nombre del combo no puede estar vacío o nulo");
-        }
-        if (comboDTO.getPrecioOriginal() == null || comboDTO.getPrecioOriginal() < 0) {
-            LOG.warning("Precio original negativo o nulo");
-            throw new NegocioException("El precio original no puede ser negativo o nulo");
-        }
-        if (comboDTO.getPrecioCombo() == null || comboDTO.getPrecioCombo() < 0) {
-            LOG.warning("Precio del combo negativo o nulo");
-            throw new NegocioException("El precio del combo no puede ser negativo o nulo");
-        }
-        if (comboDTO.getPorcentajeDescuento() == null
-                || comboDTO.getPorcentajeDescuento() < 0
-                || comboDTO.getPorcentajeDescuento() > 100) {
-            LOG.warning("Porcentaje de descuento del combo fuera de límites o nulo");
-            throw new NegocioException("El porcentaje no es un valor entre 0 y 100");
-        }
-    }
-
-    private boolean estaRepetido(List<Long> idProductos, List<Integer> cantidades) throws NegocioException {
         try {
-            List<Combo> todos = comboDAO.obtenerTodosCombos();
-            for (Combo combo : todos) {
-                List<ComboProducto> productosDelCombo = combo.getProductos();
-                if (productosDelCombo == null || productosDelCombo.size() != idProductos.size()) {
-                    continue;
-                }
-                int iguales = 0;
-                for (int i = 0; i < idProductos.size(); i++) {
-                    for (ComboProducto cp : productosDelCombo) {
-                        if (cp.getProducto() != null 
-                                && cp.getProducto().getId().equals(idProductos.get(i))
-                                && cp.getCantidad().equals(cantidades.get(i))) {
-                            iguales++;
-                            break;
-                        }
-                    }
-                }
-                if (iguales == idProductos.size()) {
-                    return true;
-                }
-            }
-            return false;
+            return ComboAdapter.entidadADTO(comboDAO.cambiarEstado(id, activo));
         } catch (PersistenciaException ex) {
-            LOG.warning("Error al verificar duplicado: " + ex.getMessage());
-            throw new NegocioException("Error al verificar duplicado");
+            throw new NegocioException(ex.getMessage());
         }
     }
 
+    
     @Override
     public List<ComboDTO> obtenerTodosCombos() throws NegocioException {
         try {
-            List<Combo> combos = comboDAO.obtenerTodosCombos();
-            LOG.info("Se obtuvieron " + combos.size() + " combos");
-            return ComboAdapter.listaEntidadADTO(combos);
+            return ComboAdapter.listaEntidadADTO(comboDAO.obtenerTodosCombos());
         } catch (PersistenciaException ex) {
-            LOG.warning("Error al obtener combos: " + ex.getMessage());
-            throw new NegocioException("Error al obtener todos los combos");
+            throw new NegocioException(ex.getMessage());
         }
     }
 
     @Override
     public List<ComboDTO> buscarCombosPorNombre(String nombre) throws NegocioException {
         try {
-            if (nombre == null || nombre.trim().isEmpty()) {
-                return this.obtenerTodosCombos();
+            if (nombre == null || nombre.isBlank()) {
+                return ComboAdapter.listaEntidadADTO(comboDAO.obtenerTodosCombos());
             }
-            List<Combo> combos = comboDAO.buscarCombosPorNombre(nombre);
-            LOG.info("Se encontraron " + combos.size() + " combos con nombre: " + nombre);
-            return ComboAdapter.listaEntidadADTO(combos);
+            return ComboAdapter.listaEntidadADTO(comboDAO.buscarCombosPorNombre(nombre));
         } catch (PersistenciaException ex) {
-            LOG.warning("Error al buscar combos: " + ex.getMessage());
-            throw new NegocioException("Error al buscar combos por nombre");
+            throw new NegocioException(ex.getMessage());
         }
     }
 
     @Override
     public ComboDTO buscarComboPorId(Long id) throws NegocioException {
+        validarId(id, "ID del combo");
         try {
-            if (id == null || id < 1) {
-                LOG.warning("Id inválido para búsqueda");
-                throw new NegocioException("El id no puede ser nulo o menor a 1");
-            }
-            Combo combo = comboDAO.buscarComboPorId(id);
-            LOG.info("Combo encontrado con id: " + id);
-            return ComboAdapter.entidadADTO(combo);
+            return ComboAdapter.entidadADTO(comboDAO.buscarComboPorId(id));
         } catch (PersistenciaException ex) {
-            LOG.warning("Error al buscar combo: " + ex.getMessage());
-            throw new NegocioException("Error al buscar combo por id");
+            throw new NegocioException(ex.getMessage());
         }
     }
 
     @Override
     public List<ComboDTO> buscarCombosPorProducto(Long idProducto) throws NegocioException {
+        validarId(idProducto, "ID del producto");
         try {
-            if (idProducto == null || idProducto < 1) {
-                LOG.warning("Id de producto inválido");
-                throw new NegocioException("El id del producto no es válido");
-            }
-            List<Combo> combos = comboDAO.buscarCombosPorProducto(idProducto);
-            LOG.info("Se encontraron " + combos.size() + " combos con producto id: " + idProducto);
-            return ComboAdapter.listaEntidadADTO(combos);
+            return ComboAdapter.listaEntidadADTO(comboDAO.buscarCombosPorProducto(idProducto));
         } catch (PersistenciaException ex) {
-            LOG.warning("Error al buscar combos por producto: " + ex.getMessage());
-            throw new NegocioException("Error al buscar combos por producto");
+            throw new NegocioException(ex.getMessage());
+        }
+    }
+
+
+    @Override
+    public boolean puedeVenderse(Long idCombo) throws NegocioException {
+        try {
+            Combo combo = comboDAO.buscarComboPorIdConDetalles(idCombo);
+
+            if (!combo.getActivo()) {
+                return false;
+            }
+
+            for (ComboProducto cp : combo.getProductos()) {
+                if (!cp.getProducto().getActivo()) {
+                    return false;
+                }
+                for (ProductoIngrediente pi : cp.getProducto().getIngredientes()) {
+                    if (pi.getIngrediente().getStock() < pi.getCantidad()) {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+
+        } catch (PersistenciaException ex) {
+            throw new NegocioException(ex.getMessage());
         }
     }
 }
