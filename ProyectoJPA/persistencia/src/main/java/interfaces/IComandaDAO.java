@@ -14,10 +14,19 @@ import java.util.List;
  * @author joser
  */
 public interface IComandaDAO {
-    
-    public Comanda agregarComanda(Comanda comanda) throws PersistenciaException;
-   
+     Comanda agregarComanda(Comanda comanda) throws PersistenciaException;
+
+    Comanda actualizar(Comanda comanda) throws PersistenciaException;
+
+    Comanda buscarPorId(Long id) throws PersistenciaException;
+
+    Comanda buscarPorFolio(String folio) throws PersistenciaException;
+
+ 
     Integer contarComandasDelDia(LocalDateTime dia) throws PersistenciaException;
 
     List<Comanda> buscarPorRangoFechas(LocalDateTime desde, LocalDateTime hasta) throws PersistenciaException;
+
+
+    boolean mesaTieneComandaAbierta(Long idMesa) throws PersistenciaException;
 }
