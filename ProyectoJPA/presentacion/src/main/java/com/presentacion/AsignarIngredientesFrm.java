@@ -8,6 +8,7 @@ import com.dtos.IngredienteDTO;
 import com.dtos.ProductoDTO;
 import com.dtos.ProductoIngredienteDTO;
 import com.dtos.ProductoIngredienteRDTO;
+import java.util.List;
 import javafx.beans.property.*;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
@@ -51,7 +52,8 @@ public class AsignarIngredientesFrm extends VBox {
     public AsignarIngredientesFrm(ControllerIngrediente controller) {
         this.controller = controller;
         initComponents();
-        cargarDatos(); 
+        cargarProductos();
+        cargarIngredientes(null);
     }
 
     private void initComponents() {
@@ -108,6 +110,16 @@ public class AsignarIngredientesFrm extends VBox {
         txtBuscador = new TextField();
         txtBuscador.setPromptText("🔍 Buscar ingrediente para agregar a la receta...");
         txtBuscador.getStyleClass().add("form-field");
+        txtBuscador.textProperty().addListener((observable, oldValue, newValue) -> {
+            
+            if (newValue == null || newValue.trim().isEmpty()) {
+                
+            } else {
+                cargarIngredientes(newValue);
+                
+            }
+            
+        });
 
         listAvailableIngredients = new VBox(5);
         ScrollPane scrollMarket = new ScrollPane(listAvailableIngredients);
@@ -178,7 +190,7 @@ public class AsignarIngredientesFrm extends VBox {
     }
 
 
-    private void cargarDatos() {
+    private void cargarProductos() {
 
         ObservableList<ProductoDTO> productosList = FXCollections.observableArrayList();
         productosList.addAll(controller.obtenerProductosDisponibles());
@@ -186,11 +198,28 @@ public class AsignarIngredientesFrm extends VBox {
 
         ObservableList<DisponibleFila> marketList = FXCollections.observableArrayList();
         for (IngredienteDTO ing : controller.obtenerIngredientesStockActual()) {
-            marketList.add(new DisponibleFila(ing, this)); // Pasamos 'this' para clics
+            marketList.add(new DisponibleFila(ing, this));
         }
 
         listAvailableIngredients.getChildren().clear();
         for (DisponibleFila fila : marketList) {
+            listAvailableIngredients.getChildren().add(fila.getNodoVisual());
+        }
+    }
+    
+    private void cargarIngredientes(String textoBusqueda){
+        listAvailableIngredients.getChildren().clear();
+        
+        List<IngredienteDTO> resultadosBd;
+        
+        if (textoBusqueda == null || textoBusqueda.trim().isEmpty()) {
+            resultadosBd = controller.obtenerIngredientesStockActual();
+        } else {
+            resultadosBd = controller.obtenerIngredientesFiltro(textoBusqueda);
+        }
+
+        for (IngredienteDTO ing : resultadosBd) {
+            DisponibleFila fila = new DisponibleFila(ing, this);
             listAvailableIngredients.getChildren().add(fila.getNodoVisual());
         }
     }
