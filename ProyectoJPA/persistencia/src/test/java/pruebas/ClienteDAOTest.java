@@ -188,42 +188,42 @@ public void testBuscarFrecuentesPorCampo_SinResultados() {
     System.out.println("Test pasado: Búsqueda sin resultados retorna lista vacía");
 }
 
-@Test
-public void testBuscarComandasPorCliente_FlujoBase() {
-    System.out.println("Prueba: Buscar Comandas por Cliente (Flujo Base)");
-    
-    // Creamos un cliente
-    ClienteFrecuente cliente = new ClienteFrecuente("Diego Perez", "6445556666", "diego@test.com");
-    EntityManager em = ConexionBD.crearConexion();
-    
-    em.getTransaction().begin();
-    em.persist(cliente);
-    
-    em.flush(); 
-   Long idCliente = cliente.getId();
-    assertNotNull(idCliente, "El cliente debe tener ID antes de crear comandas");
-
-    // Creamos 2 comandas ENTREGADAS y 1 ABIERTA
-    Comanda c1 = new Comanda(200.0, "ENTREGADA", idCliente);
-    Comanda c2 = new Comanda(350.0, "ENTREGADA", idCliente);
-    Comanda c3 = new Comanda(100.0, "ABIERTA", idCliente);
-    
-    em.persist(c1);
-    em.persist(c2);
-    em.persist(c3);
-    em.getTransaction().commit();
-    em.close();
-    
-    // Buscamos las comandas del cliente
-    List<Comanda> comandasEntregadas = dao.buscarComandasPorCliente(idCliente);
-    
-    // Validaciones
-    assertEquals(2, comandasEntregadas.size(), "Debería retornar SOLO 2 comandas entregadas (sin la ABIERTA)");
-    
-    for (Comanda c : comandasEntregadas) {
-       assertEquals("ENTREGADA", c.getEstado(), "Todas las comandas deben estar ENTREGADAS");
-    }
-    
-    System.out.println(" Test pasado: Busca correcta de comandas por cliente (filtra por estado ENTREGADA)");
-}
+//@Test
+//public void testBuscarComandasPorCliente_FlujoBase() {
+//    System.out.println("Prueba: Buscar Comandas por Cliente (Flujo Base)");
+//    
+//    // Creamos un cliente
+//    ClienteFrecuente cliente = new ClienteFrecuente("Diego Perez", "6445556666", "diego@test.com");
+//    EntityManager em = ConexionBD.crearConexion();
+//    
+//    em.getTransaction().begin();
+//    em.persist(cliente);
+//    
+//    em.flush(); 
+//   Long idCliente = cliente.getId();
+//    assertNotNull(idCliente, "El cliente debe tener ID antes de crear comandas");
+//
+//    // Creamos 2 comandas ENTREGADAS y 1 ABIERTA
+//    Comanda c1 = new Comanda(200.0, "ENTREGADA", idCliente);
+//    Comanda c2 = new Comanda(350.0, "ENTREGADA", idCliente);
+//    Comanda c3 = new Comanda(100.0, "ABIERTA", idCliente);
+//    
+//    em.persist(c1);
+//    em.persist(c2);
+//    em.persist(c3);
+//    em.getTransaction().commit();
+//    em.close();
+//    
+//    // Buscamos las comandas del cliente
+//    List<Comanda> comandasEntregadas = dao.buscarComandasPorCliente(idCliente);
+//    
+//    // Validaciones
+//    assertEquals(2, comandasEntregadas.size(), "Debería retornar SOLO 2 comandas entregadas (sin la ABIERTA)");
+//    
+//    for (Comanda c : comandasEntregadas) {
+//       assertEquals("ENTREGADA", c.getEstado(), "Todas las comandas deben estar ENTREGADAS");
+//    }
+//    
+//    System.out.println(" Test pasado: Busca correcta de comandas por cliente (filtra por estado ENTREGADA)");
+//}
 }

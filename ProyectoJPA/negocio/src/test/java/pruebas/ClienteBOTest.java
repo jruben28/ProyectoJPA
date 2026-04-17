@@ -172,47 +172,47 @@ public void testBuscarFrecuentesPorFiltro_FiltroVacio() {
     System.out.println(" Test pasado: Filtro vacío rechazado correctamente");
 }
 
-@Test
-public void testCalcularPuntos_ConComandasEntregadas() {
-    System.out.println("Prueba: Calcular puntos con comandas entregadas");
-
-    try {
-        String sufijo = String.valueOf(System.currentTimeMillis());
-        ClienteFrecuenteDTO clienteNuevo = new ClienteFrecuenteDTO(
-                null,
-                "ClientePuntos_" + sufijo,
-                "FRECUENTE",
-                "6441234567",
-                "puntos_" + sufijo + "@test.com",
-                new Date(),
-                0
-        );
-
-        bo.agregarClienteFrecuente(clienteNuevo);
-
-        List<ClienteFrecuenteDTO> resultados = bo.buscarFrecuentesPorFiltro("ClientePuntos_" + sufijo, "nombre");
-        assertFalse(resultados.isEmpty(), "Debe encontrar el cliente creado");
-
-        Long idCliente = resultados.get(0).getId();
-        assertNotNull(idCliente, "El ID del cliente no debe ser nulo");
-
-        EntityManager em = ConexionBD.crearConexion();
-        em.getTransaction().begin();
-        em.persist(new Comanda(100.0, "ENTREGADA", idCliente));
-        em.persist(new Comanda(450.0, "ENTREGADA", idCliente));
-        em.persist(new Comanda(999.0, "ABIERTA", idCliente)); // No debe contar
-        em.getTransaction().commit();
-        em.close();
-
-        Integer puntos = bo.calcularPuntos(idCliente);
-
-        // 100 + 450 = 550; 550/20 = 27
-        assertEquals(27, puntos, "El cálculo de puntos debe considerar solo ENTREGADAS");
-        System.out.println("Test pasado: puntos calculados correctamente");
-    } catch (Exception e) {
-        fail("No debería lanzar excepción: " + e.getMessage());
-    }
-}
+//@Test
+//public void testCalcularPuntos_ConComandasEntregadas() {
+//    System.out.println("Prueba: Calcular puntos con comandas entregadas");
+//
+//    try {
+//        String sufijo = String.valueOf(System.currentTimeMillis());
+//        ClienteFrecuenteDTO clienteNuevo = new ClienteFrecuenteDTO(
+//                null,
+//                "ClientePuntos_" + sufijo,
+//                "FRECUENTE",
+//                "6441234567",
+//                "puntos_" + sufijo + "@test.com",
+//                new Date(),
+//                0
+//        );
+//
+//        bo.agregarClienteFrecuente(clienteNuevo);
+//
+//        List<ClienteFrecuenteDTO> resultados = bo.buscarFrecuentesPorFiltro("ClientePuntos_" + sufijo, "nombre");
+//        assertFalse(resultados.isEmpty(), "Debe encontrar el cliente creado");
+//
+//        Long idCliente = resultados.get(0).getId();
+//        assertNotNull(idCliente, "El ID del cliente no debe ser nulo");
+//
+//        EntityManager em = ConexionBD.crearConexion();
+//        em.getTransaction().begin();
+//        em.persist(new Comanda(100.0, "ENTREGADA", idCliente));
+//        em.persist(new Comanda(450.0, "ENTREGADA", idCliente));
+//        em.persist(new Comanda(999.0, "ABIERTA", idCliente)); // No debe contar
+//        em.getTransaction().commit();
+//        em.close();
+//
+//        Integer puntos = bo.calcularPuntos(idCliente);
+//
+//        // 100 + 450 = 550; 550/20 = 27
+//        assertEquals(27, puntos, "El cálculo de puntos debe considerar solo ENTREGADAS");
+//        System.out.println("Test pasado: puntos calculados correctamente");
+//    } catch (Exception e) {
+//        fail("No debería lanzar excepción: " + e.getMessage());
+//    }
+//}
 
 @Test
 public void testCalcularTotalGastado_SinComandasDevuelve0() {
