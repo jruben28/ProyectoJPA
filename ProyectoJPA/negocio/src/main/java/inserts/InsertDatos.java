@@ -2,28 +2,32 @@ package inserts;
 
 import BOs.ClienteBO;
 import DAOs.MesaDAO;
+import com.dtos.ClienteDTO;
 import com.dtos.ClienteFrecuenteDTO;
 import java.util.Date;
 import java.util.logging.Logger;
 
 public class InsertDatos {
-    private static final Logger LOG = Logger.getLogger(InsertDatos.class.getName());
+   private static final Logger LOG = Logger.getLogger(InsertDatos.class.getName());
 
     public static void main(String[] args) {
         try {
-            
+
             new MesaDAO().cargaMasiva(20);
             LOG.info("20 mesas cargadas.");
 
             ClienteBO clienteBO = new ClienteBO();
 
-            
-            clienteBO.obtenerOCrearClienteGeneral();
-            LOG.info("Cliente General listo.");
+            ClienteDTO clienteGeneral = clienteBO.obtenerClienteGeneral();
+            if (clienteGeneral == null) {
+                clienteGeneral = clienteBO.crearClienteGeneral();
+                LOG.info("Cliente General creado con ID: " + clienteGeneral.getId());
+            } else {
+                LOG.info("Cliente General ya existe con ID: " + clienteGeneral.getId());
+            }
 
             Date hoy = new Date();
 
-            
             ClienteFrecuenteDTO c1 = new ClienteFrecuenteDTO();
             c1.setNombre("Juan Perez");
             c1.setTelefono("6441234567");

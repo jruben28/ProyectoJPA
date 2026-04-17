@@ -7,7 +7,7 @@ import entidades.Mesa;
 import enums.EstadoComanda;
 import javax.persistence.EntityManager;
 import com.dtos.ClienteFrecuenteDTO;
-import excepciones.NegocioException;
+import excepciones.PersistenciaException;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -40,7 +40,7 @@ public class ClienteBOTest {
         dto.setCorreo("nosabo@homai.com");
         dto.setFechaRegistro(new Date());
 
-        assertThrows(NegocioException.class, () -> bo.agregarClienteFrecuente(dto));
+        assertThrows(PersistenciaException.class, () -> bo.agregarClienteFrecuente(dto));
     }
 
     @Test
@@ -58,8 +58,8 @@ public class ClienteBOTest {
             bo.agregarClienteFrecuente(dto);
 
             List<entidades.ClienteFrecuente> clientes = em.createQuery(
-                "SELECT c FROM ClienteFrecuente c WHERE c.nombre = 'Panfilo'",
-                entidades.ClienteFrecuente.class
+                    "SELECT c FROM ClienteFrecuente c WHERE c.nombre = 'Panfilo'",
+                    entidades.ClienteFrecuente.class
             ).getResultList();
             Long idCliente = clientes.get(0).getId();
 
@@ -103,8 +103,8 @@ public class ClienteBOTest {
             bo.agregarClienteFrecuente(dto);
 
             List<entidades.ClienteFrecuente> clientes = em.createQuery(
-                "SELECT c FROM ClienteFrecuente c WHERE c.nombre = 'Cliente sin dinero'",
-                entidades.ClienteFrecuente.class
+                    "SELECT c FROM ClienteFrecuente c WHERE c.nombre = 'Cliente sin dinero'",
+                    entidades.ClienteFrecuente.class
             ).getResultList();
             Long idCliente = clientes.get(0).getId();
 
