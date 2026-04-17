@@ -431,3 +431,44 @@
     -fx-padding: 3 10;
     -fx-background-radius: 10;
 }
+
+/* ===== Tarjetas KPI del reporte de ventas ===== */
+.stat-card {
+    -fx-background-color: white;
+    -fx-border-color: #E5E7EB;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 16 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.04), 4, 0, 0, 2);
+}
+
+.stat-label {
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #6B7280;
+}
+
+.stat-value {
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+}
+
+.stat-value-azul   { -fx-text-fill: #2563EB; }
+.stat-value-oscuro { -fx-text-fill: #1F2937; }
+.stat-value-rojo   { -fx-text-fill: #DC2626; }
+
+.totales-row {
+    -fx-background-color: #EFF6FF;
+    -fx-padding: 12 16;
+    -fx-background-radius: 8;
+}
+
+.totales-label {
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1F2937;
+}
