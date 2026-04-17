@@ -7,6 +7,7 @@ import entidades.Mesa;
 import enums.EstadoComanda;
 import javax.persistence.EntityManager;
 import com.dtos.ClienteFrecuenteDTO;
+import excepciones.NegocioException;
 import excepciones.PersistenciaException;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,7 +41,7 @@ public class ClienteBOTest {
         dto.setCorreo("nosabo@homai.com");
         dto.setFechaRegistro(new Date());
 
-        assertThrows(PersistenciaException.class, () -> bo.agregarClienteFrecuente(dto));
+        assertThrows(NegocioException.class, () -> bo.agregarClienteFrecuente(dto));
     }
 
     @Test

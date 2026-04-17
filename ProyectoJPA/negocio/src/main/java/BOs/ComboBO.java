@@ -12,7 +12,6 @@ import entidades.Combo;
 import entidades.ComboProducto;
 import entidades.ProductoIngrediente;
 import excepciones.PersistenciaException;
-import excepciones.PersistenciaException;
 import interfaces.IComboBO;
 import interfaces.IComboDAO;
 import interfaces.IComboProductoDAO;
@@ -32,13 +31,13 @@ public class ComboBO implements IComboBO {
     private final IComboDAO comboDAO;
     private final IComboProductoDAO comboProductoDAO;
 
-    // Constructor por defecto para mantener compatibilidad con el código existente
+
     public ComboBO() {
         this.comboDAO = new ComboDAO();
         this.comboProductoDAO = new ComboProductoDAO();
     }
 
-    // Constructor con inyección de dependencias (para pruebas unitarias y flexibilidad)
+    
     public ComboBO(IComboDAO comboDAO, IComboProductoDAO comboProductoDAO) {
         this.comboDAO = comboDAO;
         this.comboProductoDAO = comboProductoDAO;
@@ -67,9 +66,7 @@ public class ComboBO implements IComboBO {
         }
     }
 
-    /**
-     * Valida que un ID sea no nulo y positivo.
-     */
+  
     private void validarId(Long id, String campo) throws PersistenciaException {
         if (id == null || id <= 0) {
             throw new PersistenciaException("El " + campo + " debe ser un valor positivo");

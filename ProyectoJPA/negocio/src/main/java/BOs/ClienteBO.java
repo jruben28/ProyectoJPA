@@ -15,7 +15,7 @@ import adaptadores.ComandaAdapter;
 import com.dtos.ClienteDTO;
 import com.dtos.ClienteFrecuenteDTO;
 import com.dtos.ComandaDTO;
-import excepciones.PersistenciaException;
+import excepciones.NegocioException;
 import excepciones.PersistenciaException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,17 +34,19 @@ public class ClienteBO implements IClienteBO {
     private final IClienteDAO clienteDAO;
     private static final Logger LOG = Logger.getLogger(ClienteBO.class.getName());
 
-    private static final String REGEX_CORREO   = "^[A-Za-z0-9+_.-]+@(.+)$";
+    private static final String REGEX_CORREO = "^[A-Za-z0-9+_.-]+@(.+)$";
     private static final String REGEX_TELEFONO = "^\\d{10}$";
 
-    /** Constructor por defecto: crea su propia dependencia. */
+    /**
+     * Constructor por defecto: crea su propia dependencia.
+     */
     public ClienteBO() {
         this.clienteDAO = new ClienteDAO();
     }
 
     /**
-     * Constructor con inyección de dependencia.
-     * Útil para pruebas unitarias con mocks.
+     * Constructor con inyección de dependencia. Útil para pruebas unitarias con
+     * mocks.
      *
      * @param clienteDAO implementación del DAO a usar
      */
@@ -52,19 +54,15 @@ public class ClienteBO implements IClienteBO {
         this.clienteDAO = clienteDAO;
     }
 
-    // =========================================================================
-    // Cálculos de fidelidad
-    // =========================================================================
-
     @Override
-    public Integer calcularPuntos(Long idCliente) throws PersistenciaException {
+    public Integer calcularPuntos(Long idCliente) throws NegocioException {
         Double total = calcularTotalGastado(idCliente);
         int puntos = (int) (total / 20);
         return Math.max(puntos, 0);
     }
 
     @Override
-    public Double calcularTotalGastado(Long idCliente) throws PersistenciaException {
+    public Double calcularTotalGastado(Long idCliente) throws NegocioException {
         List<ComandaDTO> comandas = buscarComandasPorCliente(idCliente);
         double total = 0.0;
         for (ComandaDTO c : comandas) {
@@ -75,12 +73,8 @@ public class ClienteBO implements IClienteBO {
         return Math.max(total, 0.0);
     }
 
-    // =========================================================================
-    // CRUD de clientes frecuentes
-    // =========================================================================
-
     @Override
-    public void agregarClienteFrecuente(ClienteFrecuenteDTO clienteFrecuenteDTO) throws PersistenciaException {
+    public void agregarClienteFrecuente(ClienteFrecuenteDTO clienteFrecuenteDTO) throws NegocioException {
         validarClienteFrecuenteDTO(clienteFrecuenteDTO);
         try {
             clienteFrecuenteDTO.setTelefono(Encriptador.encriptar(clienteFrecuenteDTO.getTelefono()));
@@ -88,12 +82,12 @@ public class ClienteBO implements IClienteBO {
             clienteDAO.agregarClienteFrecuente(clienteF);
         } catch (PersistenciaException ex) {
             LOG.warning("Error en negocio al agregar cliente frecuente: " + ex.getMessage());
-            throw new PersistenciaException("Error al agregar un cliente frecuente");
+            throw new NegocioException("Error al agregar un cliente frecuente");
         }
     }
 
     @Override
-    public void actualizarClienteFrecuente(ClienteFrecuenteDTO clienteFrecuenteDTO) throws PersistenciaException {
+    public void actualizarClienteFrecuente(ClienteFrecuenteDTO clienteFrecuenteDTO) throws NegocioException {
         validarClienteFrecuenteDTO(clienteFrecuenteDTO);
         if (clienteFrecuenteDTO.getId() == null) {
             throw new PersistenciaException("No se puede actualizar el cliente porque no tiene un ID asignado.");
@@ -104,16 +98,12 @@ public class ClienteBO implements IClienteBO {
             clienteDAO.actualizarClienteFrecuente(clienteF);
         } catch (PersistenciaException ex) {
             LOG.warning("Error en negocio al actualizar cliente frecuente: " + ex.getMessage());
-            throw new PersistenciaException("Error al intentar actualizar los datos del cliente en la base de datos.");
+            throw new NegocioException("Error al intentar actualizar los datos del cliente en la base de datos.");
         }
     }
 
-    // =========================================================================
-    // Búsquedas
-    // =========================================================================
-
     @Override
-    public List<ComandaDTO> buscarComandasPorCliente(Long idCliente) throws PersistenciaException {
+    public List<ComandaDTO> buscarComandasPorCliente(Long idCliente) throws NegocioException {
         if (idCliente == null || idCliente <= 0) {
             throw new PersistenciaException("El ID del cliente no es válido para realizar la búsqueda de comandas.");
         }
@@ -126,13 +116,12 @@ public class ClienteBO implements IClienteBO {
             return dtos;
         } catch (PersistenciaException ex) {
             LOG.warning("Error al buscar comandas del cliente con ID " + idCliente + ": " + ex.getMessage());
-            throw new PersistenciaException("Error al obtener el historial de comandas del cliente.");
+            throw new NegocioException("Error al obtener el historial de comandas del cliente.");
         }
     }
 
     @Override
-    public List<ClienteFrecuenteDTO> buscarFrecuentesPorFiltro(String filtro, String campoBusqueda)
-            throws PersistenciaException {
+    public List<ClienteFrecuenteDTO> buscarFrecuentesPorFiltro(String filtro, String campoBusqueda) throws NegocioException {
         if (filtro == null || filtro.trim().isEmpty()) {
             throw new PersistenciaException("El filtro de búsqueda no puede estar vacío");
         }
@@ -161,16 +150,12 @@ public class ClienteBO implements IClienteBO {
             return resultado;
         } catch (PersistenciaException ex) {
             LOG.warning("Error al buscar clientes frecuentes: " + ex.getMessage());
-            throw new PersistenciaException("Error al buscar clientes frecuentes");
+            throw new NegocioException("Error al buscar clientes frecuentes");
         }
     }
 
-    // =========================================================================
-    // Cliente General
-    // =========================================================================
-
     @Override
-    public ClienteDTO obtenerClienteGeneral() throws PersistenciaException {
+    public ClienteDTO obtenerClienteGeneral() throws NegocioException {
         try {
             ClienteGeneral entidad = clienteDAO.obtenerClienteGeneral();
             if (entidad == null) {
@@ -183,12 +168,12 @@ public class ClienteBO implements IClienteBO {
             return dto;
         } catch (PersistenciaException ex) {
             LOG.warning("Error al obtener cliente general: " + ex.getMessage());
-            throw new PersistenciaException("Error al consultar el cliente general");
+            throw new NegocioException("Error al consultar el cliente general");
         }
     }
 
     @Override
-    public ClienteDTO crearClienteGeneral() throws PersistenciaException {
+    public ClienteDTO crearClienteGeneral() throws NegocioException {
         try {
             ClienteGeneral existente = clienteDAO.obtenerClienteGeneral();
             if (existente != null) {
@@ -205,28 +190,24 @@ public class ClienteBO implements IClienteBO {
             return dto;
         } catch (PersistenciaException ex) {
             LOG.warning("Error al crear cliente general: " + ex.getMessage());
-            throw new PersistenciaException("Error al crear el cliente general");
+            throw new NegocioException("Error al crear el cliente general");
         }
     }
-
-    // =========================================================================
-    // Validación interna
-    // =========================================================================
 
     private void validarClienteFrecuenteDTO(ClienteFrecuenteDTO dto) {
         if (dto.getNombre() == null || dto.getNombre().trim().isEmpty()
                 || dto.getNombre().length() > 200) {
-            throw new PersistenciaException("El nombre del cliente no es válido");
+            throw new NegocioException("El nombre del cliente no es válido");
         }
         if (dto.getCorreo() != null && !dto.getCorreo().trim().isEmpty()
                 && !Pattern.matches(REGEX_CORREO, dto.getCorreo())) {
-            throw new PersistenciaException("El correo del cliente no es válido");
+            throw new NegocioException("El correo del cliente no es válido");
         }
         if (dto.getTelefono() == null || !Pattern.matches(REGEX_TELEFONO, dto.getTelefono())) {
-            throw new PersistenciaException("El teléfono del cliente no es válido");
+            throw new NegocioException("El teléfono del cliente no es válido");
         }
         if (dto.getFechaRegistro() == null || dto.getFechaRegistro().after(new Date())) {
-            throw new PersistenciaException("La fecha de registro no es válida");
+            throw new NegocioException("La fecha de registro no es válida");
         }
     }
 }
