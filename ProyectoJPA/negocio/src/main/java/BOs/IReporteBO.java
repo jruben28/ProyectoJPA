@@ -22,5 +22,9 @@ public interface IReporteBO {
     void generarPDFReporteComanadas(List<ReporteComandaDTO> comandas, Double totalVentas,
                                      Date fechaInicio, Date fechaFin, String rutaArchivo) throws NegocioException;
 
+    void generarPDFReporteComanadas(List<ReporteComandaDTO> comandas, Double totalVentas,
+                                     int numComandas, int canceladas, double ticketPromedio,
+                                     Date fechaInicio, Date fechaFin, String rutaArchivo) throws NegocioException;
+
     void generarPDFReporteClientes(List<ReporteClienteFrecuenteDTO> clientes, String rutaArchivo) throws NegocioException;
 }

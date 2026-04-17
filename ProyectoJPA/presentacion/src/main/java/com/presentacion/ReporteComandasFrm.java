@@ -287,6 +287,7 @@ public class ReporteComandasFrm extends Stage {
                     .atTime(23, 59, 59).atZone(ZoneId.systemDefault()).toInstant());
             try {
                 controller.exportarPDFComanadas(ultimoResultado, ultimoTotalVentas,
+                        ultimoNumComandas, ultimoCanceladas, ultimoTicketPromedio,
                         fechaInicio, fechaFin, archivo.getAbsolutePath());
                 mostrarAlerta(Alert.AlertType.INFORMATION, "PDF generado exitosamente en:\n" + archivo.getAbsolutePath());
             } catch (NegocioException ex) {

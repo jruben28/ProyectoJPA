@@ -133,6 +133,20 @@ public class ReporteBO implements IReporteBO {
     }
 
     @Override
+    public void generarPDFReporteComanadas(List<ReporteComandaDTO> comandas, Double totalVentas,
+                                            int numComandas, int canceladas, double ticketPromedio,
+                                            Date fechaInicio, Date fechaFin, String rutaArchivo) throws NegocioException {
+        try {
+            GeneradorPDF.generarReporteComandasPDF(comandas, totalVentas,
+                    numComandas, canceladas, ticketPromedio,
+                    fechaInicio, fechaFin, rutaArchivo);
+        } catch (Exception ex) {
+            LOG.warning("Error al generar PDF de comandas con KPIs: " + ex.getMessage());
+            throw new NegocioException("Error al generar el archivo PDF de comandas");
+        }
+    }
+
+    @Override
     public void generarPDFReporteClientes(List<ReporteClienteFrecuenteDTO> clientes, String rutaArchivo) throws NegocioException {
         try {
             GeneradorPDF.generarReporteClientesPDF(clientes, rutaArchivo);

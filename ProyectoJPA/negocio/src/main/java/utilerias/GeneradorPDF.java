@@ -36,9 +36,24 @@ public class GeneradorPDF {
 
     public static void generarReporteComandasPDF(List<ReporteComandaDTO> comandas, Double totalVentas,
                                                   Date fechaInicio, Date fechaFin, String rutaArchivo) throws IOException {
+        int numComandas = comandas != null ? comandas.size() : 0;
+        int canceladas = 0;
+        if (comandas != null) {
+            for (ReporteComandaDTO c : comandas) {
+                if (c.getEstado() != null && "CANCELADA".equalsIgnoreCase(c.getEstado())) canceladas++;
+            }
+        }
+        double ticketPromedio = numComandas == 0 ? 0.0 : (totalVentas != null ? totalVentas : 0.0) / numComandas;
+        generarReporteComandasPDF(comandas, totalVentas, numComandas, canceladas, ticketPromedio,
+                fechaInicio, fechaFin, rutaArchivo);
+    }
+
+    public static void generarReporteComandasPDF(List<ReporteComandaDTO> comandas, Double totalVentas,
+                                                  int numComandas, int canceladas, double ticketPromedio,
+                                                  Date fechaInicio, Date fechaFin, String rutaArchivo) throws IOException {
         try (PDDocument documento = new PDDocument()) {
-            String[] encabezados = {"Folio", "Fecha y Hora", "Mesa", "Total", "Estado", "Cliente"};
-            float[] anchos = {90, 110, 50, 80, 80, 120};
+            String[] encabezados = {"Fecha", "Folio", "Mesa", "Mesero", "Items", "Total", "Estado"};
+            float[] anchos = {70, 95, 55, 80, 45, 75, 80};
 
             int filasPorPagina = calcularFilasPorPagina();
             int totalPaginas = Math.max(1, (int) Math.ceil((double) comandas.size() / filasPorPagina));
@@ -52,8 +67,13 @@ public class GeneradorPDF {
                     float y = ALTO_PAGINA - MARGEN;
 
                     // Encabezado del reporte
-                    y = dibujarEncabezadoReporte(cs, "Reporte de Comandas",
+                    y = dibujarEncabezadoReporte(cs, "Reporte de Ventas",
                             "Periodo: " + SDF_FECHA.format(fechaInicio) + " - " + SDF_FECHA.format(fechaFin), y);
+
+                    // Resumen KPI solo en la primera pagina
+                    if (pag == 1) {
+                        y = dibujarResumenKPI(cs, totalVentas, numComandas, ticketPromedio, canceladas, y);
+                    }
 
                     // Encabezados de tabla
                     y = dibujarFilaEncabezado(cs, encabezados, anchos, y);
@@ -63,12 +83,13 @@ public class GeneradorPDF {
                     while (indice < comandas.size() && filasEnPagina < filasPorPagina) {
                         ReporteComandaDTO c = comandas.get(indice);
                         String[] fila = {
+                            c.getFechaHora() != null ? SDF_FECHA.format(c.getFechaHora()) : "-",
                             c.getFolio() != null ? c.getFolio() : "-",
-                            c.getFechaHora() != null ? SDF_FECHA_HORA.format(c.getFechaHora()) : "-",
-                            c.getNumMesa() != null ? String.valueOf(c.getNumMesa()) : "-",
+                            c.getNumMesa() != null ? "Mesa " + c.getNumMesa() : "-",
+                            "-",
+                            "-",
                             String.format("$%,.2f", c.getTotal()),
-                            c.getEstado(),
-                            c.getNombreCliente() != null ? c.getNombreCliente() : "-"
+                            c.getEstado()
                         };
                         y = dibujarFila(cs, fila, anchos, y, indice % 2 == 0);
                         indice++;
@@ -145,6 +166,45 @@ public class GeneradorPDF {
     }
 
     // ==================== Metodos auxiliares de dibujo ====================
+
+    private static float dibujarResumenKPI(PDPageContentStream cs, Double totalVentas,
+                                            int numComandas, double ticketPromedio, int canceladas,
+                                            float y) throws IOException {
+        String[] etiquetas = {"TOTAL VENTAS", "COMANDAS", "TICKET PROMEDIO", "CANCELADAS"};
+        String[] valores = {
+            String.format("$%,.2f", totalVentas != null ? totalVentas : 0.0),
+            String.valueOf(numComandas),
+            String.format("$%,.2f", ticketPromedio),
+            String.valueOf(canceladas)
+        };
+        float anchoTotal = ANCHO_PAGINA - 2 * MARGEN;
+        float anchoTarjeta = (anchoTotal - 3 * 10) / 4;
+        float altoTarjeta = 50;
+        float xInicio = MARGEN;
+        float yTop = y;
+
+        for (int i = 0; i < 4; i++) {
+            float x = xInicio + i * (anchoTarjeta + 10);
+            cs.setNonStrokingColor(0.97f, 0.97f, 0.97f);
+            cs.addRect(x, yTop - altoTarjeta, anchoTarjeta, altoTarjeta);
+            cs.fill();
+            cs.setNonStrokingColor(0, 0, 0);
+
+            cs.setFont(PDType1Font.HELVETICA_BOLD, 8);
+            cs.beginText();
+            cs.newLineAtOffset(x + 8, yTop - 16);
+            cs.showText(etiquetas[i]);
+            cs.endText();
+
+            cs.setFont(PDType1Font.HELVETICA_BOLD, 14);
+            cs.beginText();
+            cs.newLineAtOffset(x + 8, yTop - 36);
+            cs.showText(valores[i]);
+            cs.endText();
+        }
+
+        return yTop - altoTarjeta - 15;
+    }
 
     private static float dibujarEncabezadoReporte(PDPageContentStream cs, String titulo,
                                                    String subtitulo, float y) throws IOException {

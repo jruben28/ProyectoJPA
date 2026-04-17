@@ -59,6 +59,14 @@ public class ControllerReportes {
         reporteBO.generarPDFReporteComanadas(comandas, totalVentas, fechaInicio, fechaFin, rutaArchivo);
     }
 
+    public void exportarPDFComanadas(List<ReporteComandaDTO> comandas, Double totalVentas,
+                                      int numComandas, int canceladas, double ticketPromedio,
+                                      Date fechaInicio, Date fechaFin, String rutaArchivo) throws NegocioException {
+        reporteBO.generarPDFReporteComanadas(comandas, totalVentas,
+                numComandas, canceladas, ticketPromedio,
+                fechaInicio, fechaFin, rutaArchivo);
+    }
+
     public void exportarPDFClientes(List<ReporteClienteFrecuenteDTO> clientes, String rutaArchivo) throws NegocioException {
         reporteBO.generarPDFReporteClientes(clientes, rutaArchivo);
     }
