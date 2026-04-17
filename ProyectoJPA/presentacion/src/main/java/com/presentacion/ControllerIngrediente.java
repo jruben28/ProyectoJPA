@@ -227,6 +227,16 @@ public class ControllerIngrediente {
         }
     }
 
+    public List<IngredienteDTO> obtenerIngredientesFiltro(String textoBusqueda){
+    
+        try{
+            return ingredienteBO.obtenerIngredientePorFiltro(textoBusqueda);
+        }
+        catch(Exception ex){
+            System.out.println("Error al cargar ingredientes por filtro.");
+            return new ArrayList<>();
+        }
+    }
 
     /**
      * Obtiene la relacion de ProductoIngredientes, mockeado de momento al no poder manejar productos correctamente.
