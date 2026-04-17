@@ -1,11 +1,11 @@
 package com.presentacion;
 
 import BOs.ClienteBO;
+import com.dtos.ClienteDTO;
 import interfaces.IClienteBO;
-import entidades.Comanda;
 import com.dtos.ClienteFrecuenteDTO;
-import excepciones.NegocioException;
-
+import com.dtos.ComandaDTO;
+import excepciones.PersistenciaException;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class ControllerClienteFrecuente {
 
-    private final IClienteBO clienteBO;
+   private final IClienteBO clienteBO;
     private final Stage primaryStage;
     private ClienteFrecuenteDTO clienteVinculado;
     private static final String CSS_PATH = "/styles/buscador-clientes.css";
@@ -28,13 +28,11 @@ public class ControllerClienteFrecuente {
         this.primaryStage = primaryStage;
     }
 
-    // ==================== Navegacion ====================
+    // ==================== Navegación ====================
     public void mostrarBuscador() {
         BuscadorClientesFrm buscador = new BuscadorClientesFrm(this);
-
         Scene scene = new Scene(buscador.getRoot(), 1100, 700);
         scene.getStylesheets().add(getClass().getResource(CSS_PATH).toExternalForm());
-
         primaryStage.setTitle("Buscar Clientes");
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -44,49 +42,62 @@ public class ControllerClienteFrecuente {
         List<SistemaPuntosFrm.FilaTransaccion> transacciones = cargarTransacciones(cliente);
 
         SistemaPuntosFrm ventana = new SistemaPuntosFrm(cliente, transacciones);
-        ventana.getScene().getStylesheets().add(
-                getClass().getResource(CSS_PATH).toExternalForm());
+        ventana.getScene().getStylesheets().add(getClass().getResource(CSS_PATH).toExternalForm());
         ventana.show();
     }
 
     public void mostrarRegistro() {
         RegistroClienteFrm ventana = new RegistroClienteFrm(this);
-        ventana.getScene().getStylesheets().add(
-                getClass().getResource(CSS_PATH).toExternalForm());
+        ventana.getScene().getStylesheets().add(getClass().getResource(CSS_PATH).toExternalForm());
         ventana.show();
     }
 
-    // ==================== Logica de negocio ====================
-    public List<ClienteFrecuenteDTO> buscarClientes(String filtro, String campo) throws NegocioException {
+    // ==================== Lógica ====================
+    public List<ClienteFrecuenteDTO> buscarClientes(String filtro, String campo) throws PersistenciaException {
         return clienteBO.buscarFrecuentesPorFiltro(filtro, campo);
     }
 
-    public void registrarCliente(ClienteFrecuenteDTO dto) throws NegocioException {
+    public void registrarCliente(ClienteFrecuenteDTO dto) throws PersistenciaException {
         clienteBO.agregarClienteFrecuente(dto);
+    }
+
+    public void actualizarCliente(ClienteFrecuenteDTO dto) throws PersistenciaException {
+        clienteBO.actualizarClienteFrecuente(dto);
     }
 
     public void vincularCliente(ClienteFrecuenteDTO cliente) {
         this.clienteVinculado = cliente;
-        System.out.println("Cliente vinculado: " + cliente.getNombre());
     }
 
-    // ==================== Carga de datos ====================
+    public ClienteDTO crearClienteGeneral() throws PersistenciaException {
+        return clienteBO.crearClienteGeneral();
+    }
+
+    /**
+     * Convierte las ComandaDTO (del BO) al modelo FilaTransaccion que usa la tabla
+     */
     private List<SistemaPuntosFrm.FilaTransaccion> cargarTransacciones(ClienteFrecuenteDTO cliente) {
         List<SistemaPuntosFrm.FilaTransaccion> filas = new ArrayList<>();
         try {
-            List<Comanda> comandas = clienteBO.buscarComandasPorCliente(cliente.getId());
-            int acumulado = 0;
+            List<ComandaDTO> comandas = clienteBO.buscarComandasPorCliente(cliente.getId());
 
-            for (Comanda c : comandas) {
-                int puntosGanados = (int) (c.getTotal() / 20);
-                String folio = "OB-" + String.format("%06d", c.getId());
+            int acumulado = 0;
+            for (ComandaDTO c : comandas) {
+                int puntosGanados = (int) (c.getTotal() / 20.0);
                 acumulado += puntosGanados;
 
+                String folio = c.getFolio() != null ? c.getFolio() : "SIN-FOLIO";
+
                 filas.add(new SistemaPuntosFrm.FilaTransaccion(
-                        "-", folio, c.getTotal(), puntosGanados, acumulado));
+                        "-",                    // fecha (puedes mejorarlo después)
+                        folio,
+                        c.getTotal(),
+                        puntosGanados,
+                        acumulado
+                ));
             }
-        } catch (Exception ex) {
-            // buscarComandasPorCliente aun no implementado en BO, lista vacia
+        } catch (PersistenciaException e) {
+            System.err.println("Error al cargar transacciones: " + e.getMessage());
         }
         return filas;
     }
@@ -94,29 +105,4 @@ public class ControllerClienteFrecuente {
     public ClienteFrecuenteDTO obtenerClienteVinculado() {
         return clienteVinculado;
     }
-
-    /**
-     * Actualiza un cliente frecuente existente
-     */
-    public void actualizarCliente(ClienteFrecuenteDTO dto) throws NegocioException {
-        clienteBO.actualizarClienteFrecuente(dto);
-    }
-
-    /**
-     * Crea un nuevo cliente general
-     */
-    public String crearClienteGeneral() throws NegocioException {
-        return clienteBO.obtenerOCrearClienteGeneral();
-    }
-
-    /**
-     * Abre la ventana de registro en modo edición
-     */
-    public void mostrarRegistroEdicion(ClienteFrecuenteDTO cliente) {
-        RegistroClienteFrm ventana = new RegistroClienteFrm(this, cliente);
-        ventana.getScene().getStylesheets().add(
-                getClass().getResource(CSS_PATH).toExternalForm());
-        ventana.show();
-    }
-
 }

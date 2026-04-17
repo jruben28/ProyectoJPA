@@ -1,7 +1,8 @@
 package com.presentacion;
 
+import com.dtos.ClienteDTO;
 import com.dtos.ClienteFrecuenteDTO;
-import excepciones.NegocioException;
+import excepciones.PersistenciaException;
 
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -223,7 +224,7 @@ public class BuscadorClientesFrm {
             lblResultados.setText(total + " resultado" + (total != 1 ? "s" : "")
                     + " encontrado" + (total != 1 ? "s" : "")
                     + " para '" + filtro + "'");
-        } catch (NegocioException ex) {
+        } catch (PersistenciaException ex) {
             Alert alert = new Alert(Alert.AlertType.ERROR,
                     "Error al buscar clientes: " + ex.getMessage());
             alert.setHeaderText(null);
@@ -257,14 +258,14 @@ public class BuscadorClientesFrm {
 
     private void crearClienteGeneral() {
         try {
-            String nombreCliente = controller.crearClienteGeneral();
+            ClienteDTO nombreCliente = controller.crearClienteGeneral();
             Alert exito = new Alert(Alert.AlertType.INFORMATION,
                     "Cliente General listo para usar.\n\nNombre: " + nombreCliente
                             + "\n\nNota: este buscador solo muestra clientes frecuentes.");
             exito.setHeaderText(null);
             exito.setTitle("Cliente General Creado");
             exito.showAndWait();
-        } catch (NegocioException ex) {
+        } catch (PersistenciaException ex) {
             Alert error = new Alert(Alert.AlertType.ERROR,
                     "Error al crear cliente general: " + ex.getMessage());
             error.setHeaderText(null);
