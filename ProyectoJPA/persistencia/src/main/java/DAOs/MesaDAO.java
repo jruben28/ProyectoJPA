@@ -112,4 +112,37 @@ public class MesaDAO implements IMesaDAO {
             em.close();
         }
     }
+    @Override
+    public Mesa buscarPorId(Long id) throws PersistenciaException {
+        EntityManager em = ConexionBD.crearConexion();
+        try {
+            Mesa mesa = em.find(Mesa.class, id);
+            if (mesa == null) {
+                throw new PersistenciaException("Mesa no encontrada con id: " + id);
+            }
+            return mesa;
+        } catch (RuntimeException ex) {
+            throw new PersistenciaException("Error al buscar mesa por ID", ex);
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public Mesa actualizar(Mesa mesa) throws PersistenciaException {
+        EntityManager em = ConexionBD.crearConexion();
+        try {
+            em.getTransaction().begin();
+            Mesa actualizada = em.merge(mesa);
+            em.getTransaction().commit();
+            return actualizada;
+        } catch (RuntimeException ex) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw new PersistenciaException("Error al actualizar mesa", ex);
+        } finally {
+            em.close();
+        }
+    }
 }

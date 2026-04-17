@@ -10,20 +10,23 @@ import java.util.List;
 
 /**
  * Interfaz del DAO para Mesa.
+ *
  * @author Adrian Mendoza
  */
 public interface IMesaDAO {
 
-   public Mesa agregar(Mesa mesa) throws PersistenciaException;
+    public Mesa agregar(Mesa mesa) throws PersistenciaException;
 
-   public List<Mesa> obtenerTodas() throws PersistenciaException;
+    public List<Mesa> obtenerTodas() throws PersistenciaException;
 
-   public List<Mesa> obtenerDisponibles() throws PersistenciaException;
+    public List<Mesa> obtenerDisponibles() throws PersistenciaException;
 
-   public Mesa buscarPorNumero(Integer numero) throws PersistenciaException;
-   
-   public  void cargaMasiva(int cantidad) throws PersistenciaException;
+    public Mesa buscarPorNumero(Integer numero) throws PersistenciaException;
 
+    public void cargaMasiva(int cantidad) throws PersistenciaException;
 
-  
+    public Mesa buscarPorId(Long id) throws PersistenciaException;
+
+    public Mesa actualizar(Mesa mesa) throws PersistenciaException;
+
 }

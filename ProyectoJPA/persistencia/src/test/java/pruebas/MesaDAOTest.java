@@ -60,4 +60,43 @@ class MesaDAOTest {
 
         assertTrue(todas.size() >= 10);
     }
+    
+        @Test
+    void buscarPorId_Exito() throws PersistenciaException {
+
+        Mesa mesa = new Mesa(401);
+        Mesa guardada = dao.agregar(mesa);
+        Long idGenerado = guardada.getId();
+        Mesa encontrada = dao.buscarPorId(idGenerado);
+
+        assertNotNull(encontrada);
+        assertEquals(idGenerado, encontrada.getId());
+        assertEquals(401, encontrada.getNumero());
+        assertEquals(EstadoMesa.DISPONIBLE, encontrada.getEstado());
+    }
+
+    @Test
+    void buscarPorId_Inexistente() {
+
+        assertThrows(PersistenciaException.class, () -> {
+            dao.buscarPorId(99999L);
+        });
+    }
+
+    @Test
+    void actualizar_Exito() throws PersistenciaException {
+        Mesa mesa = new Mesa(402);
+        Mesa guardada = dao.agregar(mesa);
+        Long id = guardada.getId();
+        guardada.setEstado(EstadoMesa.OCUPADA);
+        Mesa actualizada = dao.actualizar(guardada);
+
+      
+        assertNotNull(actualizada);
+        assertEquals(id, actualizada.getId());
+        assertEquals(EstadoMesa.OCUPADA, actualizada.getEstado());
+
+        Mesa resultadoBuscada = dao.buscarPorId(id);
+        assertEquals(EstadoMesa.OCUPADA, resultadoBuscada.getEstado());
+    }
 }
