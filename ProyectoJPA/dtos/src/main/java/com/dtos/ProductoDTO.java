@@ -42,7 +42,7 @@ public class ProductoDTO {
     
     public List<ProductoIngredienteDTO> getIngredientes() { return ingredientes; }
     public void setIngredientes(List<ProductoIngredienteDTO> ingredientes) { this.ingredientes = ingredientes; }
-}
+
 
     @Override
     public String toString() {
