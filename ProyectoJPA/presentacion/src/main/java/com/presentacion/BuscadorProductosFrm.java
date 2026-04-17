@@ -149,7 +149,7 @@ public class BuscadorProductosFrm {
         return tabla;
     }
 
-    private void buscarProductos() {
+    public void buscarProductos() {
         try {
             String texto = txtBuscar.getText().trim();
             String categoria = cmbCategoria.getValue();

@@ -15,6 +15,7 @@ public class Presentacion extends Application {
     public void start(Stage primaryStage) {
         ControllerClienteFrecuente controller = new ControllerClienteFrecuente(primaryStage);
         ControllerIngrediente controllerIngrediente = new ControllerIngrediente(primaryStage);
+        ControllerProducto controllerProducto = new ControllerProducto(primaryStage);
         controllerIngrediente.mostrarPrincipal();
     }
 

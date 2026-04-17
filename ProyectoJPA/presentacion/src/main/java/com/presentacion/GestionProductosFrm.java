@@ -1,10 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.presentacion;
 
 import com.dtos.ProductoDTO;
+import java.util.List;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -30,6 +27,7 @@ public class GestionProductosFrm {
         this.controller = controller;
         this.datosTabla = FXCollections.observableArrayList();
         initComponents();
+        buscarProductos(); // Cargar los productos automáticamente al iniciar
     }
 
     public VBox getRoot() {
@@ -53,7 +51,7 @@ public class GestionProductosFrm {
         VBox.setVgrow(tblProductos, Priority.ALWAYS);
 
         // Footer (Resumen)
-        lblResumen = new Label("8 productos totales | 6 activos | 2 inactivos");
+        lblResumen = new Label("0 productos totales | 0 activos | 0 inactivos");
         lblResumen.setStyle("-fx-text-fill: #888888; -fx-font-size: 12px;");
 
         root.getChildren().addAll(lblTitulo, topBar, tblProductos, lblResumen);
@@ -64,6 +62,9 @@ public class GestionProductosFrm {
         txtBuscar.setPromptText("Buscar productos...");
         txtBuscar.setPrefWidth(300);
         txtBuscar.setStyle("-fx-background-radius: 20; -fx-padding: 8 15;");
+        
+        // Ejecutar búsqueda al presionar "Enter"
+        txtBuscar.setOnAction(e -> buscarProductos());
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -93,11 +94,11 @@ public class GestionProductosFrm {
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty) {
+                if (empty || item == null) {
                     setGraphic(null);
                 } else {
                     ProductoDTO prod = getTableView().getItems().get(getIndex());
-                    Label badge = new Label(prod.getTipo()); // ej: "Platos Fuertes"
+                    Label badge = new Label(prod.getTipo()); 
                     badge.setStyle("-fx-background-color: #e0e7ff; -fx-text-fill: #3730a3; -fx-padding: 3 8; -fx-background-radius: 12; -fx-font-size: 11px;");
                     setGraphic(badge);
                 }
@@ -126,11 +127,15 @@ public class GestionProductosFrm {
                     ProductoDTO prod = getTableView().getItems().get(getIndex());
                     boolean activo = prod.getActivo() != null ? prod.getActivo() : false;
                     
-                    // Simulacion de ToggleButton y Label
                     ToggleButton toggle = new ToggleButton();
                     toggle.setSelected(activo);
                     Label lblEstado = new Label(activo ? "Activo" : "Inactivo");
                     lblEstado.setStyle(activo ? "-fx-text-fill: #16a34a;" : "-fx-text-fill: #9ca3af;");
+                    
+                    // Acción para el botón de estado (switch)
+                    toggle.setOnAction(e -> {
+                        controller.cambiarEstado(prod.getId());
+                    });
                     
                     HBox box = new HBox(5, toggle, lblEstado);
                     box.setAlignment(Pos.CENTER_LEFT);
@@ -166,5 +171,23 @@ public class GestionProductosFrm {
 
         tabla.getColumns().addAll(colProducto, colCategoria, colPrecio, colIngredientes, colEstado, colAcciones);
         return tabla;
+    }
+
+    public void buscarProductos() {
+        try {
+            String texto = txtBuscar != null ? txtBuscar.getText().trim() : "";
+            
+            List<ProductoDTO> resultados = controller.buscarProductos(texto, "TODOS");
+            datosTabla.setAll(resultados);
+            
+            // Actualizamos los contadores de abajo
+            long activos = resultados.stream().filter(p -> p.getActivo() != null && p.getActivo()).count();
+            long inactivos = resultados.size() - activos;
+            lblResumen.setText(resultados.size() + " productos totales | " + activos + " activos | " + inactivos + " inactivos");
+            
+        } catch (Exception ex) {
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Error al cargar productos: " + ex.getMessage());
+            alert.showAndWait();
+        }
     }
 }

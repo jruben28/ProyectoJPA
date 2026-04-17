@@ -18,10 +18,5 @@
         <artifactId>javax.persistence-api</artifactId>
         <version>2.2</version>
     </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>enums</artifactId>
-            <version>${project.version}</version>
-        </dependency>
     </dependencies>
 </project>
