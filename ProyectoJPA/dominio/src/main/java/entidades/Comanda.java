@@ -6,12 +6,15 @@ package entidades;
 
 
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  * cambio de ultima hora para simplificar la bd, quitamos el enum de estadoComanda para manejarlo como String 
@@ -25,6 +28,16 @@ public class Comanda implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true)
+    private String folio;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "fecha_hora")
+    private Date fechaHora;
+
+    @Column(name = "num_mesa")
+    private Integer numMesa;
+
     @Column(nullable = false)
     private Double total;
 
@@ -37,7 +50,10 @@ public class Comanda implements Serializable {
     public Comanda() {
     }
 
-    public Comanda(Double total, String estado, Long idCliente) {
+    public Comanda(String folio, Date fechaHora, Integer numMesa, Double total, String estado, Long idCliente) {
+        this.folio = folio;
+        this.fechaHora = fechaHora;
+        this.numMesa = numMesa;
         this.total = total;
         this.estado = estado;
         this.idCliente = idCliente;
@@ -49,6 +65,30 @@ public class Comanda implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getFolio() {
+        return folio;
+    }
+
+    public void setFolio(String folio) {
+        this.folio = folio;
+    }
+
+    public Date getFechaHora() {
+        return fechaHora;
+    }
+
+    public void setFechaHora(Date fechaHora) {
+        this.fechaHora = fechaHora;
+    }
+
+    public Integer getNumMesa() {
+        return numMesa;
+    }
+
+    public void setNumMesa(Integer numMesa) {
+        this.numMesa = numMesa;
     }
 
     public Double getTotal() {
