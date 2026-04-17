@@ -1,5 +1,6 @@
 package com.dtos;
 
+import com.dtos.ProductoIngredienteDTO;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,8 +13,9 @@ public class ProductoDTO {
     private String nombre;
     private String descripcion;
     private Double precio;
-    private String tipo; // PLATILLO, BEBIDA, POSTRE
+    private String tipo;
     private Boolean activo; 
+    private String urlImagen; // NUEVO: Atributo para la imagen
     private List<ProductoIngredienteDTO> ingredientes;
 
     public ProductoDTO() {
@@ -36,18 +38,13 @@ public class ProductoDTO {
     public String getTipo() { return tipo; }
     public void setTipo(String tipo) { this.tipo = tipo; }
     
-    // <-- Nuevos Getter y Setter para 'activo' -->
     public Boolean getActivo() { return activo; }
     public void setActivo(Boolean activo) { this.activo = activo; }
+
+    // NUEVO: Getter y setter de la URL
+    public String getUrlImagen() { return urlImagen; }
+    public void setUrlImagen(String urlImagen) { this.urlImagen = urlImagen; }
     
     public List<ProductoIngredienteDTO> getIngredientes() { return ingredientes; }
     public void setIngredientes(List<ProductoIngredienteDTO> ingredientes) { this.ingredientes = ingredientes; }
-}
-
-    @Override
-    public String toString() {
-        return nombre;
-    }
-    
-    
 }
