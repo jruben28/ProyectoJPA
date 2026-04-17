@@ -80,7 +80,13 @@ public class ControllerIngrediente {
      * @param ingredienteDTO 
      */
     public void registrarIngrediente(IngredienteDTO ingredienteDTO){
-        ingredienteBO.agregarIngrediente(ingredienteDTO);
+        try{
+            ingredienteBO.agregarIngrediente(ingredienteDTO);
+        }
+        catch(NegocioException ex){
+            throw new NegocioException(ex.getMessage());
+        }
+        
     }
     
 //    /**
