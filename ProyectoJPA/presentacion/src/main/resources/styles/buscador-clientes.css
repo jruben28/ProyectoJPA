@@ -421,3 +421,13 @@
     -fx-padding: 3 10;
     -fx-background-radius: 10;
 }
+
+.estado-pendiente {
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #CA8A04;
+    -fx-background-color: #FEF9C3;
+    -fx-padding: 3 10;
+    -fx-background-radius: 10;
+}
