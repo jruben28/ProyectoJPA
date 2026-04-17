@@ -13,7 +13,7 @@ import entidades.Producto;
 import entidades.ProductoIngrediente;
 import enums.TipoProducto;
 import enums.UnidadDeMedida;
-import excepciones.NegocioException;
+import excepciones.PersistenciaException;
 import java.util.Arrays;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -31,7 +31,7 @@ public class ComboBOTest {
     }
 
     @Test
-    public void testAgregarComboExito() throws NegocioException {
+    public void testAgregarComboExito() throws PersistenciaException {
         ComboBO bo = new ComboBO();
         ComboDTO dto = new ComboDTO("Combo de prueba", "Descripcion", 100.0, 80.00, 20);
         Combo resultado = bo.agregarCombo(dto);
@@ -47,57 +47,57 @@ public class ComboBOTest {
     }
 
     @Test
-    public void testAgregarComboDtoNulo() throws NegocioException {
+    public void testAgregarComboDtoNulo() throws PersistenciaException {
         ComboBO bo = new ComboBO();
 
-        assertThrows(NegocioException.class, () -> bo.agregarCombo(null));
+        assertThrows(PersistenciaException.class, () -> bo.agregarCombo(null));
     }
 
     @Test
-    public void testAgregarComboNombreVacio() throws NegocioException {
+    public void testAgregarComboNombreVacio() throws PersistenciaException {
         ComboBO bo = new ComboBO();
         ComboDTO dto = new ComboDTO("", "Descripcion", 100.0, 80.0, 20);
 
-        assertThrows(NegocioException.class, () -> bo.agregarCombo(dto));
+        assertThrows(PersistenciaException.class, () -> bo.agregarCombo(dto));
 
     }
 
     @Test
-    public void testAgregarComboNombreNulo() throws NegocioException {
+    public void testAgregarComboNombreNulo() throws PersistenciaException {
         ComboBO bo = new ComboBO();
         ComboDTO dto = new ComboDTO(null, "Descripcion", 100.0, 80.0, 20);
 
-        assertThrows(NegocioException.class, () -> bo.agregarCombo(dto));
+        assertThrows(PersistenciaException.class, () -> bo.agregarCombo(dto));
     }
 
     @Test
-    public void testAgregarComboPrecioComboNegativo() throws NegocioException {
+    public void testAgregarComboPrecioComboNegativo() throws PersistenciaException {
         ComboBO bo = new ComboBO();
         ComboDTO dto = new ComboDTO("d", "Descripcion", 100.0, -80.0, 20);
 
-        assertThrows(NegocioException.class, () -> bo.agregarCombo(dto));
+        assertThrows(PersistenciaException.class, () -> bo.agregarCombo(dto));
     }
 
     @Test
-    public void testAgregarComboPrecioOriginalNegativo() throws NegocioException {
+    public void testAgregarComboPrecioOriginalNegativo() throws PersistenciaException {
         ComboBO bo = new ComboBO();
         ComboDTO dto = new ComboDTO("d", "Descripcion", -100.0, 80.0, 20);
 
-        assertThrows(NegocioException.class, () -> bo.agregarCombo(dto));
+        assertThrows(PersistenciaException.class, () -> bo.agregarCombo(dto));
     }
 
     @Test
-    public void testAgregarComboDescuentoFueraLimites() throws NegocioException {
+    public void testAgregarComboDescuentoFueraLimites() throws PersistenciaException {
         ComboBO bo = new ComboBO();
         ComboDTO dto = new ComboDTO("d", "Descripcion", 100.0, 80.0, 101);
         ComboDTO dto2 = new ComboDTO("d", "Descripcion", 100.0, 80.0, -1);
 
-        assertThrows(NegocioException.class, () -> bo.agregarCombo(dto));
-        assertThrows(NegocioException.class, () -> bo.agregarCombo(dto2));
+        assertThrows(PersistenciaException.class, () -> bo.agregarCombo(dto));
+        assertThrows(PersistenciaException.class, () -> bo.agregarCombo(dto2));
     }
 
     @Test
-    public void testAgregarComboConActivoNulo() throws NegocioException {
+    public void testAgregarComboConActivoNulo() throws PersistenciaException {
         ComboBO bo = new ComboBO();
         ComboDTO dto = new ComboDTO("d", "Descripcion", 100.0, 80.0, 20);
         dto.setActivo(null);
@@ -108,7 +108,7 @@ public class ComboBOTest {
     }
 
     @Test
-    public void testCrearComboConProductosExito() throws NegocioException {
+    public void testCrearComboConProductosExito() throws PersistenciaException {
         ComboBO bo = new ComboBO();
 
         EntityManager em = ConexionBD.crearConexion();
@@ -132,19 +132,19 @@ public class ComboBOTest {
     }
 
     @Test
-    public void testCrearComboConMenosDosProductos() throws NegocioException {
+    public void testCrearComboConMenosDosProductos() throws PersistenciaException {
         ComboBO bo = new ComboBO();
         ComboDTO dto = new ComboDTO("combo", "descripcion", 100.0, 80.0, 20);
         List<Long> idProductos = Arrays.asList(1L);
         List<Integer> cantidades = Arrays.asList(1);
 
-        assertThrows(NegocioException.class,
+        assertThrows(PersistenciaException.class,
                 () -> bo.crearComboConProductos(dto, idProductos, cantidades));
 
     }
 
     @Test
-    public void testActualizarComboExito() throws NegocioException {
+    public void testActualizarComboExito() throws PersistenciaException {
         ComboBO bo = new ComboBO();
         ComboDTO dtoOriginal = new ComboDTO("Viejo", "Viejon", 100.0, 80.0, 20);
         Combo agregado = bo.agregarCombo(dtoOriginal);
@@ -162,52 +162,52 @@ public class ComboBOTest {
     }
 
     @Test
-    public void testActualizarComboIdNulo() throws NegocioException {
+    public void testActualizarComboIdNulo() throws PersistenciaException {
         ComboBO bo = new ComboBO();
         ComboDTO dto = new ComboDTO("Combo", "Desc", 100.0, 80.0, 20);
 
-        assertThrows(NegocioException.class, () -> bo.actualizarComboPorId(null, dto));
+        assertThrows(PersistenciaException.class, () -> bo.actualizarComboPorId(null, dto));
     }
 
     @Test
-    public void testActualizarComboDtoNulo() throws NegocioException {
+    public void testActualizarComboDtoNulo() throws PersistenciaException {
         ComboBO bo = new ComboBO();
 
-        assertThrows(NegocioException.class, () -> bo.actualizarComboPorId(1L, null));
+        assertThrows(PersistenciaException.class, () -> bo.actualizarComboPorId(1L, null));
     }
 
     @Test
-    public void testActualizarComboNombreVacio() throws NegocioException {
+    public void testActualizarComboNombreVacio() throws PersistenciaException {
         ComboBO bo = new ComboBO();
         ComboDTO dtoOriginal = new ComboDTO("combo", "descripcion", 100.0, 80.0, 20);
         Combo agregado = bo.agregarCombo(dtoOriginal);
         ComboDTO dtoConNombreVacio = new ComboDTO("", "Nuevo", 100.0, 80.0, 20);
 
-        assertThrows(NegocioException.class, () -> bo.actualizarComboPorId(agregado.getId(), dtoConNombreVacio));
+        assertThrows(PersistenciaException.class, () -> bo.actualizarComboPorId(agregado.getId(), dtoConNombreVacio));
     }
 
     @Test
-    public void testActualizarComboPrecioOriginalNegativo() throws NegocioException {
+    public void testActualizarComboPrecioOriginalNegativo() throws PersistenciaException {
         ComboBO bo = new ComboBO();
         ComboDTO dtoOriginal = new ComboDTO("Original", "Desc", 100.0, 80.0, 20);
         Combo agregado = bo.agregarCombo(dtoOriginal);
         ComboDTO dtoConPrecioNegativo = new ComboDTO("Nuevo", "Desc", 100.0, -80.0, 20);
 
-        assertThrows(NegocioException.class, () -> bo.actualizarComboPorId(agregado.getId(), dtoConPrecioNegativo));
+        assertThrows(PersistenciaException.class, () -> bo.actualizarComboPorId(agregado.getId(), dtoConPrecioNegativo));
     }
 
     @Test
-    public void testActualizarComboPrecioComboNegativo() throws NegocioException {
+    public void testActualizarComboPrecioComboNegativo() throws PersistenciaException {
         ComboBO bo = new ComboBO();
         ComboDTO dtoOriginal = new ComboDTO("Original", "Desc", 100.0, 80.0, 20);
         Combo agregado = bo.agregarCombo(dtoOriginal);
         ComboDTO dtoConPrecioNegativo = new ComboDTO("Nuevo", "Desc", -100.0, 80.0, 20);
 
-        assertThrows(NegocioException.class, () -> bo.actualizarComboPorId(agregado.getId(), dtoConPrecioNegativo));
+        assertThrows(PersistenciaException.class, () -> bo.actualizarComboPorId(agregado.getId(), dtoConPrecioNegativo));
     }
 
     @Test
-    public void testActualizarComboDescuentoFueraLimites() throws NegocioException {
+    public void testActualizarComboDescuentoFueraLimites() throws PersistenciaException {
         ComboBO bo = new ComboBO();
         ComboDTO dtoOriginal = new ComboDTO("Original", "Desc", 100.0, 80.0, 20);
         Combo agregado = bo.agregarCombo(dtoOriginal);
@@ -215,13 +215,13 @@ public class ComboBOTest {
         ComboDTO dtoConDescuentoNulo = new ComboDTO("Nuevo", "Desc", 100.0, 80.0, null);
         ComboDTO dtoConDescuentoNegativo = new ComboDTO("Nuevo", "Desc", 100.0, 80.0, -1);
 
-        assertThrows(NegocioException.class, () -> bo.actualizarComboPorId(agregado.getId(), dtoConDescuentoAlto));
-        assertThrows(NegocioException.class, () -> bo.actualizarComboPorId(agregado.getId(), dtoConDescuentoNulo));
-        assertThrows(NegocioException.class, () -> bo.actualizarComboPorId(agregado.getId(), dtoConDescuentoNegativo));
+        assertThrows(PersistenciaException.class, () -> bo.actualizarComboPorId(agregado.getId(), dtoConDescuentoAlto));
+        assertThrows(PersistenciaException.class, () -> bo.actualizarComboPorId(agregado.getId(), dtoConDescuentoNulo));
+        assertThrows(PersistenciaException.class, () -> bo.actualizarComboPorId(agregado.getId(), dtoConDescuentoNegativo));
     }
 
     @Test
-    public void testObtenerTodosCombos() throws NegocioException {
+    public void testObtenerTodosCombos() throws PersistenciaException {
         ComboBO bo = new ComboBO();
         List<ComboDTO> resultado = bo.obtenerTodosCombos();
 
@@ -229,7 +229,7 @@ public class ComboBOTest {
     }
 
     @Test
-    public void testBuscarCombosPorNombreConResultados() throws NegocioException {
+    public void testBuscarCombosPorNombreConResultados() throws PersistenciaException {
         ComboBO bo = new ComboBO();
         ComboDTO dto = new ComboDTO("ComboTest123", "Desc", 100.0, 80.0, 20);
         bo.agregarCombo(dto);
@@ -239,7 +239,7 @@ public class ComboBOTest {
     }
 
     @Test
-    public void testBuscarCombosPorNombreVacio() throws NegocioException {
+    public void testBuscarCombosPorNombreVacio() throws PersistenciaException {
         ComboBO bo = new ComboBO();
         List<ComboDTO> resultado = bo.buscarCombosPorNombre("");
 
@@ -247,7 +247,7 @@ public class ComboBOTest {
     }
 
     @Test
-    public void testBuscarCombosPorNombreNull() throws NegocioException {
+    public void testBuscarCombosPorNombreNull() throws PersistenciaException {
         ComboBO bo = new ComboBO();
         List<ComboDTO> resultado = bo.buscarCombosPorNombre(null);
 
@@ -255,7 +255,7 @@ public class ComboBOTest {
     }
 
     @Test
-    public void testBuscarComboPorIdExito() throws NegocioException {
+    public void testBuscarComboPorIdExito() throws PersistenciaException {
         ComboBO bo = new ComboBO();
         ComboDTO dto = new ComboDTO("ComboParaBuscar", "Desc", 100.0, 80.0, 20);
         Combo agregado = bo.agregarCombo(dto);
@@ -270,18 +270,18 @@ public class ComboBOTest {
     public void testBuscarComboPorIdNulo() {
         ComboBO bo = new ComboBO();
 
-        assertThrows(NegocioException.class, () -> bo.buscarComboPorId(null));
+        assertThrows(PersistenciaException.class, () -> bo.buscarComboPorId(null));
     }
 
     @Test
     public void testBuscarComboPorIdInvalido() {
         ComboBO bo = new ComboBO();
 
-        assertThrows(NegocioException.class, () -> bo.buscarComboPorId(-1L));
+        assertThrows(PersistenciaException.class, () -> bo.buscarComboPorId(-1L));
     }
 
     @Test
-    public void testBuscarCombosPorProductoExito() throws NegocioException {
+    public void testBuscarCombosPorProductoExito() throws PersistenciaException {
         ComboBO bo = new ComboBO();
         List<ComboDTO> resultado = bo.buscarCombosPorProducto(9999L);
 
@@ -292,18 +292,18 @@ public class ComboBOTest {
     public void testBuscarCombosPorProductoIdNulo() {
         ComboBO bo = new ComboBO();
 
-        assertThrows(NegocioException.class, () -> bo.buscarCombosPorProducto(null));
+        assertThrows(PersistenciaException.class, () -> bo.buscarCombosPorProducto(null));
     }
 
     @Test
     public void testBuscarCombosPorProductoIdInvalido() {
         ComboBO bo = new ComboBO();
 
-        assertThrows(NegocioException.class, () -> bo.buscarCombosPorProducto(-1L));
+        assertThrows(PersistenciaException.class, () -> bo.buscarCombosPorProducto(-1L));
     }
 
     @Test
-    public void testCambiarEstadoExito() throws NegocioException {
+    public void testCambiarEstadoExito() throws PersistenciaException {
         ComboBO bo = new ComboBO();
         ComboDTO dto = new ComboDTO("Combo Estado", "Desc", 100.0, 80.0, 20);
         Combo agregado = bo.agregarCombo(dto);
@@ -321,13 +321,13 @@ public class ComboBOTest {
     @Test
     public void testCambiarEstadoIdNulo() {
         ComboBO bo = new ComboBO();
-        assertThrows(NegocioException.class, () -> bo.cambiarEstado(null, true));
+        assertThrows(PersistenciaException.class, () -> bo.cambiarEstado(null, true));
     }
 
     @Test
     public void testCambiarEstadoIdInvalido() {
         ComboBO bo = new ComboBO();
-        assertThrows(NegocioException.class, () -> bo.cambiarEstado(-5L, false));
+        assertThrows(PersistenciaException.class, () -> bo.cambiarEstado(-5L, false));
     }
 
     @Test
@@ -335,18 +335,18 @@ public class ComboBOTest {
         ComboBO bo = new ComboBO();
         ComboDTO dto = new ComboDTO("Combo Estado2", "Desc", 100.0, 80.0, 20);
         Combo agregado = bo.agregarCombo(dto);
-        assertThrows(NegocioException.class, () -> bo.cambiarEstado(agregado.getId(), null));
+        assertThrows(PersistenciaException.class, () -> bo.cambiarEstado(agregado.getId(), null));
     }
 
     @Test
     public void testCambiarEstadoComboInexistente() {
         ComboBO bo = new ComboBO();
 
-        assertThrows(NegocioException.class, () -> bo.cambiarEstado(99999L, true));
+        assertThrows(PersistenciaException.class, () -> bo.cambiarEstado(99999L, true));
     }
 
     @Test
-    public void testPuedeVenderseComboActivoConStock() throws NegocioException {
+    public void testPuedeVenderseComboActivoConStock() throws PersistenciaException {
         ComboBO bo = new ComboBO();
 
         EntityManager em = ConexionBD.crearConexion();
@@ -384,7 +384,7 @@ public class ComboBOTest {
     }
 
     @Test
-    public void testPuedeVenderseComboInactivo() throws NegocioException {
+    public void testPuedeVenderseComboInactivo() throws PersistenciaException {
         ComboBO bo = new ComboBO();
         ComboDTO dto = new ComboDTO("Combo Inactivo Test", "Descripcion generica", 100.0, 80.0, 20);
         Combo agregado = bo.agregarCombo(dto);

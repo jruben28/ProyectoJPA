@@ -6,7 +6,7 @@ package interfaces;
 
 import com.dtos.ComboDTO;
 import entidades.Combo;
-import excepciones.NegocioException;
+import excepciones.PersistenciaException;
 import java.util.List;
 
 /**
@@ -21,9 +21,9 @@ public interface IComboBO {
      *
      * @param comboDTO Datos del combo a agregar
      * @return Combo agregado
-     * @throws NegocioException si hay error de validación o persistencia
+     * @throws PersistenciaException si hay error de validación o persistencia
      */
-    public Combo agregarCombo(ComboDTO comboDTO) throws NegocioException;
+    public Combo agregarCombo(ComboDTO comboDTO) throws PersistenciaException;
 
     /**
      * Crea un combo con sus productos asociados
@@ -32,9 +32,9 @@ public interface IComboBO {
      * @param idProductos Lista de IDs de productos
      * @param cantidades Lista de cantidades por producto
      * @return Combo creado
-     * @throws NegocioException si hay error de validación o persistencia
+     * @throws PersistenciaException si hay error de validación o persistencia
      */
-    public Combo crearComboConProductos(ComboDTO dto, List<Long> idProductos, List<Integer> cantidades) throws NegocioException;
+    public Combo crearComboConProductos(ComboDTO dto, List<Long> idProductos, List<Integer> cantidades) throws PersistenciaException;
 
     /**
      * Actualiza un combo existente por su ID
@@ -42,44 +42,44 @@ public interface IComboBO {
      * @param id ID del combo a actualizar
      * @param comboDTO Nuevos datos del combo
      * @return Combo actualizado
-     * @throws NegocioException si hay error de validación o persistencia
+     * @throws PersistenciaException si hay error de validación o persistencia
      */
-    public Combo actualizarComboPorId(Long id, ComboDTO comboDTO) throws NegocioException;
+    public Combo actualizarComboPorId(Long id, ComboDTO comboDTO) throws PersistenciaException;
 
     /**
      * Obtiene todos los combos registrados
      *
      * @return Lista de ComboDTO
-     * @throws NegocioException si ocurre error
+     * @throws PersistenciaException si ocurre error
      */
-    public List<ComboDTO> obtenerTodosCombos() throws NegocioException;
+    public List<ComboDTO> obtenerTodosCombos() throws PersistenciaException;
 
     /**
      * Busca combos por nombre. Si está vacío, devuelve todos.
      *
      * @param nombre Nombre a buscar
      * @return Lista de ComboDTO que coinciden
-     * @throws NegocioException si ocurre error
+     * @throws PersistenciaException si ocurre error
      */
-    public List<ComboDTO> buscarCombosPorNombre(String nombre) throws NegocioException;
+    public List<ComboDTO> buscarCombosPorNombre(String nombre) throws PersistenciaException;
 
     /**
      * Busca un combo por su ID
      *
      * @param id ID del combo a buscar
      * @return ComboDTO encontrado
-     * @throws NegocioException si no se encuentra o hay error
+     * @throws PersistenciaException si no se encuentra o hay error
      */
-    public ComboDTO buscarComboPorId(Long id) throws NegocioException;
+    public ComboDTO buscarComboPorId(Long id) throws PersistenciaException;
 
     /**
      * Busca combos que contengan un producto específico
      *
      * @param idProducto ID del producto
      * @return Lista de ComboDTO
-     * @throws NegocioException si ocurre error
+     * @throws PersistenciaException si ocurre error
      */
-    public List<ComboDTO> buscarCombosPorProducto(Long idProducto) throws NegocioException;
+    public List<ComboDTO> buscarCombosPorProducto(Long idProducto) throws PersistenciaException;
 
     /**
      * Cambia el estado activo/inactivo de un combo (baja o alta lógica).
@@ -87,10 +87,10 @@ public interface IComboBO {
      * @param id ID del combo a modificar
      * @param activo nuevo estado (true = activo, false = inactivo)
      * @return ComboDTO actualizado
-     * @throws NegocioException si el ID no es válido, el combo no existe o hay
+     * @throws PersistenciaException si el ID no es válido, el combo no existe o hay
      * error de persistencia
      */
-    public ComboDTO cambiarEstado(Long id, Boolean activo) throws NegocioException;
+    public ComboDTO cambiarEstado(Long id, Boolean activo) throws PersistenciaException;
 
     /**
      * Verifica si un combo puede ser vendido (todos sus productos tienen stock
@@ -99,8 +99,8 @@ public interface IComboBO {
      * @param idCombo ID del combo a verificar
      * @return true si el combo está activo y todos sus ingredientes tienen
      * stock
-     * @throws NegocioException si ocurre un error al consultar
+     * @throws PersistenciaException si ocurre un error al consultar
      */
-    public boolean puedeVenderse(Long idCombo) throws NegocioException;
+    public boolean puedeVenderse(Long idCombo) throws PersistenciaException;
 
 }

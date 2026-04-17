@@ -1,7 +1,7 @@
 package com.presentacion;
 
 import com.dtos.ClienteFrecuenteDTO;
-import excepciones.NegocioException;
+import excepciones.PersistenciaException;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -156,7 +156,7 @@ public class RegistroClienteFrm extends Stage {
             }
 
             close();
-        } catch (NegocioException ex) {
+        } catch (PersistenciaException ex) {
             Alert error = new Alert(Alert.AlertType.ERROR, ex.getMessage());
             error.setHeaderText("Error al guardar cliente");
             error.setTitle("Error");

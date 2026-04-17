@@ -20,7 +20,7 @@ public interface IComandaBO {
      * Abre una comanda nueva.
      * @param dto debe tener idMesa; idCliente es opcional.
      * @return la comanda persistida.
-     * @throws NegocioException si la mesa está ocupada, no existe, etc.
+     * @throws PersistenciaException si la mesa está ocupada, no existe, etc.
      */
     Comanda abrirComanda(ComandaDTO dto) throws NegocioException;
 

@@ -11,6 +11,7 @@
         <module>negocio</module>
         <module>persistencia</module>
         <module>presentacion</module>
+        <module>enums</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
