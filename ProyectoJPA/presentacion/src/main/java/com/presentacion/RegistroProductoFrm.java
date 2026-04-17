@@ -3,6 +3,7 @@ package com.presentacion;
 import com.dtos.IngredienteDTO;
 import com.dtos.ProductoDTO;
 import com.dtos.ProductoIngredienteDTO;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List; 
 import javafx.beans.property.SimpleStringProperty;
@@ -12,7 +13,10 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 /**
@@ -29,6 +33,10 @@ public class RegistroProductoFrm extends Stage {
     private TextArea txtDescripcion;
     private TextField txtPrecio;
     private ComboBox<String> cmbTipo;
+    
+    // para la parte visual de la imagen
+    private ImageView imgPreview; 
+    private String rutaImagenSeleccionada; 
     
     // Campos de Ingredientes
     private ComboBox<IngredienteDTO> cmbIngredientesDisponibles;
@@ -64,7 +72,7 @@ public class RegistroProductoFrm extends Stage {
 
         root.getChildren().addAll(titulo, paneles, botones);
 
-        Scene scene = new Scene(root, 850, 600);
+        Scene scene = new Scene(root, 900, 650); 
         setTitle(esEdicion ? "Editar Producto" : "Registrar Producto");
         setScene(scene);
     }
@@ -84,12 +92,53 @@ public class RegistroProductoFrm extends Stage {
         
         Label lblPrecio = new Label("Precio *");
         txtPrecio = new TextField();
-        
+
         Label lblTipo = new Label("Categoría *");
         cmbTipo = new ComboBox<>(FXCollections.observableArrayList("PLATILLO", "BEBIDA", "POSTRE"));
 
-        form.getChildren().addAll(lblNombre, txtNombre, lblDesc, txtDescripcion, lblPrecio, txtPrecio, lblTipo, cmbTipo);
+        
+        Label lblImagen = new Label("Imagen del Producto");
+        
+        // El cuadrito donde se verá la foto
+        imgPreview = new ImageView();
+        imgPreview.setFitWidth(150);
+        imgPreview.setFitHeight(150);
+        imgPreview.setPreserveRatio(true);
+        imgPreview.setStyle("-fx-border-color: #cccccc;"); // Borde para que no se vea invisible si está vacío
+        
+        // Botón para abrir el explorador de archivos
+        Button btnSeleccionarImagen = new Button("Seleccionar Foto...");
+        btnSeleccionarImagen.setOnAction(e -> abrirExploradorArchivos());
+
+        HBox boxImagen = new HBox(15, imgPreview, btnSeleccionarImagen);
+        boxImagen.setAlignment(Pos.CENTER_LEFT);
+        // ==========================================
+
+        form.getChildren().addAll(lblNombre, txtNombre, lblDesc, txtDescripcion, lblPrecio, txtPrecio, lblTipo, cmbTipo, lblImagen, boxImagen);
         return form;
+    }
+
+    //  Método para elegir la foto de la compu
+    private void abrirExploradorArchivos() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Seleccionar Imagen del Producto");
+        
+        // Filtro para que el usuario solo pueda elegir imágenes
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Imágenes", "*.png", "*.jpg", "*.jpeg")
+        );
+        
+        // Abrimos la ventanita. 
+        File archivoSeleccionado = fileChooser.showOpenDialog(this);
+        
+        if (archivoSeleccionado != null) {
+            // Obtenemos la ruta en formato "file:///C:/ruta/foto.png"
+            rutaImagenSeleccionada = archivoSeleccionado.toURI().toString();
+            
+            // Mostramos la foto en el cuadrito (ImageView)
+            Image imagen = new Image(rutaImagenSeleccionada);
+            imgPreview.setImage(imagen);
+        }
     }
 
     private VBox crearSeccionIngredientes() {
@@ -171,7 +220,6 @@ public class RegistroProductoFrm extends Stage {
         ProductoIngredienteDTO pi = new ProductoIngredienteDTO();
         pi.setIdIngrediente(seleccionado.getIdIngrediente());
         pi.setNombreIngrediente(seleccionado.getNombre());
-        // CORRECCIÓN: Cambiado a Double.parseDouble asumiendo que ProductoIngredienteDTO.setCantidad recibe un Double
         pi.setCantidad(Double.parseDouble(cantidadStr)); 
 
         listaIngredientesTemporales.add(pi);
@@ -188,9 +236,12 @@ public class RegistroProductoFrm extends Stage {
 
             dto.setNombre(txtNombre.getText().trim());
             dto.setDescripcion(txtDescripcion.getText().trim());
-            // CORRECCIÓN: Cambiado de Float.parseFloat a Double.parseDouble
             dto.setPrecio(Double.parseDouble(txtPrecio.getText().trim()));
             dto.setTipo(cmbTipo.getValue());
+            
+            // Le pasamos la ruta que se guardó cuando el usuario eligió la foto
+            dto.setUrlImagen(rutaImagenSeleccionada);
+            
             dto.setIngredientes(new ArrayList<>(listaIngredientesTemporales));
 
             if (productoEditando != null) {
@@ -202,7 +253,6 @@ public class RegistroProductoFrm extends Stage {
             }
             close();
         } catch (NumberFormatException ex) {
-            // Se añade manejo específico por si el usuario introduce letras en el precio
             mostrarAlerta(Alert.AlertType.ERROR, "Error: El precio y las cantidades deben ser números válidos.");
         } catch (Exception ex) {
             mostrarAlerta(Alert.AlertType.ERROR, "Error al guardar: " + ex.getMessage());
@@ -211,7 +261,6 @@ public class RegistroProductoFrm extends Stage {
 
     private void cargarIngredientesAlComboBox() {
         try {
-            // El controller debe tener un método que consulte al IngredienteBO
             List<IngredienteDTO> ingredientesBD = controller.obtenerTodosLosIngredientes();
             cmbIngredientesDisponibles.setItems(FXCollections.observableArrayList(ingredientesBD));
         } catch (Exception e) {
@@ -224,6 +273,18 @@ public class RegistroProductoFrm extends Stage {
         txtDescripcion.setText(p.getDescripcion());
         txtPrecio.setText(String.valueOf(p.getPrecio()));
         cmbTipo.setValue(p.getTipo());
+        
+        // Si estamos editando y el producto ya tenía foto, la mostramos
+        if (p.getUrlImagen() != null && !p.getUrlImagen().isEmpty()) {
+            rutaImagenSeleccionada = p.getUrlImagen();
+            try {
+                imgPreview.setImage(new Image(rutaImagenSeleccionada));
+            } catch (Exception e) {
+                // Si borraron la foto de la compu, no crashea, nomás no la muestra
+                System.out.println("No se pudo cargar la imagen anterior.");
+            }
+        }
+        
         if (p.getIngredientes() != null) {
             listaIngredientesTemporales.addAll(p.getIngredientes());
         }

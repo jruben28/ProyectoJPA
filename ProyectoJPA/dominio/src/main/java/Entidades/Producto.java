@@ -34,18 +34,15 @@ public class Producto implements Serializable {
     @Column(name = "tipo", nullable = false)
     private TipoProducto tipo;
 
-    @Lob
-    @Column(name = "imagen")
-    private byte[] imagen; 
+    @Column(name = "url_imagen")
+    private String urlImagen; 
 
     @Column(name = "activo", nullable = false)
     private Boolean activo;
 
-    // Relación con la tabla intermedia (Un producto tiene muchos ingredientes en su receta)
     @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductoIngrediente> ingredientes;
 
-   
     public Producto() {
     }
 
@@ -54,14 +51,11 @@ public class Producto implements Serializable {
         this.descripcion = descripcion;
         this.precio = precio;
         this.tipo = tipo;
-        this.activo = true; // Por defecto activo al crearse
+        this.activo = true;
     }
 
-    
     public Boolean estaDisponible() {
         if (!this.activo) return false;
-        
-      
         for (ProductoIngrediente pi : ingredientes) {
             if (pi.getIngrediente().getStock() < pi.getCantidad()) {
                 return false;
@@ -70,71 +64,28 @@ public class Producto implements Serializable {
         return true;
     }
 
-    public String getNombre() {
-        return nombre;
-    }
+    // --- GETTERS Y SETTERS ---
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
 
-    public String getDescripcion() {
-        return descripcion;
-    }
+    public String getDescripcion() { return descripcion; }
+    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
 
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
+    public Double getPrecio() { return precio; }
+    public void setPrecio(Double precio) { this.precio = precio; }
 
-    public Double getPrecio() {
-        return precio;
-    }
+    public TipoProducto getTipo() { return tipo; }
+    public void setTipo(TipoProducto tipo) { this.tipo = tipo; }
 
-    public void setPrecio(Double precio) {
-        this.precio = precio;
-    }
+    public String getUrlImagen() { return urlImagen; }
+    public void setUrlImagen(String urlImagen) { this.urlImagen = urlImagen; }
 
-    public TipoProducto getTipo() {
-        return tipo;
-    }
+    public Boolean getActivo() { return activo; }
+    public void setActivo(Boolean activo) { this.activo = activo; }
 
-    public void setTipo(TipoProducto tipo) {
-        this.tipo = tipo;
-    }
-
-    public byte[] getImagen() {
-        return imagen;
-    }
-
-    public void setImagen(byte[] imagen) {
-        this.imagen = imagen;
-    }
-
-    public Boolean getActivo() {
-        return activo;
-    }
-
-    public void setActivo(Boolean activo) {
-        this.activo = activo;
-    }
-
-    public List<ProductoIngrediente> getIngredientes() {
-        return ingredientes;
-    }
-
-    public void setIngredientes(List<ProductoIngrediente> ingredientes) {
-        this.ingredientes = ingredientes;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-   
-
-  
+    public List<ProductoIngrediente> getIngredientes() { return ingredientes; }
+    public void setIngredientes(List<ProductoIngrediente> ingredientes) { this.ingredientes = ingredientes; }
 }

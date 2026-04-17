@@ -15,7 +15,7 @@ public class ProductoDTO {
     private Double precio;
     private String tipo;
     private Boolean activo; 
-    private String urlImagen; // NUEVO: Atributo para la imagen
+    private String urlImagen; 
     private List<ProductoIngredienteDTO> ingredientes;
 
     public ProductoDTO() {
