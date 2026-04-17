@@ -14,7 +14,8 @@ public class Presentacion extends Application {
     @Override
     public void start(Stage primaryStage) {
         ControllerClienteFrecuente controller = new ControllerClienteFrecuente(primaryStage);
-        controller.mostrarBuscador();
+        ControllerIngrediente controllerIngrediente = new ControllerIngrediente(primaryStage);
+        controllerIngrediente.mostrarPrincipal();
     }
 
     public static void main(String[] args) {
