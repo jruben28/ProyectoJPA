@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Clase de prueba para ComandaBO
+ *
  * @author joser
  */
 public class ComandaBOTest {
@@ -48,6 +49,7 @@ public class ComandaBOTest {
         dto.setIdMesa(mesa.getId());
         dto.setIdCliente(cliente.getId());
         Comanda resultado = bo.abrirComanda(dto);
+        
         assertNotNull(resultado);
         assertNotNull(resultado.getFolio());
         assertTrue(resultado.getFolio().startsWith("OB-"));
@@ -58,6 +60,7 @@ public class ComandaBOTest {
     @Test
     public void testAbrirComandaDtoNulo() {
         ComandaBO bo = new ComandaBO();
+        
         assertThrows(NegocioException.class, () -> bo.abrirComanda(null));
     }
 
@@ -84,6 +87,7 @@ public class ComandaBOTest {
         bo.abrirComanda(dto);
         ComandaDTO dto2 = new ComandaDTO();
         dto2.setIdMesa(mesa.getId());
+        
         assertThrows(NegocioException.class, () -> bo.abrirComanda(dto2));
     }
 
@@ -107,35 +111,36 @@ public class ComandaBOTest {
         dto.setIdMesa(mesa.getId());
         dto.setIdCliente(cliente.getId());
         Comanda comanda = bo.abrirComanda(dto);
+        
         assertDoesNotThrow(() -> bo.agregarDetalleProducto(comanda.getId(), p.getId(), 2, "sin cebolla"));
     }
 
     @Test
-public void testAgregarDetalleProductoSinStock() throws NegocioException {
-    ComandaBO bo = new ComandaBO();
-    Mesa mesa = new MesaDAO().agregar(new Mesa(40006));
-    EntityManager em = ConexionBD.crearConexion();
-    em.getTransaction().begin();
-    ClienteFrecuente cliente = new ClienteFrecuente("cliente-ss", "6441112222", "ss@test.com");
-    em.persist(cliente);
-    Ingrediente ing = new Ingrediente(null, "ing-ss", UnidadDeMedida.GRAMO, 0.0, null);
-    em.persist(ing);
-    Producto p = new Producto("prod-ss", "desc", 50.0, TipoProducto.PLATILLO);
-    em.persist(p);
-    ProductoIngrediente pi = new ProductoIngrediente(1.0, p, ing);
-    em.persist(pi);
-    p.getIngredientes().add(pi);   
-    em.getTransaction().commit();
-    em.close();
-    
-    ComandaDTO dto = new ComandaDTO();
-    dto.setIdMesa(mesa.getId());
-    dto.setIdCliente(cliente.getId());
-    Comanda comanda = bo.abrirComanda(dto);
-    
-    assertThrows(NegocioException.class,
-            () -> bo.agregarDetalleProducto(comanda.getId(), p.getId(), 1, null));
-}
+    public void testAgregarDetalleProductoSinStock() throws NegocioException {
+        ComandaBO bo = new ComandaBO();
+        Mesa mesa = new MesaDAO().agregar(new Mesa(40006));
+        EntityManager em = ConexionBD.crearConexion();
+        em.getTransaction().begin();
+        ClienteFrecuente cliente = new ClienteFrecuente("cliente-ss", "6441112222", "ss@test.com");
+        em.persist(cliente);
+        Ingrediente ing = new Ingrediente(null, "ing-ss", UnidadDeMedida.GRAMO, 0.0, null);
+        em.persist(ing);
+        Producto p = new Producto("prod-ss", "desc", 50.0, TipoProducto.PLATILLO);
+        em.persist(p);
+        ProductoIngrediente pi = new ProductoIngrediente(1.0, p, ing);
+        em.persist(pi);
+        p.getIngredientes().add(pi);
+        em.getTransaction().commit();
+        em.close();
+
+        ComandaDTO dto = new ComandaDTO();
+        dto.setIdMesa(mesa.getId());
+        dto.setIdCliente(cliente.getId());
+        Comanda comanda = bo.abrirComanda(dto);
+
+        assertThrows(NegocioException.class,
+                () -> bo.agregarDetalleProducto(comanda.getId(), p.getId(), 1, null));
+    }
 
     @Test
     public void testEntregarComandaSinDetallesFalla() throws NegocioException {
@@ -151,6 +156,7 @@ public void testAgregarDetalleProductoSinStock() throws NegocioException {
         dto.setIdMesa(mesa.getId());
         dto.setIdCliente(cliente.getId());
         Comanda comanda = bo.abrirComanda(dto);
+        
         assertThrows(NegocioException.class, () -> bo.entregarComanda(comanda.getId()));
     }
 
