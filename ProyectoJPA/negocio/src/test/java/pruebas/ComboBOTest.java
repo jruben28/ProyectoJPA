@@ -189,9 +189,9 @@ public class ComboBOTest {
     @Test
     public void testActualizarComboPrecioOriginalNegativo() throws PersistenciaException {
         ComboBO bo = new ComboBO();
-        ComboDTO dtoOriginal = new ComboDTO("Original", "Desc", 100.0, 80.0, 20);
+        ComboDTO dtoOriginal = new ComboDTO("OriginalPO" + System.nanoTime(), "Desc", 100.0, 80.0, 20);
         Combo agregado = bo.agregarCombo(dtoOriginal);
-        ComboDTO dtoConPrecioNegativo = new ComboDTO("Nuevo", "Desc", 100.0, -80.0, 20);
+        ComboDTO dtoConPrecioNegativo = new ComboDTO("NuevoPO" + System.nanoTime(), "Desc", 100.0, -80.0, 20);
 
         assertThrows(PersistenciaException.class, () -> bo.actualizarComboPorId(agregado.getId(), dtoConPrecioNegativo));
     }
@@ -199,9 +199,9 @@ public class ComboBOTest {
     @Test
     public void testActualizarComboPrecioComboNegativo() throws PersistenciaException {
         ComboBO bo = new ComboBO();
-        ComboDTO dtoOriginal = new ComboDTO("Original", "Desc", 100.0, 80.0, 20);
+        ComboDTO dtoOriginal = new ComboDTO("OriginalPC" + System.nanoTime(), "Desc", 100.0, 80.0, 20);
         Combo agregado = bo.agregarCombo(dtoOriginal);
-        ComboDTO dtoConPrecioNegativo = new ComboDTO("Nuevo", "Desc", -100.0, 80.0, 20);
+        ComboDTO dtoConPrecioNegativo = new ComboDTO("NuevoPC" + System.nanoTime(), "Desc", -100.0, 80.0, 20);
 
         assertThrows(PersistenciaException.class, () -> bo.actualizarComboPorId(agregado.getId(), dtoConPrecioNegativo));
     }
