@@ -4,20 +4,29 @@ import BOs.ClienteBO;
 import DAOs.MesaDAO;
 import com.dtos.ClienteDTO;
 import com.dtos.ClienteFrecuenteDTO;
+import conexion.ConexionBD;
+import entidades.Combo;
+import entidades.ComboProducto;
+import entidades.Ingrediente;
+import entidades.Producto;
+import entidades.ProductoIngrediente;
+import enums.TipoProducto;
+import enums.UnidadDeMedida;
+import excepciones.PersistenciaException;
 import java.util.Date;
 import java.util.logging.Logger;
+import javax.persistence.EntityManager;
 
 public class InsertDatos {
-   private static final Logger LOG = Logger.getLogger(InsertDatos.class.getName());
+
+    private static final Logger LOG = Logger.getLogger(InsertDatos.class.getName());
 
     public static void main(String[] args) {
         try {
-
             new MesaDAO().cargaMasiva(20);
             LOG.info("20 mesas cargadas.");
 
             ClienteBO clienteBO = new ClienteBO();
-
             ClienteDTO clienteGeneral = clienteBO.obtenerClienteGeneral();
             if (clienteGeneral == null) {
                 clienteGeneral = clienteBO.crearClienteGeneral();
@@ -98,8 +107,84 @@ public class InsertDatos {
             c10.setFechaRegistro(hoy);
             clienteBO.agregarClienteFrecuente(c10);
 
+            LOG.info("Clientes cargados.");
+
+            EntityManager em = ConexionBD.crearConexion();
+            em.getTransaction().begin();
+
+            Ingrediente tortilla  = new Ingrediente(null, "Tortilla de maiz",    UnidadDeMedida.PIEZA,     200.0,   null);
+            Ingrediente carne     = new Ingrediente(null, "Carne de res",         UnidadDeMedida.GRAMO,     5000.0,  null);
+            Ingrediente queso     = new Ingrediente(null, "Queso rallado",        UnidadDeMedida.GRAMO,     2000.0,  null);
+            Ingrediente pan       = new Ingrediente(null, "Pan de hamburguesa",   UnidadDeMedida.PIEZA,     100.0,   null);
+            Ingrediente refresco  = new Ingrediente(null, "Refresco 355ml",       UnidadDeMedida.MILILITRO, 10000.0, null);
+            Ingrediente helado    = new Ingrediente(null, "Helado de vainilla",   UnidadDeMedida.GRAMO,     3000.0,  null);
+            Ingrediente panHot    = new Ingrediente(null, "Pan para hotdog",      UnidadDeMedida.PIEZA,     80.0,    null);
+            Ingrediente salchicha = new Ingrediente(null, "Salchicha",            UnidadDeMedida.PIEZA,     150.0,   null);
+
+            em.persist(tortilla);
+            em.persist(carne);
+            em.persist(queso);
+            em.persist(pan);
+            em.persist(refresco);
+            em.persist(helado);
+            em.persist(panHot);
+            em.persist(salchicha);
+
+            Producto taco = new Producto("Taco de res", "Taco con carne asada y queso", 30.0, TipoProducto.PLATILLO);
+            em.persist(taco);
+            em.persist(new ProductoIngrediente(2.0,  taco, tortilla));
+            em.persist(new ProductoIngrediente(80.0, taco, carne));
+            em.persist(new ProductoIngrediente(15.0, taco, queso));
+
+            Producto hamburguesa = new Producto("Hamburguesa clasica", "Hamburguesa con carne y queso", 75.0, TipoProducto.PLATILLO);
+            em.persist(hamburguesa);
+            em.persist(new ProductoIngrediente(1.0,   hamburguesa, pan));
+            em.persist(new ProductoIngrediente(150.0, hamburguesa, carne));
+            em.persist(new ProductoIngrediente(20.0,  hamburguesa, queso));
+
+            Producto hotdog = new Producto("Hotdog", "Hotdog con salchicha", 40.0, TipoProducto.PLATILLO);
+            em.persist(hotdog);
+            em.persist(new ProductoIngrediente(1.0, hotdog, panHot));
+            em.persist(new ProductoIngrediente(1.0, hotdog, salchicha));
+
+            Producto refrescoP = new Producto("Refresco", "Refresco de 355ml", 25.0, TipoProducto.BEBIDA);
+            em.persist(refrescoP);
+            em.persist(new ProductoIngrediente(355.0, refrescoP, refresco));
+
+            Producto postre = new Producto("Copa de helado", "Copa de helado de vainilla", 45.0, TipoProducto.POSTRE);
+            em.persist(postre);
+            em.persist(new ProductoIngrediente(150.0, postre, helado));
+
+            Combo combo1 = new Combo("Combo Taquero", "Dos tacos de res con refresco", 85.0, 70.0, 17);
+            em.persist(combo1);
+            em.persist(new ComboProducto(combo1, taco, 2));
+            em.persist(new ComboProducto(combo1, refrescoP, 1));
+
+            Combo combo2 = new Combo("Combo Hamburguesa", "Hamburguesa clasica con refresco", 100.0, 85.0, 15);
+            em.persist(combo2);
+            em.persist(new ComboProducto(combo2, hamburguesa, 1));
+            em.persist(new ComboProducto(combo2, refrescoP, 1));
+
+            Combo combo3 = new Combo("Combo Hotdog", "Hotdog con refresco", 65.0, 55.0, 15);
+            em.persist(combo3);
+            em.persist(new ComboProducto(combo3, hotdog, 1));
+            em.persist(new ComboProducto(combo3, refrescoP, 1));
+
+            Combo combo4 = new Combo("Combo Familiar", "Dos hamburguesas con descuento", 150.0, 125.0, 16);
+            em.persist(combo4);
+            em.persist(new ComboProducto(combo4, hamburguesa, 2));
+
+            Combo combo5 = new Combo("Combo Postre", "Taco con copa de helado", 75.0, 60.0, 20);
+            combo5.setActivo(false);
+            em.persist(combo5);
+            em.persist(new ComboProducto(combo5, taco, 1));
+            em.persist(new ComboProducto(combo5, postre, 1));
+
+            em.getTransaction().commit();
+            em.close();
+
             LOG.info("InsertDatos completado.");
-        } catch (Exception e) {
+        } catch (PersistenciaException e) {
             LOG.warning("Error en InsertDatos: " + e.getMessage());
         }
     }
