@@ -40,6 +40,15 @@ public interface IComboDAO {
      * @throws PersistenciaException si ocurre error en la base de datos
      */
     List<Combo> obtenerTodosCombos() throws PersistenciaException;
+    
+     /**
+     * Obtiene todos los combos con su lista de productos.
+     * Se usa para validar duplicados por composición.
+     *
+     * @return Lista de combos con productos inicializados
+     * @throws PersistenciaException si ocurre error en la base de datos
+     */
+    List<Combo> obtenerTodosCombosConProductos() throws PersistenciaException;
 
     /**
      * Busca un combo por su id, solo datos básicos.

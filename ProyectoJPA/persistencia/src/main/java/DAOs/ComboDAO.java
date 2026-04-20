@@ -192,4 +192,21 @@ public class ComboDAO implements IComboDAO {
             em.close();
         }
     }
+    
+     @Override
+    public List<Combo> obtenerTodosCombosConProductos() throws PersistenciaException {
+        EntityManager em = ConexionBD.crearConexion();
+        try {
+            String jpql = "SELECT DISTINCT c FROM Combo c "
+                    + "LEFT JOIN FETCH c.productos cp "
+                    + "LEFT JOIN FETCH cp.producto";
+            TypedQuery<Combo> q = em.createQuery(jpql, Combo.class);
+            return q.getResultList();
+        } catch (RuntimeException ex) {
+            LOG.warning("Error al obtener combos con productos: " + ex.getMessage());
+            throw new PersistenciaException("Error al obtener combos con productos");
+        } finally {
+            em.close();
+        }
+    }
 }
